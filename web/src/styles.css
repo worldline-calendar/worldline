@@ -1425,9 +1425,15 @@ kbd { font: inherit; font-weight: 600; padding: 0 5px; border-radius: 4px; backg
 .side-chevron { flex: none; color: var(--text-3); transition: transform 0.2s ease; }
 .side-head-btn:hover .side-chevron { color: var(--text); }
 .side-section.collapsed .side-chevron { transform: rotate(-90deg); }
-.side-summary-wrap { display: flex; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+/* (clipped, fading out at its right end, when there are more dots than room — never running under the + button) */
+.side-summary-wrap {
+  display: flex; min-width: 0; overflow: hidden; opacity: 0; transition: opacity 0.2s; pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 10px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 10px), transparent);
+}
+.side-title { flex: none; }
+.side-summary .side-dot { flex: none; }
 .side-section.collapsed .side-summary-wrap { opacity: 1; }
-.side-summary { display: flex; gap: 3px; margin-left: 2px; }
+.side-summary { display: flex; gap: 3px; margin-left: 2px; padding-right: 10px; }
 .side-dot { width: 6px; height: 6px; border-radius: 50%; }
 .side-count { margin-left: 2px; padding: 0 6px; border-radius: 8px; font-size: 10.5px; background: var(--bg-press); color: var(--text-2); text-transform: none; }
 .side-count.overdue { background: color-mix(in srgb, #ef4b4b 22%, transparent); color: #ef4b4b; }
