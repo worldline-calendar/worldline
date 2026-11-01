@@ -1,4 +1,5 @@
 // Your side of scheduling links: list, create, edit, copy, and pick the final time for a poll.
+import { Portal } from './Portal';
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { useStore } from '../data/store';
@@ -84,13 +85,14 @@ export function SchedulingBody() {
   const links = useStore((s) => s.links);
   const [editing, setEditing] = useState<string | null>(null);
   const [results, setResults] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null); // a booking link's card: who booked, when
   const [showFinished, setShowFinished] = useState(false);
   const st = useStore.getState;
   const add = (mode: 'book' | 'poll') => setEditing(st().createLink(mode));
   const active = links.filter((l) => !isFinished(l));
   const finished = links.filter((l) => isFinished(l));
   const row = (l: BookingLink, booked = bookedTimes(l, Date.now())) => (
-        <div key={l.id} className={cls('sl', l.closed && 'closed')} onClick={() => (l.mode === 'poll' ? setResults(l.id) : setEditing(l.id))}>
+        <div key={l.id} className={cls('sl', l.closed && 'closed')} onClick={() => (l.mode === 'poll' ? setResults(l.id) : setStatus(l.id))}>
           <span className="sl-icon">{l.mode === 'book' ? '◷' : '◫'}</span>
           <span className="sl-body">
             <span className="sl-title">{l.title}</span>
@@ -145,6 +147,7 @@ export function SchedulingBody() {
         <button onClick={() => add('poll')}>+ Group poll</button>
       </div>
       {editing && <LinkEditor id={editing} onClose={() => setEditing(null)} />}
+      {status && <LinkStatus id={status} onClose={() => setStatus(null)} onEdit={() => { setEditing(status); setStatus(null); }} />}
       {results && <PollResults id={results} onClose={() => setResults(null)} onEdit={() => { setEditing(results); setResults(null); }} />}
     </>
   );
@@ -157,6 +160,7 @@ function Modal({ title, onClose, children, wide }: { title: string; onClose: () 
     return () => window.removeEventListener('keydown', on);
   }, [onClose]);
   return (
+    <Portal>
     <div className="ce-scrim" onMouseDown={onClose}>
       <div className={cls('ce', 'sl-modal', wide && 'wide')} onMouseDown={(e) => e.stopPropagation()}>
         <div className="ce-head">
@@ -166,6 +170,63 @@ function Modal({ title, onClose, children, wide }: { title: string; onClose: () 
         {children}
       </div>
     </div>
+    </Portal>
+  );
+}
+
+/** A booking link once it's out: has anyone picked a time? (Changing it is one click further: Edit.) */
+function LinkStatus({ id, onClose, onEdit }: { id: string; onClose: () => void; onEdit: () => void }) {
+  const link = useStore((s) => s.links.find((l) => l.id === id));
+  const st = useStore.getState;
+  useNow(60_000);
+  if (!link) return null;
+  const now = Date.now();
+  const booked = bookedTimes(link, now - 365 * 86_400_000).sort((a, b) => a.start - b.start);
+  const upcoming = booked.filter((b) => b.end >= now);
+  const past = booked.filter((b) => b.end < now);
+  const show = (b: (typeof booked)[number]) => {
+    const ev = b.eventId ?? st().events.find((x) => x.bookedVia === link.id && x.start === b.start)?.id;
+    st().goTo(b.start);
+    if (ev) st().flash(ev);
+    onClose();
+  };
+  const line = (b: (typeof booked)[number]) => (
+    <button key={b.start} className={cls('sl-booked', 'big', b.end < now && 'past')} onClick={() => show(b)} title="Show on calendar">
+      ✓ {format(b.start, 'EEE MMM d')} · {fmtTimeRange(b.start, b.end)}{b.name ? ` · ${b.name}` : ''}
+    </button>
+  );
+  return (
+    <Modal title="Booking link" onClose={onClose}>
+      <div className="ce-name" style={{ fontSize: 20 }}>{link.title}</div>
+      <div className="sl-sub pr-sub">{summary(link)}{link.closed ? ' · closed' : ''}</div>
+      <div className="sl-status">
+        {upcoming.length ? (
+          <>
+            <div className="sl-label">{upcoming.length === 1 ? 'Booked' : `${upcoming.length} bookings`}</div>
+            {upcoming.map(line)}
+          </>
+        ) : (
+          <div className="tk-empty">{link.closed ? 'Closed — no one booked.' : 'No one has picked a time yet.'}</div>
+        )}
+        {past.length > 0 && (
+          <>
+            <div className="sl-label">Earlier</div>
+            {past.map(line)}
+          </>
+        )}
+      </div>
+      <SyncLine id={id} />
+      <div className="ce-actions">
+        <button className="ce-btn subtle-danger" onClick={async () => { if (await deleteLink(link)) onClose(); }}>
+          <Trash /> Delete
+        </button>
+        <span style={{ display: 'flex', gap: 8 }}>
+          <button className="ce-btn" onClick={onEdit}>Edit</button>
+          <button className="ce-btn" onClick={() => window.open(linkUrl(id), '_blank')}>Preview ↗</button>
+          <button className="ce-btn primary" onClick={() => { copyLink(id); onClose(); }}>Copy link</button>
+        </span>
+      </div>
+    </Modal>
   );
 }
 

@@ -197,6 +197,7 @@ export function useEdgeSwipe(on: boolean) {
       const t = e.touches[0];
       const open = useStore.getState().sidebarOpen;
       if (!open && t.clientX > 22) return; // from the very edge only (elsewhere: scrolling, swiping days)
+      if ((e.target as Element).closest?.('.ce-scrim, .st-scrim')) return; // inside a card or dialog: its own scrolling
       if (open && !(e.target as Element).closest?.('.sidebar, .scrim')) return;
       g = { x0: t.clientX, y0: t.clientY, open, engaged: false, w: bar()?.offsetWidth ?? 300 };
     };

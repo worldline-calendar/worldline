@@ -167,3 +167,20 @@ describe('projects', () => {
     expect(st().projectNav.i).toBe(-1);
   });
 });
+
+describe('ideas', () => {
+  it('a jotted idea can be changed; emptied, it goes; the change is one undo step', () => {
+    const st = useStore.getState;
+    const pid = st().projects[0].id;
+    st().addIdea(pid, 'First thought');
+    const id = st().projects[0].ideas![0].id;
+    const steps = st().past.length;
+    st().updateIdea(pid, id, '  A better thought ');
+    expect(st().projects[0].ideas![0].text).toBe('A better thought');
+    expect(st().past.length).toBe(steps + 1);
+    st().updateIdea(pid, id, 'A better thought'); // unchanged: no step
+    expect(st().past.length).toBe(steps + 1);
+    st().updateIdea(pid, id, '   ');
+    expect(st().projects[0].ideas!.some((i) => i.id === id)).toBe(false);
+  });
+});

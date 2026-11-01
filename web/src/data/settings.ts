@@ -32,6 +32,7 @@ export interface AppSettings {
   /** A deadline's colour as its due time gets closer (Settings → Tasks & Deadlines): yellow below `halfway` per cent
    *  of the runway left, orange below `closing` per cent, red in the last `soonHours` hours, then the overdue colour. */
   deadlineLook: DeadlineLook;
+  deadlineRows: number; // how many deadline runways the day / week view shows at once (the rest: "+N more")
   suggest: Record<SuggestionKey, boolean>; // each kind of quick-add suggestion on / off
   // Habits
   habitsFromCalendar: boolean;
@@ -74,6 +75,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   dueMinutes: 17 * 60,
   leadDays: 14,
   deadlineLook: DEFAULT_DEADLINE_LOOK,
+  deadlineRows: 4,
   suggest: { stale: true, focus: true, add: true, habit: true },
   habitsFromCalendar: true,
   alertMin: 10,
@@ -130,6 +132,7 @@ export function normalizeSettings(raw: unknown): AppSettings {
     dueMinutes: num(r.dueMinutes, 0, 24 * 60 - 1, d.dueMinutes),
     leadDays: num(r.leadDays, 1, 365, d.leadDays),
     deadlineLook: normalizeLook(r.deadlineLook),
+    deadlineRows: num(r.deadlineRows, 1, 50, d.deadlineRows),
     suggest: { stale: bool(sg.stale, true), focus: bool(sg.focus, true), add: bool(sg.add, true), habit: bool(sg.habit, true) },
     habitsFromCalendar: bool(r.habitsFromCalendar, d.habitsFromCalendar),
     alertMin: 'alertMin' in r ? minOrNone(r.alertMin, 0, 7 * 1440, d.alertMin) : d.alertMin,

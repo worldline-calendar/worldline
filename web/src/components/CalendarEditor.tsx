@@ -2,6 +2,7 @@
 // deleting asks whether its events move to another calendar or go with it.
 // A new calendar can also be a subscription (a link to a department's / team's / Google calendar, kept up to date,
 // read-only) or an imported .ics file (copied in as your own, editable).
+import { Portal } from './Portal';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { CALENDAR_COLORS, readOnly, useStore } from '../data/store';
@@ -80,6 +81,7 @@ export function CalendarEditor({ id, onClose, mode: startMode = 'new' }: { id: s
   };
 
   return (
+    <Portal>
     <div className="ce-scrim" onMouseDown={onClose}>
       <div className="ce" onMouseDown={(e) => e.stopPropagation()} style={{ '--c': color } as CSSProperties}>
         <div className="ce-head">
@@ -258,5 +260,6 @@ export function CalendarEditor({ id, onClose, mode: startMode = 'new' }: { id: s
         )}
       </div>
     </div>
+    </Portal>
   );
 }

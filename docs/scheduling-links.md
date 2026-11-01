@@ -28,6 +28,9 @@ Mac app.
   everyone's names in **Available** / **Unavailable** columns. It starts on the best time (outlined on the grid); as
   you move over the grid, the outline covers the whole meeting starting there (two rows for 1 h) and the names
   move to the right column (red if you're busy for part of it). Click a time to pick it, then **Schedule**.
+- **Clicking a link in the sidebar** shows its card: who booked and when (or that no one has yet), whether it's
+  live, and Copy link · Preview · **Edit** · Delete. Changing the link is the Edit button; a poll opens its results.
+  On a phone the card fills the screen.
 - **After:** a booked or scheduled link shows the meeting time as a green line under it in the sidebar
   (“✓ Mon Oct 12 · 2 – 3 PM”; click it to jump to the meeting) and stays in the list until the meeting has
   happened. Reusable links list their next three bookings. Opening a used-up link shows the guest the time

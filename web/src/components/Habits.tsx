@@ -1,6 +1,7 @@
 // Habits: a sidebar card (tap a ring to tick today), a page of cards, and a page per habit for the long
 // view (strength over its whole life, totals by week / month / year, every calendar year, weekday pattern).
 // The maths lives in lib/habits.ts. Colour carries identity; no emoji.
+import { Portal } from './Portal';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { format } from 'date-fns';
 import { CALENDAR_COLORS, useStore } from '../data/store';
@@ -809,6 +810,7 @@ export function HabitEditor({ id, onClose }: { id: string | 'new'; onClose: () =
     onClose();
   };
   return (
+    <Portal>
     <div className="ce-scrim" onMouseDown={onClose}>
       <div className="ce he" onMouseDown={(e) => e.stopPropagation()} style={{ '--c': draft.color } as CSSProperties}>
         <div className="ce-head">
@@ -881,5 +883,6 @@ export function HabitEditor({ id, onClose }: { id: string | 'new'; onClose: () =
         </div>
       </div>
     </div>
+    </Portal>
   );
 }

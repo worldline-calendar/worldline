@@ -21,7 +21,6 @@ import { prefs } from '../lib/prefs';
 
 const DAY_HEAD_H = 50;
 const RIB_H = 22; // one deadline ribbon
-const MAX_RIBBONS = 4;
 const LANE_H = 22; // all-day bar height
 const MAX_ALLDAY_LANES = 4;
 const SNAP = 15; // minutes
@@ -61,6 +60,7 @@ const exactIndex = (t: Date | number) => S.toSlot(D.dayIndex(t), 'exact'); // -1
 
 export function TimeGrid({ days }: { days: number }) {
   useStore((s) => s.settings.deadlineLook); // (deadline colours: redrawn when they change in Settings)
+  const MAX_RIBBONS = useStore((s) => s.settings.deadlineRows); // Settings → Tasks & Deadlines
   const scrollerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const { width } = useElementSize(scrollerRef);
@@ -186,6 +186,7 @@ export function TimeGrid({ days }: { days: number }) {
   }, [ahead, showDeadlines, from, to]);
   const ribbonLanes = ribbons.reduce((m, r) => (r.a < first + days && r.b >= first ? Math.max(m, r.lane + 1) : m), 0);
   const ribbonH = ribbonLanes ? Math.min(ribbonLanes, MAX_RIBBONS) * RIB_H + 4 : 0;
+  const hiddenRibbons = ribbons.filter((r) => r.lane >= MAX_RIBBONS && r.a < first + days && r.b >= first).length;
   const AD_TOP = DAY_HEAD_H + ribbonH; // the all-day row sits under the ribbons
 
   // ---- scrolling & navigation -------------------------------------------------------
@@ -528,6 +529,11 @@ export function TimeGrid({ days }: { days: number }) {
               <span>{zoneAbbr(zone)}</span>
             </span>
             {ribbonH > 0 && <span className="tg-allday-label" style={{ top: DAY_HEAD_H + 5 }}>due</span>}
+            {hiddenRibbons > 0 && (
+              <span className="tg-allday-label tg-more-dl" style={{ top: DAY_HEAD_H + ribbonH - 17 }} title={`${hiddenRibbons} more deadline${hiddenRibbons === 1 ? '' : 's'} here — Settings → Tasks & Deadlines shows more at once`}>
+                +{hiddenRibbons}
+              </span>
+            )}
             <span className="tg-allday-label" style={{ top: AD_TOP + 4 }}>all-day</span>
           </div>
           {cols.map((i) => {

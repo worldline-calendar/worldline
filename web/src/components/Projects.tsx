@@ -9,6 +9,7 @@ import { CALENDAR_COLORS, useStore, type PaneView } from '../data/store';
 import {
   ago, bestThreads, columnOf, familyOf, ideasOf, isEmptyDoc, isReady, isStale, latestLine, logOf, marksOf, openItems, search, span, statusOf,
   type LogEntry, type OpenItem, type Pin, type Project, type Thread, type World,
+  type IdeaRow,
 } from '../lib/projects';
 import { cls } from '../lib/format';
 import { useNow } from '../lib/hooks';
@@ -301,12 +302,7 @@ function Column({ p, w, view, now, dragging, onHeadDown, onHeadClickCapture }: {
         <>
           <AddRow icon={Ico.spark} spark placeholder="Jot an idea…" onAdd={(text) => st().addIdea(p.id, text)} />
           {(allIdeas ? ideas : ideas.slice(0, IDEAS_SHOWN)).map((x, i) => (
-            <div key={x.idea?.id ?? `m${i}`} className="pj-idea">
-              <span className="pj-spark">{Ico.spark}</span>
-              <span className="pj-idea-text">{x.text}</span>
-              <button className="pj-idea-go" onClick={() => { open({ k: 'thread', id: st().startIdea(p.id, x) }); st().showToast('Started — it’s a thread now'); }}>Start →</button>
-              {x.idea && <button className="pj-x" onClick={() => st().removeIdea(p.id, x.idea!.id)} title="Remove" aria-label="Remove idea">×</button>}
-            </div>
+            <IdeaItem key={x.idea?.id ?? `m${i}`} pid={p.id} x={x} />
           ))}
           {ideas.length > IDEAS_SHOWN && <button className="pj-more pj-more-btn" onClick={() => setAllIdeas(!allIdeas)}>{allIdeas ? 'Show fewer' : `+${ideas.length - IDEAS_SHOWN} more`}</button>}
         </>
@@ -728,6 +724,62 @@ function SearchPage({ w, q, pid, now }: { w: World; q: string; pid?: string; now
           </button>
         ))}
       </article>
+    </div>
+  );
+}
+
+/** One idea: its words can be selected and copied; click them to change a jotted idea (Enter or clicking away saves,
+ *  Esc cancels, emptying it removes it). An idea found in a note ("Idea: …") opens that note to change it there. */
+function IdeaItem({ pid, x }: { pid: string; x: IdeaRow }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(x.text);
+  const box = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (!editing || !box.current) return;
+    const b = box.current;
+    b.focus();
+    b.setSelectionRange(b.value.length, b.value.length);
+  }, [editing]);
+  const fit = (b: HTMLTextAreaElement | null) => b && ((b.style.height = 'auto'), (b.style.height = `${b.scrollHeight}px`));
+  useEffect(() => void fit(box.current), [draft, editing]);
+  const save = () => {
+    if (x.idea) st().updateIdea(pid, x.idea.id, draft);
+    setEditing(false);
+  };
+  const begin = () => {
+    if (window.getSelection()?.toString()) return; // selecting to copy, not editing
+    if (x.idea) {
+      setDraft(x.text);
+      setEditing(true);
+    } else if (x.mark) open({ k: x.mark.s.owner === pid ? 'project' : 'thread', id: x.mark.s.owner });
+  };
+  return (
+    <div className={cls('pj-idea', editing && 'editing')}>
+      <span className="pj-spark">{Ico.spark}</span>
+      {editing ? (
+        <textarea
+          ref={box}
+          className="pj-idea-edit"
+          rows={1}
+          value={draft}
+          aria-label="Idea"
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={save}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              save();
+            } else if (e.key === 'Escape') {
+              e.stopPropagation();
+              setEditing(false);
+            }
+          }}
+        />
+      ) : (
+        <span className="pj-idea-text" onClick={begin} title={x.idea ? 'Click to change' : 'From a note — click to open it'}>{x.text}</span>
+      )}
+      {!editing && <button className="pj-idea-go" onClick={() => { open({ k: 'thread', id: st().startIdea(pid, x) }); st().showToast('Started — it’s a thread now'); }}>Start →</button>}
+      {!editing && x.idea && <button className="pj-x" onClick={() => st().removeIdea(pid, x.idea!.id)} title="Remove" aria-label="Remove idea">×</button>}
     </div>
   );
 }

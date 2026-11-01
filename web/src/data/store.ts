@@ -170,6 +170,8 @@ interface State {
   moveItem: (s: Source, path: number[], toId: string) => void;
   addIdea: (projectId: string, text: string) => void;
   removeIdea: (projectId: string, ideaId: string) => void;
+  /** Change a jotted idea's words (empty: it's removed). */
+  updateIdea: (projectId: string, ideaId: string, text: string) => void;
   /** Start working on an idea: it becomes a thread (and leaves the ideas). Returns the thread's id. */
   startIdea: (projectId: string, row: IdeaRow) => string;
   theme: ThemeId; // Settings → Appearance ('system' = follow the Mac, with settings.themeLight / themeDark)
@@ -877,6 +879,14 @@ export const useStore = create<State>()(
           if (!text.trim()) return;
           record();
           set((s) => ({ projects: s.projects.map((p) => (p.id === projectId ? { ...p, ideas: [{ id: newId(), text: text.trim(), at: Date.now() }, ...(p.ideas ?? [])] } : p)) }));
+        },
+        updateIdea: (projectId, ideaId, text) => {
+          const t = text.trim();
+          if (!t) return get().removeIdea(projectId, ideaId);
+          const cur = get().projects.find((p) => p.id === projectId)?.ideas?.find((i) => i.id === ideaId);
+          if (!cur || cur.text === t) return;
+          record();
+          set((s) => ({ projects: s.projects.map((p) => (p.id === projectId ? { ...p, ideas: (p.ideas ?? []).map((i) => (i.id === ideaId ? { ...i, text: t } : i)) } : p)) }));
         },
         removeIdea: (projectId, ideaId) => {
           record();

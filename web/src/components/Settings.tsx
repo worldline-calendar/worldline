@@ -376,6 +376,9 @@ function TasksPane() {
         <Row title="Runway when none is given" note="How long before the deadline work starts (deadlines that set their own keep it)">
           <Pick label="Runway" value={s.leadDays} options={[[3, '3 days'], [7, '1 week'], [14, '2 weeks'], [21, '3 weeks'], [30, '1 month']]} onChange={(v) => set({ leadDays: v })} />
         </Row>
+        <Row title="Deadlines shown at once" note="Rows of runways above the day and week views; any more show as “+N more”">
+          <Pick label="Deadlines shown at once" value={s.deadlineRows} options={[2, 3, 4, 5, 6, 8, 10, 15, 50].map((n) => [n, n === 50 ? 'all' : String(n)] as [number, string])} onChange={(v) => set({ deadlineRows: v })} />
+        </Row>
       </Group>
       <DeadlineColors />
       <Group title="Suggestions" foot="Each switch turns off one kind of suggestion in the quick-add box.">

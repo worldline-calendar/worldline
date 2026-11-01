@@ -1,6 +1,6 @@
 // Your app and several guests, end to end, over three in-memory relays (one of them down): publishing free/busy,
 // a booking race, the app being closed while someone books, poll answers, deleting a link.
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { generateSecretKey, type Event } from 'nostr-tools/pure';
 import type { Filter } from 'nostr-tools/filter';
 import { KIND, derive, newestAvail, openGuestMsg, parseFragment, guestUrl, resolveHolds, sealGuestMsg, withHolds, type BookedAgainst, type Decoded, type LinkRef } from '../lib/schedwire';
@@ -231,7 +231,12 @@ describe('cancelling', () => {
     expect(v.decisions[a.ev.pubkey].status).toBe('cancelled');
     expect(v.decisions[b.ev.pubkey].status).toBe('ok');
     // you delete the link: Ben's upcoming meeting goes too, and the closed notice says it's cancelled
-    useStore.getState().deleteLink(id);
+    vi.useFakeTimers({ toFake: ['Date'], now }); // (the store's own clock: the test's "now", whatever today is)
+    try {
+      useStore.getState().deleteLink(id);
+    } finally {
+      vi.useRealTimers();
+    }
     expect(evs()).toHaveLength(0);
     await settle();
     await settle();

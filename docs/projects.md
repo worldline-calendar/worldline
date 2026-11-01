@@ -45,7 +45,8 @@ action items first, then its plan). One undo step either way; a project note lef
 
 Each list has its add-box at the top: **Add a thread…** above the threads, **Jot an idea…** above the **Ideas**
 (open by default, the first five shown; Enter saves and the box stays ready for the next; **Start →** turns an idea
-into a thread). **Done** threads fold away. Click anywhere on a tile to open it; click empty board space (or Esc) to
+into a thread). Click an idea's words to change them (Enter saves, Esc cancels, empty removes it); the words can also
+be selected and copied. An idea from an `Idea:` line in a note opens that note instead. **Done** threads fold away. Click anywhere on a tile to open it; click empty board space (or Esc) to
 close the page and get back to the board. **Drag a column by its name** to reorder the board. **+ New project** and
 archived projects at the end. The calendar's sidebar tucks away on this tab (more room for columns) and comes back
 when you leave.
