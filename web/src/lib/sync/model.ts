@@ -9,6 +9,7 @@
 // Only what belongs to you syncs — your data, name, home zone and the settings about you — not what belongs to a
 // device (its theme, its current view, its window behaviour).
 import * as Y from 'yjs';
+import { safeKey } from '../../data/validate';
 
 export const COLLECTIONS = ['calendars', 'events', 'tasks', 'habits', 'projects', 'threads', 'projectLog', 'links'] as const;
 export const NESTED = ['habitLog', 'habitNotes'] as const;
@@ -201,6 +202,8 @@ export function readDoc(doc: Y.Doc, prev: Partial<Synced> = {}): Partial<Synced>
     ymap.forEach((v, key) => {
       const i = key.indexOf(SEP);
       const outer = key.slice(0, i), inner = key.slice(i + 1);
+      // (a key another device wrote: anything but "habit id SEP day" is skipped — `__proto__` above all)
+      if (i <= 0 || !safeKey(outer) || !safeKey(inner)) return;
       (nested[outer] ??= {})[/^-?\d+$/.test(inner) ? Number(inner) : inner] = v;
     });
     const old = prev[n];

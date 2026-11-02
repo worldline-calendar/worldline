@@ -126,6 +126,11 @@ export function Toolbar() {
       )}
       <div className="toolbar-right" hidden={!calendar}>
         {away && <ZonePill />}
+        <button className="icon-btn" onClick={() => useStore.getState().setSearch(true)} aria-label="Find" title={`Find events, deadlines and tasks (${MAC ? '⌘F' : 'Ctrl+F'} or /)`}>
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
+            <circle cx="7" cy="7" r="4.5" /><path d="m10.5 10.5 3 3" />
+          </svg>
+        </button>
         <button className="today-btn" onClick={goToday} title="Today (T)">Today</button>
       </div>
     </header>

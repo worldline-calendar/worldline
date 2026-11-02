@@ -652,6 +652,11 @@ function DataPane() {
     await uninstallApp();
   };
   const exportIcs = async () => {
+    if (cal === '*') {
+      const text = toIcs('Worldline', st.events);
+      if (await saveFile('Worldline.ics', text, 'text/calendar')) setMsg({ text: 'Exported all calendars.' });
+      return;
+    }
     const c = calendars.find((x) => x.id === cal);
     if (!c) return;
     const text = toIcs(c.name, st.events.filter((e) => e.calendarId === c.id), c.color);
@@ -687,8 +692,8 @@ function DataPane() {
         </Row>
       </Group>
       <Group title="Export">
-        <Row title="A calendar as an .ics file" note="For Apple Calendar, Google, Outlook">
-          <Pick label="Calendar" value={cal} options={calendars.map((c) => [c.id, c.name] as [string, string])} onChange={setCal} />
+        <Row title="Calendars as an .ics file" note="For Apple Calendar, Google, Outlook">
+          <Pick label="Calendar" value={cal} options={[['*', 'All calendars'] as [string, string], ...calendars.map((c) => [c.id, c.name] as [string, string])]} onChange={setCal} />
           <button className="ce-btn" onClick={() => void exportIcs()}>Export</button>
         </Row>
         <Row title="Habits as a spreadsheet"><button className="ce-btn" disabled={!hasHabits} onClick={() => void downloadHabitsCsv()}>Export CSV</button></Row>

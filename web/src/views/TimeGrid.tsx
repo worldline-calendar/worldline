@@ -168,8 +168,10 @@ export function TimeGrid({ days }: { days: number }) {
       .filter((x) => x.a <= x.b); // only on hidden days
     return assignLanes(items);
   }, [shown, from, to]);
-  const lanesInView = allDayBars.reduce(
-    (m, bar) => (bar.a < first + days && bar.b >= first ? Math.max(m, bar.lane + 1) : m), 0);
+  // (rows close up to the lanes in view, as the deadline ribbons' do below)
+  const adUsed = [...new Set(allDayBars.filter((r) => r.a < first + days && r.b >= first).map((r) => r.lane))].sort((x, y) => x - y);
+  const adRow = (lane: number) => adUsed.filter((l) => l < lane).length;
+  const lanesInView = adUsed.length;
   const allDayH = Math.max(1, Math.min(lanesInView, MAX_ALLDAY_LANES)) * LANE_H + 8;
 
   // ---- deadline ribbons: each open deadline's runway (default 2 weeks), drawn ahead of time ----
@@ -184,9 +186,14 @@ export function TimeGrid({ days }: { days: number }) {
       .map((x) => ({ ...x, a: Math.max(from, x.run), b: Math.min(to - 1, x.due) }));
     return assignLanes(items);
   }, [ahead, showDeadlines, from, to]);
-  const ribbonLanes = ribbons.reduce((m, r) => (r.a < first + days && r.b >= first ? Math.max(m, r.lane + 1) : m), 0);
+  // Rows close up to the lanes in view: a lone deadline left in lane 4 sits in row 1, and the band is one row tall
+  // the moment the others scroll away (not only once that last one does too).
+  const inView = (r: { a: number; b: number }) => r.a < first + days && r.b >= first;
+  const usedLanes = [...new Set(ribbons.filter(inView).map((r) => r.lane))].sort((x, y) => x - y);
+  const rowOf = (lane: number) => usedLanes.filter((l) => l < lane).length;
+  const ribbonLanes = usedLanes.length;
   const ribbonH = ribbonLanes ? Math.min(ribbonLanes, MAX_RIBBONS) * RIB_H + 4 : 0;
-  const hiddenRibbons = ribbons.filter((r) => r.lane >= MAX_RIBBONS && r.a < first + days && r.b >= first).length;
+  const hiddenRibbons = ribbons.filter((r) => inView(r) && rowOf(r.lane) >= MAX_RIBBONS).length;
   const AD_TOP = DAY_HEAD_H + ribbonH; // the all-day row sits under the ribbons
 
   // ---- scrolling & navigation -------------------------------------------------------
@@ -554,7 +561,8 @@ export function TimeGrid({ days }: { days: number }) {
             <div key={'ad' + i} className="tg-allday-cell" style={{ left: colLeft(i), width: colW, top: DAY_HEAD_H, height: ribbonH + allDayH }} />
           ))}
           {ribbons.map(({ ev, run, due, a, b, lane }) => {
-            if (lane >= MAX_RIBBONS) return null;
+            const row = rowOf(lane);
+            if (row >= MAX_RIBBONS) return null;
             const color = URGENCY_COLOR[urgency(ev, now)];
             const fullW = (due - run + 1) * colW; // the whole runway, so the colour ramp lines up when clipped
             return (
@@ -564,7 +572,7 @@ export function TimeGrid({ days }: { days: number }) {
                 style={{
                   left: colLeft(a) + 2,
                   width: (b - a + 1) * colW - 4,
-                  top: DAY_HEAD_H + 3 + lane * RIB_H,
+                  top: DAY_HEAD_H + 3 + row * RIB_H,
                   height: RIB_H - 4,
                   '--c': color,
                   backgroundSize: `${fullW}px 3px, ${fullW}px 100%`,
@@ -586,8 +594,9 @@ export function TimeGrid({ days }: { days: number }) {
               </div>
             );
           })}
-          {allDayBars.map(({ ev, a, b, lane }) =>
-            lane < MAX_ALLDAY_LANES && ev.kind === 'task' ? (
+          {allDayBars.map(({ ev, a, b, lane: l }) => {
+            const lane = adRow(l);
+            return lane < MAX_ALLDAY_LANES && ev.kind === 'task' ? (
               <div
                 key={'tk' + ev.id}
                 className={cls('ad-task', ev.done && 'done', ev.id === selectedId && 'selected')}
@@ -626,8 +635,8 @@ export function TimeGrid({ days }: { days: number }) {
                 )}
                 {ev.end > dayEnd(b) && <span className="ad-arrow">›</span>}
               </div>
-            ) : null,
-          )}
+            ) : null;
+          })}
         </div>
 
         <div

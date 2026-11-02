@@ -141,17 +141,47 @@ function unroll(master: CalEvent, from: number, to: number): CalEvent[] {
   return out;
 }
 
+/** The event list arranged for range lookups: one-off events decoded and sorted by start (so a range is found by
+ *  binary search, not by reading years of history), and the series apart. Kept per list object and time zone. */
+interface RangeIndex { zone: string; starts: Float64Array; ones: CalEvent[]; long: CalEvent[]; series: CalEvent[] }
+const indexes = new WeakMap<CalEvent[], RangeIndex>();
+const LONG = 62 * DAY; // one-offs longer than this are checked every time (rare), so the search window stays short
+
+function rangeIndex(events: CalEvent[], zone: string): RangeIndex {
+  const kept = indexes.get(events);
+  if (kept && kept.zone === zone) return kept;
+  const ones: CalEvent[] = [], long: CalEvent[] = [], series: CalEvent[] = [];
+  for (const raw of events) {
+    if (raw.recurrence) series.push(raw);
+    else {
+      const e = decodeEvent(raw);
+      (e.end - e.start > LONG ? long : ones).push(e);
+    }
+  }
+  ones.sort((a, b) => a.start - b.start);
+  const idx = { zone, starts: Float64Array.from(ones, (e) => e.start), ones, long, series };
+  indexes.set(events, idx);
+  return idx;
+}
+/** The first position whose start is ≥ t. */
+function lowerBound(a: Float64Array, t: number) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (a[mid] < t) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+
 /** Everything to show in [from, to): one-off events plus generated occurrences, in local time. */
 export function expand(events: CalEvent[], from: number, to: number): CalEvent[] {
   const out: CalEvent[] = [];
   zoneNow = deviceZone(); // (once per call, not per series)
-  for (const raw of events) {
-    if (raw.recurrence) for (const o of occurrences(raw, from, to, zoneNow)) out.push(o);
-    else {
-      const e = decodeEvent(raw);
-      if (e.start < to && e.end > from) out.push(e);
-    }
-  }
+  const { starts, ones, long, series } = rangeIndex(events, zoneNow);
+  for (let i = lowerBound(starts, from - LONG), n = lowerBound(starts, to); i < n; i++) if (ones[i].end > from) out.push(ones[i]);
+  for (const e of long) if (e.start < to && e.end > from) out.push(e);
+  for (const raw of series) for (const o of occurrences(raw, from, to, zoneNow)) out.push(o);
   return out;
 }
 

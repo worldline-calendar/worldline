@@ -5,6 +5,7 @@
 // read-only event. A repeat rule runs on the wall clock of its own time zone (a weekly 3 PM Toronto meeting stays at
 // 3 PM Toronto across daylight-saving changes): the rule is expanded in wall-clock time, then each occurrence is
 // placed in its zone. Overridden occurrences (RECURRENCE-ID), skipped ones (EXDATE) and cancellations are honoured.
+import { webUrl } from '../data/validate';
 import { RRule } from 'rrule';
 import type { CalEvent } from '../data/types';
 import { instantOf, wallClock, zoneOffset } from './zone';
@@ -268,7 +269,7 @@ export function parseIcs(text: string, calendarId: string, from: number, to: num
       allDay: start.allDay,
       ...(get(v, 'LOCATION') ? { location: unescape(get(v, 'LOCATION')!.value) } : {}),
       ...(get(v, 'DESCRIPTION') ? { notes: unescape(get(v, 'DESCRIPTION')!.value) } : {}),
-      ...(get(v, 'URL') ? { url: get(v, 'URL')!.value.trim() } : {}),
+      ...(webUrl(get(v, 'URL')?.value) ? { url: webUrl(get(v, 'URL')!.value) } : {}), // (http(s) only: a feed's link is opened)
     };
   };
   const inWindow = (e: CalEvent) => e.end > from && e.start < to;

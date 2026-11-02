@@ -22,7 +22,7 @@ import { fetchText, canFetchFeeds } from '../lib/platform';
 import { appStorage, dataReplaced, markLoadProblem, onFlush } from './persist';
 import { fmtWhen } from '../lib/format';
 import { STORE_VERSION } from './storeVersion';
-import { cleanEvent, cleanLink, cleanList } from './validate';
+import { cleanCalendar, cleanEvent, cleanHabit, cleanLink, cleanList, cleanLogEntry, cleanNested, cleanProject, cleanTask, cleanThread, isNum, isStr } from './validate';
 import type { UpdateStatus } from '../lib/updates';
 import { rebaseList, rebaseNested } from '../lib/sync/rebase';
 import type { SyncStatus } from '../lib/sync/status';
@@ -207,6 +207,7 @@ interface State {
   sidebarOpen: boolean;
   defaultCalendarId: string; // where new events go (★ in the sidebar)
   quickAddOpen: boolean;
+  searchOpen: boolean; // Find (⌘F)
   hourH: number; // time-grid zoom: pixels per hour
   toast: Toast | null;
   flashId: string | null; // briefly highlighted event (e.g. just added)
@@ -235,6 +236,7 @@ interface State {
   phoneMonth: boolean;
   setPhoneMonth: (open: boolean) => void;
   setQuickAdd: (open: boolean) => void;
+  setSearch: (open: boolean) => void;
   setHourH: (h: number) => void;
   toggleCalendar: (id: string) => void;
   addCalendar: (name: string, color: string) => string;
@@ -380,12 +382,8 @@ export function cleanSaved(persisted: unknown, current: Pick<State, 'view' | 'ho
     } else out[k] = v;
   }
   const ok = <T,>(k: string, valid: (x: unknown) => boolean, d: T) => (k in out && !valid(out[k]) ? (out[k] = d) : undefined);
-  if (Array.isArray(out.events)) out.events = cleanList(out.events, cleanEvent);
-  if (Array.isArray(out.links)) out.links = cleanList(out.links, cleanLink);
-  if (Array.isArray(out.tasks)) out.tasks = (out.tasks as Record<string, unknown>[]).filter((t) => typeof t.id === 'string' && typeof t.title === 'string');
-  if (Array.isArray(out.habits)) out.habits = (out.habits as Record<string, unknown>[]).filter((h) => typeof h.id === 'string');
-  for (const k of ['projects', 'threads', 'projectLog'] as const) if (Array.isArray(out[k])) out[k] = (out[k] as Record<string, unknown>[]).filter((x) => typeof x.id === 'string');
-  if (Array.isArray(out.calendars)) out.calendars = withWritable((out.calendars as Record<string, unknown>[]).filter((c) => typeof c.id === 'string' && typeof c.name === 'string') as unknown as CalendarSource[]);
+  Object.assign(out, cleanSynced(out));
+  if (Array.isArray(out.calendars)) out.calendars = withWritable(out.calendars as CalendarSource[]);
   ok('view', (x) => ['day', '3day', 'week', 'month'].includes(x as string), current.view);
   ok('page', (x) => ['calendar', 'habits', 'projects'].includes(x as string), current.page);
   ok('hourH', (x) => num(x) && (x as number) >= HOUR_H_RANGE[0] && (x as number) <= HOUR_H_RANGE[1], current.hourH);
@@ -439,6 +437,7 @@ export const useStore = create<State>()(
         sidebarOpen: window.innerWidth >= 900,
         defaultCalendarId: 'personal',
         quickAddOpen: false,
+        searchOpen: false,
         hourH: 52,
         toast: null,
         flashId: null,
@@ -486,6 +485,7 @@ export const useStore = create<State>()(
         phoneMonth: false,
         setPhoneMonth: (phoneMonth) => set({ phoneMonth }),
         setQuickAdd: (quickAddOpen) => set({ quickAddOpen }),
+        setSearch: (searchOpen) => set({ searchOpen }),
         setHourH: (h) => set({ hourH: Math.min(HOUR_H_RANGE[1], Math.max(HOUR_H_RANGE[0], h)) }),
         addCalendar: (name, color) => {
           record();
@@ -926,8 +926,7 @@ export const useStore = create<State>()(
             return out as unknown as Snapshot;
           };
           // (another device's records are checked like a saved file's: a malformed one must never crash this app)
-          if (patch.events) patch = { ...patch, events: cleanList(patch.events, cleanEvent) };
-          if (patch.links) patch = { ...patch, links: cleanList(patch.links, cleanLink) };
+          patch = cleanSynced(patch);
           const { settings, ...rest } = patch as { settings?: Partial<AppSettings> } & Record<string, unknown>;
           set({
             ...(rest as Partial<State>),
@@ -1146,3 +1145,15 @@ const applyPrefs = (s: AppSettings) =>
   setPrefs({ weekStartsOn: s.weekStartsOn, hour24: s.hour24, defaultEventMin: s.defaultEventMin, dueMinutes: s.dueMinutes, leadDays: s.leadDays, habitsFromCalendar: s.habitsFromCalendar, deadlineLook: s.deadlineLook });
 applyPrefs(useStore.getState().settings);
 useStore.subscribe((s, p) => s.settings !== p.settings && applyPrefs(s.settings));
+
+/** Records from a saved file or another device, checked before the app uses them (data/validate.ts). */
+function cleanSynced<P extends Record<string, unknown>>(p: P): P {
+  const out: Record<string, unknown> = { ...p };
+  const lists = { events: cleanEvent, links: cleanLink, tasks: cleanTask, habits: cleanHabit, projects: cleanProject, threads: cleanThread, projectLog: cleanLogEntry, calendars: cleanCalendar } as const;
+  for (const [k, clean] of Object.entries(lists)) if (k in out) out[k] = cleanList(out[k], clean as (x: unknown) => unknown);
+  if ('habitLog' in out) out.habitLog = cleanNested(out.habitLog, isNum);
+  if ('habitNotes' in out) out.habitNotes = cleanNested(out.habitNotes, isStr);
+  for (const k of ['myName', 'homeZone', 'defaultCalendarId'] as const) if (k in out && out[k] !== undefined && !isStr(out[k])) delete out[k];
+  for (const k of ['skipped', 'dismissed'] as const) if (k in out && !Array.isArray(out[k])) delete out[k];
+  return out as P;
+}

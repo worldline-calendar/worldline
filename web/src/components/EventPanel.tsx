@@ -17,6 +17,7 @@ const LEAD_CHOICES: [number, string][] = [
 ];
 import { Close, Trash } from './Icons';
 import { Checklist } from './TasksSection';
+import { webUrl } from '../data/validate';
 
 /** "☐ For task: Go grocery shopping  [Mark done]" on a block made from the sidebar. */
 function LinkedTo({ id }: { id: string }) {
@@ -382,7 +383,7 @@ function SubscribedEvent({ ev }: { ev: CalEvent }) {
       <h2 className="panel-title ro">{ev.title}</h2>
       <div className="ro-when">{when}</div>
       {ev.location && <div className="ro-row">📍 {ev.location}</div>}
-      {ev.url && <a className="ro-row ro-link" href={ev.url} target="_blank" rel="noopener noreferrer">{ev.url}</a>}
+      {webUrl(ev.url) && <a className="ro-row ro-link" href={webUrl(ev.url)} target="_blank" rel="noopener noreferrer">{ev.url}</a>}
       {ev.notes && <div className="ro-notes">{ev.notes}</div>}
       <div className="ro-foot">From a subscribed calendar — read-only here; it updates from its source.</div>
     </aside>

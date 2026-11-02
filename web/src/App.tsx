@@ -7,6 +7,7 @@ import { EventPanel } from './components/EventPanel';
 import { TaskPanel } from './components/TaskPanel';
 import { DragGhost } from './components/BlockDrag';
 import { QuickAdd } from './components/QuickAdd';
+import { Search } from './components/Search';
 import { HabitsPage } from './components/Habits';
 import { Toast } from './components/Toast';
 import { ConfirmHost } from './components/Confirm';
@@ -31,6 +32,7 @@ export default function App() {
   const sidebarOpen = useStore((s) => s.sidebarOpen);
   const hasSelection = useStore((s) => s.selectedId !== null);
   const quickAddOpen = useStore((s) => s.quickAddOpen);
+  const searchOpen = useStore((s) => s.searchOpen);
   const page = useStore((s) => s.page);
   const theme = useStore((s) => s.theme);
   const themeLight = useStore((s) => s.settings.themeLight);
@@ -132,6 +134,10 @@ export default function App() {
         e.preventDefault();
         return st.openSettings(st.settingsOpen ? null : 'general');
       }
+      if (mod && e.key.toLowerCase() === 'f' && !st.settingsOpen && st.page !== 'projects') {
+        e.preventDefault();
+        return st.setSearch(true);
+      }
       if (mod && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         return st.setQuickAdd(true);
@@ -141,7 +147,7 @@ export default function App() {
         e.preventDefault();
         return e.shiftKey ? st.redo() : st.undo();
       }
-      if (mod || e.altKey || st.quickAddOpen) return;
+      if (mod || e.altKey || st.quickAddOpen || st.searchOpen) return;
       // a window open over the app (Settings, a dialog): its own keys only — nothing acts on the calendar behind it
       if (st.settingsOpen || document.querySelector('[aria-modal="true"]')) return;
       const actions: Record<string, () => void> = {
@@ -153,6 +159,7 @@ export default function App() {
         h: () => st.setPage(st.page === 'habits' ? 'calendar' : 'habits'),
         p: () => st.setPage(st.page === 'projects' ? 'calendar' : 'projects'),
         n: () => st.setQuickAdd(true),
+        '/': () => st.setSearch(true),
         ArrowLeft: () => st.step(-1),
         ArrowRight: () => st.step(1),
         // (only what's open on the calendar in front of you)
@@ -195,6 +202,7 @@ export default function App() {
       </main>
       {phone && <Fab />}
       {quickAddOpen && <QuickAdd />}
+      {searchOpen && <Search />}
       <Toast />
       <Settings />
       <ConfirmHost />
