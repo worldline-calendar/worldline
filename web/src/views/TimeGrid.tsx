@@ -169,8 +169,9 @@ export function TimeGrid({ days }: { days: number }) {
     return assignLanes(items);
   }, [shown, from, to]);
   // (rows close up to the lanes in view, as the deadline ribbons' do below)
-  const adUsed = [...new Set(allDayBars.filter((r) => r.a < first + days && r.b >= first).map((r) => r.lane))].sort((x, y) => x - y);
-  const adRow = (lane: number) => adUsed.filter((l) => l < lane).length;
+  const adUsed = [...new Set(allDayBars.filter((r) => r.a <= first + days && r.b >= first - 1).map((r) => r.lane))].sort((x, y) => x - y);
+  const adIdx = new Map(adUsed.map((l, i) => [l, i]));
+  const adRow = (lane: number) => adIdx.get(lane) ?? Infinity;
   const lanesInView = adUsed.length;
   const allDayH = Math.max(1, Math.min(lanesInView, MAX_ALLDAY_LANES)) * LANE_H + 8;
 
@@ -188,9 +189,11 @@ export function TimeGrid({ days }: { days: number }) {
   }, [ahead, showDeadlines, from, to]);
   // Rows close up to the lanes in view: a lone deadline left in lane 4 sits in row 1, and the band is one row tall
   // the moment the others scroll away (not only once that last one does too).
-  const inView = (r: { a: number; b: number }) => r.a < first + days && r.b >= first;
+  // (in view: any part of its days on screen, the half-shown column at the edge included)
+  const inView = (r: { a: number; b: number }) => r.a <= first + days && r.b >= first - 1;
   const usedLanes = [...new Set(ribbons.filter(inView).map((r) => r.lane))].sort((x, y) => x - y);
-  const rowOf = (lane: number) => usedLanes.filter((l) => l < lane).length;
+  const rowIdx = new Map(usedLanes.map((l, i) => [l, i]));
+  const rowOf = (lane: number) => rowIdx.get(lane) ?? Infinity; // (off screen: not drawn — never piled into a row)
   const ribbonLanes = usedLanes.length;
   const ribbonH = ribbonLanes ? Math.min(ribbonLanes, MAX_RIBBONS) * RIB_H + 4 : 0;
   const hiddenRibbons = ribbons.filter((r) => inView(r) && rowOf(r.lane) >= MAX_RIBBONS).length;
