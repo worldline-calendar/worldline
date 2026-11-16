@@ -1,19 +1,19 @@
 {
   "about": "Relays Worldline uses for scheduling links. Checked weekly by .github/workflows/relays.yml, which opens a pull request when one stops working. Only relay addresses here — never anyone's data.",
-  "updated": "2026-10-10",
+  "updated": "2026-11-16",
   "relays": [
-    "wss://relay.damus.io",
     "wss://nos.lol",
     "wss://relay.primal.net",
     "wss://nostr.mom",
     "wss://relay.nostr.net",
     "wss://nostr.oxtr.dev",
-    "wss://relay.illuminodes.com"
+    "wss://relay.illuminodes.com",
+    "wss://offchain.pub"
   ],
   "retired": [
     {
-      "url": "wss://offchain.pub",
-      "since": "2026-10-10"
+      "url": "wss://relay.damus.io",
+      "since": "2026-11-16"
     }
   ],
   "candidates": [
@@ -24,6 +24,6 @@
     "wss://relay.nostrhub.fr",
     "wss://nostr.data.haus",
     "wss://nostr.bitcoiner.social",
-    "wss://offchain.pub"
+    "wss://relay.damus.io"
   ]
 }
