@@ -561,7 +561,7 @@ export function TimeGrid({ days }: { days: number }) {
             <span className="tg-zones" style={{ top: DAY_HEAD_H - 17 }} title={`Times shown in ${zone}`}>
               {showHome && (
                 <span className={cls('home', !homeOn && 'trip')} style={{ width: HOME_W }} title={homeOn ? `Home: ${homeZone}` : `${zoneCity(secondZone!)} time (your trip)`}>
-                  {zoneAbbr(secondZone!)}
+                  {homeOn || zoneCity(secondZone!).length > 7 ? zoneAbbr(secondZone!) : zoneCity(secondZone!)}
                 </span>
               )}
               <span>{zoneAbbr(zone)}</span>
