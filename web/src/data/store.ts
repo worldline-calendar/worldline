@@ -1104,6 +1104,7 @@ export const useStore = create<State>()(
       // v1: the demo habits gained years of history (only swapped while they're the untouched demo set).
       // v2: Projects became pages you write in (About, steps, waiting-on and notes folded into editor documents).
       //     The untouched demo projects are swapped for the new demo; anything else is converted, losing nothing.
+      // v3: saved split up (data/persist.ts): nothing to convert — the version only stops an older copy from opening it.
       migrate: (persisted, version) => {
         // saved by a newer Worldline (an older copy was opened afterwards): its format is unknown here, so load nothing
         // and save nothing — the recovery screen says to update; the data stays untouched for the newer version

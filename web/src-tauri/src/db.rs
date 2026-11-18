@@ -208,7 +208,7 @@ mod tests {
     // the file earlier versions wrote opens as it is
     drop(db);
     let again = Db::new(path.clone());
-    assert_eq!(again.get("calendar-v1").unwrap().as_deref(), Some("v20"));
+    assert_eq!(again.get("calendar-v1").unwrap().as_deref(), Some("head"));
     let _ = std::fs::remove_dir_all(path.parent().unwrap());
   }
 
