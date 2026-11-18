@@ -59,8 +59,9 @@ impl Db {
   }
 
   /// Write a value; with `snapshot` (a day), the day's first save is also kept as that day's snapshot — in one
-  /// transaction, so a crash never leaves one without the other.
-  pub fn set(&self, key: &str, value: &str, now: i64, snapshot: Option<&str>) -> Result<(), String> {
+  /// transaction, so a crash never leaves one without the other. The snapshot is `full` when given (the app saves its
+  /// big collections under their own keys, so the head it writes last isn't the whole state; `full` is), else `value`.
+  pub fn set(&self, key: &str, value: &str, now: i64, snapshot: Option<&str>, full: Option<&str>) -> Result<(), String> {
     if !valid_key(key) || snapshot.is_some_and(|d| !valid_day(d)) {
       return Err("bad key".into());
     }
@@ -76,7 +77,7 @@ impl Db {
         None => true,
       };
       if let (Some(day), false) = (snapshot, have) {
-        tx.execute("INSERT INTO snapshots (day, value) VALUES (?1, ?2)", params![day, gzip(value)])?;
+        tx.execute("INSERT INTO snapshots (day, value) VALUES (?1, ?2)", params![day, gzip(full.unwrap_or(value))])?;
         tx.execute(
           "DELETE FROM snapshots WHERE day NOT IN (SELECT day FROM snapshots ORDER BY day DESC LIMIT ?1)",
           [SNAPSHOT_DAYS],
@@ -177,28 +178,33 @@ mod tests {
     let path = tmp();
     let db = Db::new(path.clone());
     assert_eq!(db.get("calendar-v1").unwrap(), None);
-    db.set("calendar-v1", "one", 1, Some("2026-10-01")).unwrap();
-    db.set("calendar-v1", "two", 2, Some("2026-10-01")).unwrap(); // the day's first save is the snapshot
+    db.set("calendar-v1", "one", 1, Some("2026-10-01"), None).unwrap();
+    db.set("calendar-v1", "two", 2, Some("2026-10-01"), None).unwrap(); // the day's first save is the snapshot
     assert_eq!(db.get("calendar-v1").unwrap().as_deref(), Some("two"));
     assert_eq!(db.snapshot("2026-10-01").unwrap().as_deref(), Some("one"));
     let big = format!("{{\"state\":{{\"events\":[{}]}}}}", "{\"id\":\"e\",\"title\":\"Group meeting\"},".repeat(20_000));
-    db.set("calendar-v1", &big, 2, Some("2026-09-30")).unwrap();
+    db.set("calendar-v1", &big, 2, Some("2026-09-30"), None).unwrap();
     assert_eq!(db.snapshot("2026-09-30").unwrap().as_deref(), Some(big.as_str())); // compressed, read back the same
     let stored: i64 = db.with(|c| c.query_row("SELECT length(value) FROM snapshots WHERE day = '2026-09-30'", [], |r| r.get(0))).unwrap();
     assert!(stored * 20 < big.len() as i64, "kept compressed ({stored} bytes)");
     for d in 2..=20 {
-      db.set("calendar-v1", &format!("v{d}"), d, Some(&format!("2026-10-{d:02}"))).unwrap();
+      db.set("calendar-v1", &format!("v{d}"), d, Some(&format!("2026-10-{d:02}")), None).unwrap();
     }
     let days = db.snapshot_days().unwrap();
     assert_eq!(days.len(), 14);
     assert_eq!(days[0], "2026-10-20");
-    db.set("calendar-v1-unreadable-a", "x", 3, None).unwrap();
-    db.set("calendar-v1-unreadable-b", "y", 3, None).unwrap();
+    db.set("calendar-v1-unreadable-a", "x", 3, None, None).unwrap();
+    db.set("calendar-v1-unreadable-b", "y", 3, None, None).unwrap();
     assert_eq!(db.keys("calendar-v1-unreadable").unwrap(), vec!["calendar-v1-unreadable-a", "calendar-v1-unreadable-b"]);
     db.del("calendar-v1-unreadable-a").unwrap();
     assert_eq!(db.keys("calendar-v1-unreadable").unwrap().len(), 1);
     assert!(db.get("bad key").is_err());
-    assert!(db.set("k", "v", 0, Some("not a day")).is_err());
+    assert!(db.set("k", "v", 0, Some("not a day"), None).is_err());
+    // a split save: the head is written, the snapshot keeps the whole state handed over beside it
+    db.set("calendar-v1", "head", 4, Some("2026-10-21"), Some("whole")).unwrap();
+    assert_eq!(db.get("calendar-v1").unwrap().as_deref(), Some("head"));
+    assert_eq!(db.snapshot("2026-10-21").unwrap().as_deref(), Some("whole"));
+    assert!(valid_key("calendar-v1:events.12"));
     // the file earlier versions wrote opens as it is
     drop(db);
     let again = Db::new(path.clone());
