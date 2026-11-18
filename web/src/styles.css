@@ -1012,6 +1012,15 @@ button { background: none; border: 0; padding: 0; cursor: pointer; }
   transition: opacity 0.25s;
 }
 .mv-item.dim { opacity: 0.5; }
+.mv-item { touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.mv-item.dragging { opacity: 0.35; }
+.mv-cell.drop { background: color-mix(in srgb, var(--accent) 16%, transparent); box-shadow: inset 0 0 0 2px var(--accent); }
+.mv-ghost {
+  position: fixed; z-index: 1000; pointer-events: none; max-width: 220px; padding: 3px 8px; border-radius: 6px;
+  background: var(--c, var(--accent)); color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); opacity: 0.92;
+}
+.mv-ghost-day { margin-left: 6px; font-weight: 400; opacity: 0.85; }
 .mv-item:hover { background: var(--bg-hover); }
 .mv-item.bar { font-weight: 600; background: var(--c); color: #fff; }
 .mv-item.bar:hover { background: color-mix(in srgb, var(--c) 85%, #000); }
