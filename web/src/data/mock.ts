@@ -2,6 +2,8 @@
 // department, students and collaborators with generic names). Nothing in it is about a real person or place. The app
 // itself starts empty.
 import { addDays, startOfDay, startOfWeek } from 'date-fns';
+import { flightTitle } from '../lib/flights';
+import { instantOf } from '../lib/zone';
 import type { CalEvent, CalendarSource } from './types';
 import type { Task } from '../lib/tasks';
 import { encodeDay } from '../lib/zone';
@@ -76,6 +78,14 @@ export function makeDemoEvents(now = new Date()): CalEvent[] {
   dueId('demo-dl-grades', 'Midterm grades', addDays(today, 3)); // orange
   dueId('demo-dl-report', 'Annual report', addDays(today, 12)); // green
   allDay('research', 'Research workshop', addDays(wk0, 15), 3);
+  // a trip to it: each time as printed on the ticket, on its own airport's clock (lib/flights.ts)
+  const fly = (no: string, from: string, fz: string, to: string, tz: string, day: Date, dep: number, arr: number, plus: number) => {
+    const [y, m, d] = [day.getFullYear(), day.getMonth(), day.getDate()];
+    const flight = { no, from, to, fromZone: fz, toZone: tz };
+    add('personal', flightTitle(flight), instantOf(y, m, d, dep, fz), instantOf(y, m, d + plus, arr, tz), { flight });
+  };
+  fly('AC 856', 'YYZ', 'America/Toronto', 'LHR', 'Europe/London', addDays(wk0, 13), 18 * 60 + 40, 6 * 60 + 55, 1);
+  fly('AC 857', 'LHR', 'Europe/London', 'YYZ', 'America/Toronto', addDays(wk0, 18), 11 * 60 + 15, 14 * 60 + 5, 0);
   allDay('social', 'Weekend away', addDays(wk0, 11), 3);
   allDay('personal', 'Mom’s birthday', addDays(today, 3), 1);
   allDay('holidays', 'Reading week', addDays(wk0, 21), 5);

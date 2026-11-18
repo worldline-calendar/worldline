@@ -12,8 +12,10 @@ import { allDays, weekdaysOnly, type Slots } from '../lib/slots';
 import { assignLanes, layoutDay } from '../lib/layout';
 import { useElementSize, useNow } from '../lib/hooks';
 import { cls, fmtHour, fmtTime, fmtTimeRange } from '../lib/format';
+import { FLIGHT_COLOR, FLIGHT_LEAD, flightLength, flightTimes, tripsOf } from '../lib/flights';
+import { airport } from '../lib/airports';
 import { asButton } from '../lib/a11y';
-import { wallClock, zoneAbbr, zoneCity } from '../lib/zone';
+import { localZone, wallClock, zoneAbbr, zoneCity } from '../lib/zone';
 import { URGENCY_COLOR, countdown, runwayStart, urgency } from '../lib/deadlines';
 import { taskAsEvent } from '../lib/tasks';
 import { registerDropTarget } from '../components/BlockDrag';
@@ -27,6 +29,7 @@ const SNAP = 15; // minutes
 const LONG_PRESS_MS = 420;
 
 type Preview = { id: string; start: number; end: number } | null;
+const TRIP = '~trip'; // (a trip bar's id: its arriving flight's, with this after it)
 interface Seg { ev: CalEvent; start: number; end: number; contBefore: boolean; contAfter: boolean }
 interface Drag {
   kind: 'move' | 'resize' | 'create';
@@ -111,6 +114,7 @@ export function TimeGrid({ days }: { days: number }) {
     setPreviewState(p);
   };
   const now = useNow();
+  const minuteNow = Math.floor(now / 60_000) * 60_000; // (what's recomputed by the clock: once a minute, not every second)
   const todayIdx = exactIndex(now);
 
   // ---- which day columns to draw --------------------------------------------------
@@ -159,15 +163,29 @@ export function TimeGrid({ days }: { days: number }) {
     return new Map([...buckets].map(([i, segs]) => [i, layoutDay(segs)]));
   }, [shown, from, to]);
 
+  const allEvents = useStore((s) => s.events);
+  const flights = useMemo(() => allEvents.filter((e) => e.flight), [allEvents]);
+  // ---- trips: "In London" across the all-day row, from landing until the flight out (lib/flights.ts) ----
+  const tripBars = useMemo((): CalEvent[] => {
+    const evs = flights;
+    return tripsOf(evs, homeZone || localZone(), useStore.getState().calendars)
+      .filter((t) => !t.open && t.start < rangeEnd && t.end > rangeStart)
+      .map((t) => {
+        const f = evs.find((e) => e.id === t.id)!;
+        const s0 = new Date(t.start); s0.setHours(0, 0, 0, 0);
+        const e0 = new Date(t.end); e0.setHours(24, 0, 0, 0);
+        return { id: t.id + TRIP, linkedTo: t.id, calendarId: f.calendarId, title: `In ${t.city}`, start: s0.getTime(), end: e0.getTime(), allDay: true };
+      });
+  }, [flights, homeZone, rangeStart, rangeEnd]); // eslint-disable-line react-hooks/exhaustive-deps
   const allDayBars = useMemo(() => {
-    const items = shown
+    const items = [...tripBars, ...shown]
       .filter((e) => e.allDay && e.kind !== 'deadline')
       // events first (they occupy the day), then tasks; within each, by date and length
       .sort((x, y) => Number(x.kind === 'task') - Number(y.kind === 'task') || x.start - y.start || y.end - y.start - (x.end - x.start))
       .map((e) => ({ ev: e, a: Math.max(from, dayIndex(e.start)), b: Math.min(to - 1, lastIndex(e.end - 1)) }))
       .filter((x) => x.a <= x.b); // only on hidden days
     return assignLanes(items);
-  }, [shown, from, to]);
+  }, [shown, tripBars, from, to]);
   // (rows close up to the lanes in view, as the deadline ribbons' do below)
   const adUsed = [...new Set(allDayBars.filter((r) => r.a <= first + days && r.b >= first - 1).map((r) => r.lane))].sort((x, y) => x - y);
   const adIdx = new Map(adUsed.map((l, i) => [l, i]));
@@ -177,16 +195,18 @@ export function TimeGrid({ days }: { days: number }) {
 
   // ---- deadline ribbons: each open deadline's runway (default 2 weeks), drawn ahead of time ----
   const ahead = useDeadlinesIn(rangeStart, rangeEnd + 120 * 86_400_000);
+  // (flights count down too: FLIGHT_LEAD days, in the same band)
   const ribbons = useMemo(() => {
-    const items = ahead
-      .filter((e) => e.kind === 'deadline' && !e.done && showDeadlines)
-      .map((e) => ({ ev: e, run: dayIndex(runwayStart(e)), due: lastIndex(e.start) }))
+    const items = [
+      ...ahead.filter((e) => e.kind === 'deadline' && !e.done && showDeadlines).map((e) => ({ ev: e, run: dayIndex(runwayStart(e)), due: lastIndex(e.start) })),
+      ...flights.filter((e) => e.end > minuteNow && e.start >= rangeStart - 86_400_000).map((e) => ({ ev: e, run: dayIndex(e.start - FLIGHT_LEAD * 86_400_000), due: lastIndex(e.start) })),
+    ]
       .filter((x) => x.run <= x.due)
       .filter((x) => x.run < to && x.due >= from)
       .sort((x, y) => x.ev.start - y.ev.start)
       .map((x) => ({ ...x, a: Math.max(from, x.run), b: Math.min(to - 1, x.due) }));
     return assignLanes(items);
-  }, [ahead, showDeadlines, from, to]);
+  }, [ahead, flights, rangeStart, showDeadlines, from, to, minuteNow]);
   // Rows close up to the lanes in view: a lone deadline left in lane 4 sits in row 1, and the band is one row tall
   // the moment the others scroll away (not only once that last one does too).
   // (in view: any part of its days on screen, the half-shown column at the edge included)
@@ -566,12 +586,13 @@ export function TimeGrid({ days }: { days: number }) {
           {ribbons.map(({ ev, run, due, a, b, lane }) => {
             const row = rowOf(lane);
             if (row >= MAX_RIBBONS) return null;
-            const color = URGENCY_COLOR[urgency(ev, now)];
+            const color = ev.flight ? FLIGHT_COLOR : URGENCY_COLOR[urgency(ev, now)];
+            const mark = ev.flight ? '✈' : '⚑';
             const fullW = (due - run + 1) * colW; // the whole runway, so the colour ramp lines up when clipped
             return (
               <div
                 key={'rb' + ev.id}
-                className={cls('rb', ev.id === selectedId && 'selected', urgency(ev, now))}
+                className={cls('rb', ev.id === selectedId && 'selected', ev.flight ? 'flight' : urgency(ev, now))}
                 style={{
                   left: colLeft(a) + 2,
                   width: (b - a + 1) * colW - 4,
@@ -582,15 +603,15 @@ export function TimeGrid({ days }: { days: number }) {
                   backgroundPosition: `${-(a - run) * colW}px 100%, ${-(a - run) * colW}px 0`,
                 } as CSSProperties}
                 onClick={() => useStore.getState().toggleSelect(ev.id)}
-                title={`${ev.title} · due ${format(ev.start, 'EEE MMM d, h:mm a')}`}
+                title={ev.flight ? `${ev.title} · ${format(ev.start, 'EEE MMM d')} · ${flightTimes(ev, ev.flight)}` : `${ev.title} · due ${format(ev.start, 'EEE MMM d, h:mm a')}`}
               >
                 <span className="rb-label" style={{ left: gutterW + 6 }}>
-                  ⚑ {ev.title}{' '}
+                  {mark} {ev.title}{' '}
                   {progress.get(ev.id) && <span className="rb-steps">{progress.get(ev.id)!.done}/{progress.get(ev.id)!.total}</span>}
                   <span className="rb-count">· {countdown(ev, now)}{due >= first + days ? ` · ${format(ev.start, 'EEE MMM d')}` : ''}</span>
                 </span>
                 {due < to ? (
-                  <span className="rb-flag">⚑ {fmtTime(ev.start)}</span>
+                  <span className="rb-flag">{mark} {fmtTime(ev.start)}</span>
                 ) : (
                   <span className="rb-end">→ {format(ev.start, 'MMM d')}</span>
                 )}
@@ -620,8 +641,8 @@ export function TimeGrid({ days }: { days: number }) {
             ) : lane < MAX_ALLDAY_LANES ? (
               <div
                 key={ev.id}
-                className={cls('ad-bar', ev.id === selectedId && 'selected', ev.end <= now && 'past', ev.id === flashId && 'flash', ev.start < dayStart(a) && 'cont-l', ev.end > dayEnd(b) && 'cont-r')}
-                {...asButton(`${ev.title}, all day, ${format(ev.start, 'EEEE MMMM d')}`, () => useStore.getState().toggleSelect(ev.id))}
+                className={cls('ad-bar', ev.id.endsWith(TRIP) && 'trip', (ev.id === selectedId || ev.linkedTo === selectedId && ev.id.endsWith(TRIP)) && 'selected', ev.end <= now && 'past', ev.id === flashId && 'flash', ev.start < dayStart(a) && 'cont-l', ev.end > dayEnd(b) && 'cont-r')}
+                {...asButton(`${ev.title}, all day, ${format(ev.start, 'EEEE MMMM d')}`, () => useStore.getState().toggleSelect(ev.id.endsWith(TRIP) ? ev.linkedTo! : ev.id))}
                 style={{
                   left: colLeft(a) + 2,
                   width: (b - a + 1) * colW - 4,
@@ -711,12 +732,15 @@ export function TimeGrid({ days }: { days: number }) {
                     } as CSSProperties}
                   >
                     <div className="ev-title">
+                      {ev.flight && <span className="ev-plane">✈ </span>}
                       {ev.title || 'New Event'}
                       {ev.seriesId && <span className="ev-repeat" title="Repeats">↻</span>}
-                      {short && <span className="ev-time-inline">{fmtTime(ev.start)}</span>}
+                      {short && <span className="ev-time-inline">{ev.flight ? flightTimes(ev, ev.flight) : fmtTime(ev.start)}</span>}
                     </div>
-                    {!short && <div className="ev-time">{fmtTimeRange(ev.start, ev.end)}</div>}
-                    {h >= 60 && ev.location && <div className="ev-loc">{ev.location}</div>}
+                    {/* a flight: each end on its own airport's clock ("6:40 PM YYZ → 6:55 AM LHR +1") */}
+                    {!short && <div className="ev-time">{ev.flight ? flightTimes(ev, ev.flight) : fmtTimeRange(ev.start, ev.end)}</div>}
+                    {h >= 60 && ev.flight && <div className="ev-loc">{flightLength(ev)} · {airport(ev.flight.from)?.city} → {airport(ev.flight.to)?.city}</div>}
+                    {h >= 60 && !ev.flight && ev.location && <div className="ev-loc">{ev.location}</div>}
                     {!seg.contAfter && <div className="ev-resize" data-resize />}
                   </div>
                 );

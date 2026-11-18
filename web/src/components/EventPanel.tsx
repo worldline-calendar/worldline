@@ -8,7 +8,9 @@ import { ALL_DAY_CHOICES, TIMED_CHOICES, alertFor, describeAlert } from '../lib/
 import { decodeEvent, describeRecurrence, isOccurrenceId, resolveEvent } from '../lib/recurrence';
 import type { Scope } from '../lib/mutate';
 import { cls, fmtTimeRange } from '../lib/format';
-import { wallClock, zoneAbbr, zoneCity } from '../lib/zone';
+import { instantOf, wallClock, zoneAbbr, zoneCity } from '../lib/zone';
+import { airport } from '../lib/airports';
+import { dayShift, flightLength, flightTitle, trackerUrl } from '../lib/flights';
 import { defaultLeadDays, URGENCY_COLOR, countdown, urgency } from '../lib/deadlines';
 
 const LEAD_CHOICES: [number, string][] = [
@@ -220,10 +222,12 @@ export function EventPanel() {
       )}
 
       <div className="panel-rows">
+        {!ev.flight && (
         <label className="prow">
           <span>Deadline</span>
           <input type="checkbox" className="switch" checked={ev.kind === 'deadline'} onChange={(e) => toggleDeadline(e.target.checked)} />
         </label>
+        )}
         {ev.kind === 'deadline' ? (
           <>
             <div className="prow">
@@ -248,6 +252,7 @@ export function EventPanel() {
           </>
         ) : (
           <>
+        {ev.flight ? <FlightRows ev={ev} up={up} /> : <>
         <label className="prow">
           <span>All-day</span>
           <input type="checkbox" className="switch" checked={ev.allDay} onChange={(e) => toggleAllDay(e.target.checked)} />
@@ -273,6 +278,7 @@ export function EventPanel() {
             {!ev.allDay && <input type="time" step={300} value={toTime(ev.end)} onChange={(e) => setEnd(withTime(ev.end, e.target.value))} />}
           </div>
         </div>
+        </>}
           </>
         )}
         <div className="prow">
@@ -309,7 +315,7 @@ export function EventPanel() {
             };
             return (
               <select className="pselect" value={value} onChange={(e) => set(e.target.value)} aria-label="Alert">
-                <option value="default">Default · {describeAlert(fallback, ev.allDay && ev.kind !== 'deadline').replace('minutes', 'min').replace(/^(\w)/, (c) => c.toLowerCase())}</option>
+                <option value="default">Default · {ev.flight ? '3 days, 1 day and 3 h before' : describeAlert(fallback, ev.allDay && ev.kind !== 'deadline').replace('minutes', 'min').replace(/^(\w)/, (c) => c.toLowerCase())}</option>
                 <option value="none">None</option>
                 {choices.map(([m, l]) => <option key={m} value={String(m)}>{l}</option>)}
                 {typeof own === 'number' && !choices.some(([m]) => m === own) && <option value={String(own)}>{describeAlert(own, ev.allDay)}</option>}
@@ -387,5 +393,82 @@ function SubscribedEvent({ ev }: { ev: CalEvent }) {
       {ev.notes && <div className="ro-notes">{ev.notes}</div>}
       <div className="ro-foot">From a subscribed calendar — read-only here; it updates from its source.</div>
     </aside>
+  );
+}
+
+// ---------------------------------------------------------------- flights
+const pad2 = (n: number) => String(n).padStart(2, '0');
+const dateIn = (t: number, zone: string) => { const w = wallClock(t, zone); return `${w.y}-${pad2(w.m + 1)}-${pad2(w.d)}`; };
+const timeIn = (t: number, zone: string) => { const w = wallClock(t, zone); return `${pad2(w.h)}:${pad2(w.min)}`; };
+/** A date and time typed on `zone`'s clock → the instant. */
+const atIn = (date: string, time: string, zone: string) => {
+  const [y, m, d] = date.split('-').map(Number), [h, min] = time.split(':').map(Number);
+  return instantOf(y, m - 1, d, h * 60 + min, zone);
+};
+
+/** A flight's own rows: its airports and number, and each end on its own airport's clock. */
+function FlightRows({ ev, up }: { ev: CalEvent; up: (patch: Partial<CalEvent>, typing?: boolean) => void }) {
+  const f = ev.flight!;
+  const [codes, setCodes] = useState({ from: f.from, to: f.to });
+  useEffect(() => setCodes({ from: f.from, to: f.to }), [f.from, f.to]);
+  const setAirport = (side: 'from' | 'to', code: string) => {
+    const c = code.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3);
+    setCodes((x) => ({ ...x, [side]: c }));
+    const a = airport(c);
+    if (!a || c === f[side]) return;
+    // the times stay what the ticket says on that end's clock: re-read them in the new airport's zone
+    const zone = side === 'from' ? 'fromZone' : 'toZone';
+    const t = side === 'from' ? ev.start : ev.end;
+    const moved = atIn(dateIn(t, f[zone]), timeIn(t, f[zone]), a.zone);
+    const next = { ...f, [side]: c, [zone]: a.zone };
+    const patch: Partial<CalEvent> = { flight: next, ...(side === 'from' ? { start: moved } : { end: moved }) };
+    if (ev.title === flightTitle(f)) patch.title = flightTitle(next);
+    up(patch);
+  };
+  const setNo = (no: string) => {
+    const next = { ...f, no: no.trim() ? no.toUpperCase().slice(0, 10) : undefined };
+    if (!next.no) delete next.no;
+    up({ flight: next, ...(ev.title === flightTitle(f) ? { title: flightTitle(next) } : {}) }, true);
+  };
+  const setDep = (date: string, time: string) => {
+    const start = atIn(date, time, f.fromZone);
+    up({ start, end: Math.max(ev.end + (start - ev.start), start + 5 * 60_000) }); // (moves with it, like any event)
+  };
+  const setArr = (date: string, time: string) => {
+    const end = atIn(date, time, f.toZone);
+    if (end > ev.start) up({ end });
+  };
+  const n = dayShift(ev, f);
+  const track = trackerUrl(f);
+  return (
+    <>
+      <div className="prow">
+        <span>Flight</span>
+        <div className="pinputs">
+          <input className="fl-no" placeholder="AC 856" value={f.no ?? ''} onChange={(e) => setNo(e.target.value)} aria-label="Flight number" />
+          {track && <a className="fl-track" href={track} target="_blank" rel="noopener noreferrer" title="Status, gate and delays on FlightAware">Track ↗</a>}
+        </div>
+      </div>
+      <div className="prow fl-end">
+        <span>Departs</span>
+        <div className="pinputs">
+          <input className={cls('fl-code', !airport(codes.from) && 'bad')} value={codes.from} onChange={(e) => setAirport('from', e.target.value)} aria-label="From airport" title={airport(codes.from)?.city ?? 'Not an airport this app knows'} />
+          <input type="date" value={dateIn(ev.start, f.fromZone)} onChange={(e) => e.target.value && setDep(e.target.value, timeIn(ev.start, f.fromZone))} />
+          <input type="time" step={300} value={timeIn(ev.start, f.fromZone)} onChange={(e) => e.target.value && setDep(dateIn(ev.start, f.fromZone), e.target.value)} />
+        </div>
+      </div>
+      <div className="prow fl-end">
+        <span>Lands</span>
+        <div className="pinputs">
+          <input className={cls('fl-code', !airport(codes.to) && 'bad')} value={codes.to} onChange={(e) => setAirport('to', e.target.value)} aria-label="To airport" title={airport(codes.to)?.city ?? 'Not an airport this app knows'} />
+          <input type="date" value={dateIn(ev.end, f.toZone)} onChange={(e) => e.target.value && setArr(e.target.value, timeIn(ev.end, f.toZone))} />
+          <input type="time" step={300} value={timeIn(ev.end, f.toZone)} onChange={(e) => e.target.value && setArr(dateIn(ev.end, f.toZone), e.target.value)} />
+        </div>
+      </div>
+      <div className="ptz fl-note">
+        Times are local at each airport · {airport(f.from)?.city ?? f.from} {zoneAbbr(f.fromZone, ev.start)} → {airport(f.to)?.city ?? f.to} {zoneAbbr(f.toZone, ev.end)}
+        {n ? ` (lands ${n > 0 ? `+${n} day${n > 1 ? 's' : ''}` : `${n} day`})` : ''} · {flightLength(ev)} in the air
+      </div>
+    </>
   );
 }

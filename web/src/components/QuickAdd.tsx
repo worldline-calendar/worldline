@@ -7,6 +7,7 @@ import { format, isSameDay, isSameYear } from 'date-fns';
 import { newEventCalendarId, useStore } from '../data/store';
 import type { CalEvent } from '../data/types';
 import { parseQuick } from '../lib/quickparse';
+import { FLIGHT_COLOR, flightLength, flightTimes, parseFlight } from '../lib/flights';
 import { parseCommand, type Change, type Command } from '../lib/commands';
 import { suggest, type SuggestionKind } from '../lib/suggest';
 import { phraseAction, typeahead, type PhraseAction } from '../lib/typeahead';
@@ -107,6 +108,8 @@ export function QuickAdd() {
     [typing, text, withTasks, calendars, masters],
   );
   const parsed = useMemo(() => (typing ? parseQuick(stripTaskPrefix(text), calendars) : null), [typing, text, calendars]);
+  // A flight ("AC 856 YYZ 6:40pm → LHR 6:55am dec 12"): each time on its own airport's clock
+  const flightPlan = useMemo(() => (typing && !hasTaskPrefix(text) && !kindOverride ? parseFlight(text) : null), [typing, text, kindOverride]);
   const kind: ItemKind = kindOverride ?? (parsed ? guessKind(text, parsed) : 'event');
   const taskPreview = parsed ? taskFromParsed(parsed) : null;
   // A deadline's due moment: the parsed time, or 5 PM on the day if none was given.
@@ -272,7 +275,16 @@ export function QuickAdd() {
     );
   };
 
-  const submit = (forceCreate = false) => (habitMode && !forceCreate ? logHabit() : cmd && !forceCreate ? apply() : create());
+  const addFlight = () => {
+    if (!flightPlan) return;
+    const { title, start, end, flight } = flightPlan;
+    const id = st().createEvent({ calendarId: cal.id, title, start, end, allDay: false, flight });
+    close();
+    reveal(start, id);
+    st().showToast(`Added “${title}” · ${format(start, 'EEE MMM d')} · ${flightTimes(flightPlan, flight)}`, true, id);
+  };
+  const submit = (forceCreate = false) =>
+    flightPlan && !forceCreate ? addFlight() : habitMode && !forceCreate ? logHabit() : cmd && !forceCreate ? apply() : create();
 
   const suggestionList = list.length ? (
     <div className="qa-suggest">
@@ -359,7 +371,20 @@ export function QuickAdd() {
           />
         </div>
 
-        {habitMode && habitPlan && habitNow ? (
+        {flightPlan ? (
+          <div className="qa-preview k-flight" role="button" tabIndex={-1} onClick={() => addFlight()} style={{ '--c': FLIGHT_COLOR } as CSSProperties}>
+            <span className="qa-bar" />
+            <span className="qa-body">
+              <span className="qa-title">✈ {flightPlan.title}</span>
+              <span className="qa-when">
+                {format(flightPlan.start, 'EEE MMM d')} · <b>{flightTimes(flightPlan, flightPlan.flight)}</b>
+              </span>
+              <span className="qa-where">
+                {flightPlan.from.city} → {flightPlan.to.city} · {flightPlan.hasArrival ? `${flightLength(flightPlan)} in the air` : 'add the landing time to get the length right'} · times are local at each airport
+              </span>
+            </span>
+          </div>
+        ) : habitMode && habitPlan && habitNow ? (
           <div className="qa-preview k-habit" role="button" tabIndex={-1} onClick={() => logHabit()} style={{ '--c': habitPlan.habit.color } as CSSProperties}>
             <span className="qa-bar" />
             <span className="qa-body">

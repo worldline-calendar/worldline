@@ -5,6 +5,7 @@
 // −540 = 9 AM on the day, 420 = 5 PM the day before), one for deadlines (before the due moment). Subscribed calendars
 // and calendars on the Mac (the Calendar app has its own alerts) only alert when that calendar has alerts turned on (its ⋯ card) or the event has its own. Hidden calendars, done
 // deadlines and tasks never alert.
+import { FLIGHT_ALERTS, flightTimes } from './flights';
 import { format } from 'date-fns';
 import type { CalEvent, CalendarSource } from '../data/types';
 import { expand } from './recurrence';
@@ -49,7 +50,7 @@ export function alertFor(ev: CalEvent, cal: CalendarSource | undefined, d: Alert
   return ev.kind === 'deadline' ? d.alertDeadlineMin : ev.allDay ? d.alertAllDayMin : d.alertMin;
 }
 
-const MAX_LEAD = 3 * 1440 * 60_000; // the longest alert offered is 2 days before (at 9 AM): look this far past `to`
+const MAX_LEAD = 3 * 1440 * 60_000 + 60_000; // the longest alert offered is 2 days before (at 9 AM): look this far past `to`
 
 /** Alerts that fall in [from, to), soonest first. */
 export function upcomingAlerts(events: CalEvent[], calendars: CalendarSource[], d: AlertDefaults, from: number, to: number): Alert[] {
@@ -59,6 +60,21 @@ export function upcomingAlerts(events: CalEvent[], calendars: CalendarSource[], 
     if (ev.kind === 'task' || (ev.kind === 'deadline' && ev.done)) continue;
     const cal = cals.get(ev.calendarId);
     if (ev.kind !== 'deadline' && cal && !cal.visible) continue;
+    if (ev.flight && ev.alert === undefined && !(cal && cal.alerts === false)) {
+      // a flight: 3 days (pack, documents), a day (check-in opens), 3 hours (leave for the airport)
+      for (const m of FLIGHT_ALERTS) {
+        const at = ev.start - m * 60_000;
+        if (at < from || at >= to) continue;
+        out.push({
+          key: `${ev.id}|${ev.start}|${m}`,
+          at,
+          title: `✈ ${ev.title}`,
+          body: [m >= 2880 ? `${format(ev.start, 'EEEE MMM d')}` : m >= 1440 ? 'Tomorrow · check-in is open' : 'Leave for the airport', flightTimes(ev, ev.flight)].join(' · '),
+          eventId: ev.id,
+        });
+      }
+      continue;
+    }
     const min = alertFor(ev, cal, d);
     if (min === null) continue;
     // all-day: on the wall clock from the start of the day (9 AM is 9 AM on a daylight-saving day too)

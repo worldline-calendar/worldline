@@ -1,3 +1,4 @@
+import type { FlightInfo } from '../lib/flights';
 export type ViewMode = 'day' | '3day' | 'week' | 'month';
 
 export interface CalendarSource {
@@ -49,6 +50,8 @@ export interface CalEvent {
   /** An event in a calendar on the Mac: its identifier there and which occurrence (its original start); `recurring`:
    *  one occurrence of a series that repeats in the Calendar app. Unset on a new one not yet saved there. */
   ext?: { id: string; occ: number; recurring?: boolean };
+  /** A flight (lib/flights.ts): its airports and their zones; start and end are the real departure and landing. */
+  flight?: FlightInfo;
 }
 
 export type Freq = 'daily' | 'weekly' | 'monthly' | 'yearly';

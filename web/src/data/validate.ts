@@ -26,6 +26,13 @@ export function cleanRecurrence(r: unknown): Recurrence | undefined {
 /** A web address that's safe to open from a link: http(s) only (never `javascript:` or `data:`). */
 export const webUrl = (x: unknown): string | undefined => (str(x) && /^https?:\/\/\S/i.test(x.trim()) ? x.trim() : undefined);
 
+const zoneOk = (z: unknown) => {
+  if (!str(z)) return false;
+  try { new Intl.DateTimeFormat('en', { timeZone: z }); return true; } catch { return false; }
+};
+const okFlight = (f: unknown) =>
+  isObj(f) && str(f.from) && str(f.to) && /^[A-Z]{3}$/.test(f.from) && /^[A-Z]{3}$/.test(f.to) && zoneOk(f.fromZone) && zoneOk(f.toZone) &&
+  (f.no === undefined || (str(f.no) && f.no.length <= 10));
 const TEXT = ['location', 'notes', 'timeZone', 'seriesId', 'linkedTo', 'bookedVia'] as const;
 const NUMS = ['createdAt', 'originalStart', 'leadDays'] as const;
 
@@ -36,7 +43,8 @@ export function cleanEvent(e: unknown): CalEvent | null {
     e.recurrence === undefined && e.exdates === undefined && str(e.title) && e.end >= e.start &&
     (e.url === undefined || webUrl(e.url) === e.url) &&
     TEXT.every((k) => e[k] === undefined || str(e[k])) && NUMS.every((k) => e[k] === undefined || num(e[k])) &&
-    (e.kind === undefined || e.kind === 'deadline' || e.kind === 'task');
+    (e.kind === undefined || e.kind === 'deadline' || e.kind === 'task') &&
+    (e.flight === undefined || okFlight(e.flight));
   if (fine) return e as unknown as CalEvent; // (the usual case: nothing to repair)
   const out = { ...e } as Record<string, unknown>;
   out.title = str(out.title) ? out.title : out.title == null ? '' : String(out.title);
@@ -45,6 +53,7 @@ export function cleanEvent(e: unknown): CalEvent | null {
   for (const k of TEXT) if (out[k] !== undefined && !str(out[k])) out[k] = undefined;
   for (const k of NUMS) if (out[k] !== undefined && !num(out[k])) out[k] = undefined;
   if (out.kind !== undefined && out.kind !== 'deadline' && out.kind !== 'task') out.kind = undefined;
+  if (out.flight !== undefined && !okFlight(out.flight)) out.flight = undefined;
   if (out.recurrence !== undefined) out.recurrence = cleanRecurrence(out.recurrence);
   if (out.exdates !== undefined) out.exdates = nums(out.exdates);
   for (const k of Object.keys(out)) if (out[k] === undefined) delete out[k];
