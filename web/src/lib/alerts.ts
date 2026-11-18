@@ -50,7 +50,7 @@ export function alertFor(ev: CalEvent, cal: CalendarSource | undefined, d: Alert
   return ev.kind === 'deadline' ? d.alertDeadlineMin : ev.allDay ? d.alertAllDayMin : d.alertMin;
 }
 
-const MAX_LEAD = 3 * 1440 * 60_000 + 60_000; // the longest alert offered is 2 days before (at 9 AM): look this far past `to`
+const MAX_LEAD = 3 * 1440 * 60_000 + 4 * 3_600_000; // (+ the longest travel time)
 
 /** Alerts that fall in [from, to), soonest first. */
 export function upcomingAlerts(events: CalEvent[], calendars: CalendarSource[], d: AlertDefaults, from: number, to: number): Alert[] {
@@ -78,13 +78,16 @@ export function upcomingAlerts(events: CalEvent[], calendars: CalendarSource[], 
     const min = alertFor(ev, cal, d);
     if (min === null) continue;
     // all-day: on the wall clock from the start of the day (9 AM is 9 AM on a daylight-saving day too)
-    const at = ev.allDay && ev.kind !== 'deadline' ? new Date(ev.start).setMinutes(-min) : ev.start - min * 60_000;
+    const travel = !ev.allDay && !ev.kind && ev.travelMin ? ev.travelMin : 0; // (counts from when you should leave)
+    const at = ev.allDay && ev.kind !== 'deadline' ? new Date(ev.start).setMinutes(-min) : ev.start - (min + travel) * 60_000;
     if (at < from || at >= to) continue;
     const when = ev.kind === 'deadline'
       ? `Due ${format(ev.start, 'EEE MMM d')} at ${fmtTime(ev.start)}`
       : ev.allDay
         ? format(ev.start, 'EEEE MMMM d') + (ev.end - ev.start > 86_400_000 + 3_600_000 ? ` – ${format(ev.end - 1, 'MMMM d')}` : '')
-        : `${relative(min)}${fmtTime(ev.start)} – ${fmtTime(ev.end)}`;
+        : travel
+          ? `${min === 0 ? 'Leave now' : `Leave in ${min < 60 ? `${min} min` : `${+(min / 60).toFixed(1)} h`}`} (${travel} min to get there) · ${fmtTime(ev.start)} – ${fmtTime(ev.end)}`
+          : `${relative(min)}${fmtTime(ev.start)} – ${fmtTime(ev.end)}`;
     out.push({
       key: `${ev.id}|${ev.start}|${min}`,
       at,

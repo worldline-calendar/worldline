@@ -69,3 +69,19 @@ it('describes alerts in words', () => {
   expect(describeAlert(null, false)).toBe('None');
   expect(describeAlert(180, false)).toBe('3 hours before');
 });
+
+describe('travel time and flights', () => {
+  const cals: CalendarSource[] = [{ id: 'c', name: 'Work', color: '#00f', visible: true, account: 'Local' }];
+  const t0 = new Date(2026, 10, 20, 14).getTime();
+  it('an event with travel time alerts before you need to leave', () => {
+    const ev: CalEvent = { id: 'e', calendarId: 'c', title: 'Talk', start: t0, end: t0 + 3_600_000, allDay: false, travelMin: 30 };
+    const [a] = upcomingAlerts([ev], cals, D, t0 - 86_400_000, t0);
+    expect(a.at).toBe(t0 - 40 * 60_000);
+    expect(a.body).toMatch(/^Leave in 10 min \(30 min to get there\)/);
+  });
+  it('a flight gets three reminders', () => {
+    const ev: CalEvent = { id: 'f', calendarId: 'c', title: 'AC 856 to London', start: t0, end: t0 + 7 * 3_600_000, allDay: false, flight: { from: 'YYZ', to: 'LHR', fromZone: 'America/Toronto', toZone: 'Europe/London' } };
+    const as = upcomingAlerts([ev], cals, D, t0 - 4 * 86_400_000, t0);
+    expect(as.map((a) => (t0 - a.at) / 60_000)).toEqual([3 * 1440, 1440, 180]);
+  });
+});

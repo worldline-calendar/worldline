@@ -11,6 +11,8 @@
 //   · only in Worldline, known               → deleted on the Mac → removed from Worldline
 //   · new in Worldline (no Mac identifier)   → created on the Mac (a repeating one as a real repeating event)
 // The Mac is asked about a window of time: an event of Worldline's outside it is never taken as deleted there.
+import type { FlightInfo } from './flights';
+import { airport } from './airports';
 import type { CalEvent, Recurrence } from '../data/types';
 import { encodeEvent } from './recurrence';
 
@@ -79,7 +81,9 @@ export function fromMac(m: MacEvent): CalEvent {
     ext: { id: m.ext, occ, ...(m.recurring ? { recurring: true } : {}) },
   };
   if (m.location) ev.location = m.location;
-  if (m.notes) ev.notes = m.notes;
+  const { notes, flight } = readFlightLine(m.notes ?? '');
+  if (notes) ev.notes = notes;
+  if (flight) ev.flight = flight;
   if (m.url) ev.url = m.url;
   return m.all_day ? encodeEvent(ev) : ev;
 }
@@ -95,7 +99,7 @@ export function toSave(e: CalEvent, macCalendar: string, decode: (e: CalEvent) =
   const s: MacSave = { calendar: macCalendar, title: d.title || 'New Event', start: d.start, end: d.end, all_day: !!d.allDay };
   if (e.ext) Object.assign(s, { ext: e.ext.id, occ: e.ext.occ });
   if (d.location) s.location = d.location;
-  if (d.notes) s.notes = d.notes;
+  if (d.notes || d.flight) s.notes = [d.notes, d.flight && flightLine(d.flight)].filter(Boolean).join('\n\n');
   if (d.url) s.url = d.url;
   if (d.recurrence) s.rule = { freq: d.recurrence.freq, interval: d.recurrence.interval, by_day: d.recurrence.byDay ?? [], ...(d.recurrence.until ? { until: d.recurrence.until } : {}) };
   return s;
@@ -199,4 +203,18 @@ function hash(s: string): string {
   let h2 = 0x1505;
   for (let i = 0; i < s.length; i++) h2 = (Math.imul(h2, 33) ^ s.charCodeAt(i)) >>> 0;
   return h.toString(36) + h2.toString(36);
+}
+
+// ---- flights keep their airports through the Calendar app: a last line in the notes, readable there too
+//      ("✈ AC 856 · YYZ → LHR"), read back (and taken out of the notes) when the event returns.
+const FLIGHT_LINE = /(?:^|\n\n?)✈ (?:([A-Z0-9]{2} ?\d{1,4}) · )?([A-Z]{3}) → ([A-Z]{3})\s*$/;
+export const flightLine = (f: FlightInfo) => `✈ ${f.no ? f.no + ' · ' : ''}${f.from} → ${f.to}`;
+export function readFlightLine(notes: string): { notes: string; flight?: FlightInfo } {
+  const m = FLIGHT_LINE.exec(notes);
+  const from = airport(m?.[2]), to = airport(m?.[3]);
+  if (!m || !from || !to) return { notes };
+  return {
+    notes: notes.slice(0, m.index).trimEnd(),
+    flight: { ...(m[1] ? { no: m[1] } : {}), from: from.code, to: to.code, fromZone: from.zone, toZone: to.zone },
+  };
 }

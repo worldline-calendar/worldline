@@ -216,6 +216,7 @@ export function EventPanel() {
           <span>Changes apply to</span>
           <div className="seg">
             <button className={cls(scope === 'this' && 'on')} onClick={() => setScope('this')}>This event</button>
+            <button className={cls(scope === 'following' && 'on')} onClick={() => setScope('following')} title="This one and every later one — earlier ones stay as they were">This &amp; following</button>
             <button className={cls(scope === 'all' && 'on')} onClick={() => setScope('all')}>All events</button>
           </div>
         </div>
@@ -325,6 +326,19 @@ export function EventPanel() {
         </div>
       </div>
 
+      {!ev.allDay && !ev.kind && !ev.flight && (
+        <div className="panel-rows">
+          <div className="prow">
+            <span>Travel time</span>
+            <select className="pselect" value={ev.travelMin ?? 0} onChange={(e) => up({ travelMin: +e.target.value || undefined })} aria-label="Travel time">
+              {[0, 10, 15, 20, 30, 45, 60, 90, 120].map((m) => (
+                <option key={m} value={m}>{m === 0 ? 'None' : m < 60 ? `${m} min` : `${m / 60} h`}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
+
       {zone !== homeZone && !ev.allDay && (() => {
         const w = wallClock(ev.start, homeZone);
         const t = `${w.h % 12 || 12}:${String(w.min).padStart(2, '0')} ${w.h < 12 ? 'AM' : 'PM'}`;
@@ -357,6 +371,9 @@ export function EventPanel() {
         <div className="delete-row">
           <button className="delete-btn" onClick={() => deleteEvent(ev.id, 'this')}>
             <Trash /> Delete this event
+          </button>
+          <button className="delete-btn" onClick={() => deleteEvent(ev.id, 'following')}>
+            This &amp; following
           </button>
           <button className="delete-btn" onClick={() => deleteEvent(ev.id, 'all')}>
             Delete all events

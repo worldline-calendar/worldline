@@ -1,5 +1,7 @@
 // Pure edits on the event list that understand recurring series.
 //   scope 'this' on an occurrence → an exception for that date only
+//   scope 'following' on an occurrence → the series splits there: the old one ends before it, a new one (with the
+//                     change) starts from it — "from January the meeting moves rooms", without rewriting the past
 //   scope 'all'  on an occurrence → the whole series (the master) changes
 import type { CalEvent } from '../data/types';
 import { decodeEvent, encodeEvent, isOccurrenceId, occurrenceId, resolveEvent, splitOccurrenceId } from './recurrence';
@@ -9,7 +11,7 @@ import { encodeDay, epochDay, instantOf, wallClock } from './zone';
 const toLocal = (events: CalEvent[]) => events.map(decodeEvent);
 const toStored = (events: CalEvent[]) => events.map(encodeEvent);
 
-export type Scope = 'this' | 'all';
+export type Scope = 'this' | 'following' | 'all';
 
 /** Weekdays (0 = Sunday) moved by `days`: [1, 3] + 1 → [2, 4]. */
 export const rotateDays = (byDay: number[], days: number) => byDay.map((d) => (((d + days) % 7) + 7) % 7);
@@ -26,6 +28,12 @@ function updateLocal(events: CalEvent[], id: string, patch: Partial<CalEvent>, s
   const occ = resolveEvent(events, id);
   if (!occ) return { events, id };
   const { masterId, start: original } = splitOccurrenceId(id);
+
+  if (scope === 'following') {
+    const split = splitSeries(events, masterId, occ, newId);
+    if (!split) return updateLocal(events, id, patch, 'all', newId); // (the first occurrence: that's the whole series)
+    return updateLocal(split.events, split.id, patch, 'all', newId);
+  }
 
   if (scope === 'all') {
     const master = events.find((e) => e.id === masterId)!;
@@ -76,6 +84,10 @@ function removeLocal(events: CalEvent[], id: string, scope: Scope): CalEvent[] {
   if (isOccurrenceId(id)) {
     const { masterId, start } = splitOccurrenceId(id);
     if (scope === 'all') return removeSeries(events, masterId);
+    if (scope === 'following') {
+      const occ = resolveEvent(events, id);
+      return occ ? endLocal(events, masterId, occ.start) : events;
+    }
     return events.map((e) => (e.id === masterId ? { ...e, exdates: [...(e.exdates ?? []), start] } : e));
   }
   const ev = events.find((e) => e.id === id);
@@ -93,9 +105,39 @@ export function endSeries(stored: CalEvent[], masterId: string, at: number): Cal
   const events = toLocal(stored);
   const master = events.find((e) => e.id === masterId);
   if (!master?.recurrence) return stored;
-  if (master.start >= at) return toStored(removeSeries(events, masterId));
+  return toStored(endLocal(events, masterId, at));
+}
+function endLocal(events: CalEvent[], masterId: string, at: number): CalEvent[] {
+  const master = events.find((e) => e.id === masterId);
+  if (!master?.recurrence) return events;
+  if (master.start >= at) return removeSeries(events, masterId);
   // (an all-day series stores this as its last day: see recurrence.ts)
-  return toStored(events
+  return events
     .filter((e) => !(e.seriesId === masterId && e.start >= at)) // drop future exceptions too
-    .map((e) => (e.id === masterId ? { ...e, recurrence: { ...e.recurrence!, until: at - 1 } } : e)));
+    .map((e) => (e.id === masterId ? { ...e, recurrence: { ...e.recurrence!, until: at - 1 } } : e));
+}
+
+/** Split a series at occurrence `occ`: the old series ends just before it, a copy starts there (its later exceptions
+ *  and skipped dates go with it). Returns the copy's occurrence id for `occ`, or null when `occ` is the first one. */
+function splitSeries(events: CalEvent[], masterId: string, occ: CalEvent, newId: () => string) {
+  const master = events.find((e) => e.id === masterId);
+  if (!master?.recurrence || occ.start <= master.start) return null;
+  const at = occ.start;
+  const id = newId();
+  const fresh: CalEvent = {
+    ...master,
+    id,
+    start: occ.start,
+    end: occ.start + (master.end - master.start),
+    exdates: master.exdates?.filter((x) => x >= (master.allDay ? encodeDay(at) : at)),
+    ext: undefined, // (a new series: not yet in the Calendar app)
+  };
+  if (!fresh.exdates?.length) delete fresh.exdates;
+  delete fresh.ext;
+  const moved = events.map((e) => {
+    if (e.id === masterId) return { ...e, recurrence: { ...e.recurrence!, until: at - 1 } };
+    if (e.seriesId === masterId && (e.originalStart ?? e.start) >= (e.allDay ? encodeDay(at) : at)) return { ...e, seriesId: id };
+    return e;
+  });
+  return { events: [...moved, fresh], id: occurrenceId(id, master.allDay ? encodeDay(at) : at) };
 }

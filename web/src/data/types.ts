@@ -52,6 +52,7 @@ export interface CalEvent {
   ext?: { id: string; occ: number; recurring?: boolean };
   /** A flight (lib/flights.ts): its airports and their zones; start and end are the real departure and landing. */
   flight?: FlightInfo;
+  travelMin?: number; // time to get there: drawn before it, and its alert counts from when you should leave
 }
 
 export type Freq = 'daily' | 'weekly' | 'monthly' | 'yearly';

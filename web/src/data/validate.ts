@@ -34,7 +34,7 @@ const okFlight = (f: unknown) =>
   isObj(f) && str(f.from) && str(f.to) && /^[A-Z]{3}$/.test(f.from) && /^[A-Z]{3}$/.test(f.to) && zoneOk(f.fromZone) && zoneOk(f.toZone) &&
   (f.no === undefined || (str(f.no) && f.no.length <= 10));
 const TEXT = ['location', 'notes', 'timeZone', 'seriesId', 'linkedTo', 'bookedVia'] as const;
-const NUMS = ['createdAt', 'originalStart', 'leadDays'] as const;
+const NUMS = ['createdAt', 'originalStart', 'leadDays', 'travelMin'] as const;
 
 /** An event the views can show, or null. */
 export function cleanEvent(e: unknown): CalEvent | null {

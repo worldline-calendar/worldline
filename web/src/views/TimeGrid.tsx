@@ -1,7 +1,7 @@
 // Day / 3-day / week view: one scroll box over a very wide canvas (2020–2035).
 // Only the columns near the viewport are actually drawn ("virtualized"), so scrolling
 // sideways through days is continuous and cheap. Header and hour gutter are CSS-sticky.
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { format, startOfWeek } from 'date-fns';
 import { DRAFT_ID, HOUR_H_RANGE, isLocked, newEventCalendarId, useStore } from '../data/store';
 import { useDeadlinesIn, useEventsIn } from '../data/useEvents';
@@ -70,7 +70,17 @@ export function TimeGrid({ days }: { days: number }) {
   // Away from home: a second, narrower hour column in home time (left of the local one).
   const zone = useStore((s) => s.zone);
   const homeZone = useStore((s) => s.homeZone);
-  const showHome = useStore((s) => s.showHomeHours) && zone !== homeZone;
+  // A trip in view (lib/flights.ts): its local hours alongside, so a plan for London reads in London time too
+  const allEvents = useStore((s) => s.events);
+  const flights = useMemo(() => allEvents.filter((e) => e.flight), [allEvents]);
+  const visible = useStore((s) => s.visibleRange);
+  const tripZone = useMemo(() => {
+    const t = tripsOf(flights, homeZone || localZone()).find((x) => !x.open && x.start < visible.end && x.end > visible.start && x.zone !== zone);
+    return t?.zone;
+  }, [flights, homeZone, visible.start, visible.end, zone]);
+  const homeOn = useStore((s) => s.showHomeHours) && zone !== homeZone;
+  const secondZone = homeOn ? homeZone : tripZone;
+  const showHome = !!secondZone;
   const HOME_W = 40;
   const gutterW = (width && width < 600 ? 46 : 58) + (showHome ? HOME_W : 0);
   const colW = width ? (width - gutterW) / days : 0;
@@ -163,8 +173,6 @@ export function TimeGrid({ days }: { days: number }) {
     return new Map([...buckets].map(([i, segs]) => [i, layoutDay(segs)]));
   }, [shown, from, to]);
 
-  const allEvents = useStore((s) => s.events);
-  const flights = useMemo(() => allEvents.filter((e) => e.flight), [allEvents]);
   // ---- trips: "In London" across the all-day row, from landing until the flight out (lib/flights.ts) ----
   const tripBars = useMemo((): CalEvent[] => {
     const evs = flights;
@@ -552,8 +560,8 @@ export function TimeGrid({ days }: { days: number }) {
           <div className="tg-corner" style={{ width: gutterW, height: headH }}>
             <span className="tg-zones" style={{ top: DAY_HEAD_H - 17 }} title={`Times shown in ${zone}`}>
               {showHome && (
-                <span className="home" style={{ width: HOME_W }} title={`Home: ${homeZone}`}>
-                  {zoneAbbr(homeZone)}
+                <span className={cls('home', !homeOn && 'trip')} style={{ width: HOME_W }} title={homeOn ? `Home: ${homeZone}` : `${zoneCity(secondZone!)} time (your trip)`}>
+                  {zoneAbbr(secondZone!)}
                 </span>
               )}
               <span>{zoneAbbr(zone)}</span>
@@ -673,9 +681,9 @@ export function TimeGrid({ days }: { days: number }) {
         >
           <div className="tg-gutter" style={{ width: gutterW }}>
             {showHome && (
-              <div className="tg-gutter-home" style={{ width: HOME_W }} title={`${zoneCity(homeZone)} time`}>
+              <div className={cls('tg-gutter-home', !homeOn && 'trip')} style={{ width: HOME_W }} title={`${zoneCity(secondZone!)} time`}>
                 {Array.from({ length: 23 }, (_, k) => k + 1).map((h) => {
-                  const w = wallClock(atMinutes(first, h * 60), homeZone);
+                  const w = wallClock(atMinutes(first, h * 60), secondZone);
                   const h12 = w.h % 12 || 12;
                   return (
                     <span key={h} className="tg-hour home" style={{ top: h * hourH }}>
@@ -708,9 +716,20 @@ export function TimeGrid({ days }: { days: number }) {
                 const top = (seg.start / 60) * hourH;
                 const h = (Math.max(seg.end - seg.start, 15) / 60) * hourH;
                 const short = h < 38;
+                // time to get there, drawn just above it (only on its first day)
+                const travelH = ev.travelMin && !seg.contBefore ? (ev.travelMin / 60) * hourH : 0;
                 return (
+                  <Fragment key={ev.id}>
+                  {travelH > 0 && (
+                    <div
+                      className={cls('ev-travel', ev.end <= now && 'past')}
+                      style={{ top: top - travelH + 1, height: travelH - 1, left: `calc(${(col / n) * 100}% + 1px)`, width: `calc(${(span / n) * 100}% - 3px)`, '--c': calById.get(ev.calendarId)?.color } as CSSProperties}
+                      title={`Leave by ${fmtTime(ev.start - ev.travelMin! * 60_000)} · ${ev.travelMin} min to get there`}
+                    >
+                      {travelH >= 16 && <span>🚶 {ev.travelMin} min</span>}
+                    </div>
+                  )}
                   <div
-                    key={ev.id}
                     data-ev={ev.id}
                     {...asButton(`${ev.title || 'New Event'}, ${format(ev.start, 'EEEE MMMM d')}, ${fmtTimeRange(ev.start, ev.end)}`, () => useStore.getState().toggleSelect(ev.id))}
                     className={cls(
@@ -743,6 +762,7 @@ export function TimeGrid({ days }: { days: number }) {
                     {h >= 60 && !ev.flight && ev.location && <div className="ev-loc">{ev.location}</div>}
                     {!seg.contAfter && <div className="ev-resize" data-resize />}
                   </div>
+                  </Fragment>
                 );
               })}
               {shown

@@ -7,7 +7,7 @@ import { format, isSameDay, isSameYear } from 'date-fns';
 import { newEventCalendarId, useStore } from '../data/store';
 import type { CalEvent } from '../data/types';
 import { parseQuick } from '../lib/quickparse';
-import { FLIGHT_COLOR, flightLength, flightTimes, parseFlight } from '../lib/flights';
+import { FLIGHT_COLOR, flightLength, flightTimes, parseFlight, parseItinerary } from '../lib/flights';
 import { parseCommand, type Change, type Command } from '../lib/commands';
 import { suggest, type SuggestionKind } from '../lib/suggest';
 import { phraseAction, typeahead, type PhraseAction } from '../lib/typeahead';
@@ -109,7 +109,10 @@ export function QuickAdd() {
   );
   const parsed = useMemo(() => (typing ? parseQuick(stripTaskPrefix(text), calendars) : null), [typing, text, calendars]);
   // A flight ("AC 856 YYZ 6:40pm → LHR 6:55am dec 12"): each time on its own airport's clock
-  const flightPlan = useMemo(() => (typing && !hasTaskPrefix(text) && !kindOverride ? parseFlight(text) : null), [typing, text, kindOverride]);
+  const flightOne = useMemo(() => (typing && !hasTaskPrefix(text) && !kindOverride ? parseFlight(text) : null), [typing, text, kindOverride]);
+  // A pasted confirmation email: every flight in it
+  const itinerary = useMemo(() => (text.length > 60 && !kindOverride ? parseItinerary(text) : []), [text, kindOverride]);
+  const flightPlan = itinerary.length > 1 ? null : itinerary[0] ?? flightOne;
   const kind: ItemKind = kindOverride ?? (parsed ? guessKind(text, parsed) : 'event');
   const taskPreview = parsed ? taskFromParsed(parsed) : null;
   // A deadline's due moment: the parsed time, or 5 PM on the day if none was given.
@@ -283,8 +286,14 @@ export function QuickAdd() {
     reveal(start, id);
     st().showToast(`Added “${title}” · ${format(start, 'EEE MMM d')} · ${flightTimes(flightPlan, flight)}`, true, id);
   };
+  const addItinerary = () => {
+    const ids = itinerary.map(({ title, start, end, flight }) => st().createEvent({ calendarId: cal.id, title, start, end, allDay: false, flight }));
+    close();
+    reveal(itinerary[0].start, ids[0]);
+    st().showToast(`Added ${itinerary.length} flights · ${itinerary.map((f) => f.flight.from).concat(itinerary.at(-1)!.flight.to).join(' → ')}`, true);
+  };
   const submit = (forceCreate = false) =>
-    flightPlan && !forceCreate ? addFlight() : habitMode && !forceCreate ? logHabit() : cmd && !forceCreate ? apply() : create();
+    itinerary.length > 1 && !forceCreate ? addItinerary() : flightPlan && !forceCreate ? addFlight() : habitMode && !forceCreate ? logHabit() : cmd && !forceCreate ? apply() : create();
 
   const suggestionList = list.length ? (
     <div className="qa-suggest">
@@ -333,6 +342,15 @@ export function QuickAdd() {
             placeholder="Add or change an event — “coffee with Ana thu 3pm”, “skip gym tomorrow”"
             enterKeyHint="done"
             autoComplete="off"
+            onPaste={(e) => {
+              // a pasted email: its lines kept apart as spaces (an input would glue them together)
+              const t = e.clipboardData.getData('text');
+              if (!/\n/.test(t)) return;
+              e.preventDefault();
+              setText((x) => (x + ' ' + t.replace(/\s*\n\s*/g, ' ')).trim());
+              setMatchIdx(0);
+              setHi(-1);
+            }}
             onChange={(e) => {
               setText(e.target.value);
               setMatchIdx(0);
@@ -371,7 +389,20 @@ export function QuickAdd() {
           />
         </div>
 
-        {flightPlan ? (
+        {itinerary.length > 1 ? (
+          <div className="qa-preview k-flight" role="button" tabIndex={-1} onClick={() => addItinerary()} style={{ '--c': FLIGHT_COLOR } as CSSProperties}>
+            <span className="qa-bar" />
+            <span className="qa-body">
+              <span className="qa-title">✈ {itinerary.length} flights found</span>
+              {itinerary.map((f) => (
+                <span key={f.start} className="qa-when">
+                  {format(f.start, 'EEE MMM d')} · <b>{f.flight.no}</b> · {flightTimes(f, f.flight)}
+                </span>
+              ))}
+              <span className="qa-where">Enter adds them all · times are local at each airport</span>
+            </span>
+          </div>
+        ) : flightPlan ? (
           <div className="qa-preview k-flight" role="button" tabIndex={-1} onClick={() => addFlight()} style={{ '--c': FLIGHT_COLOR } as CSSProperties}>
             <span className="qa-bar" />
             <span className="qa-body">

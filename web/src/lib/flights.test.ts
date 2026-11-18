@@ -59,3 +59,39 @@ describe('trips', () => {
     expect(t).toEqual([{ id: 'hop', city: 'Athens', zone: 'Europe/Athens', start: at('2026-12-13T12:00:00Z'), end: at('2026-12-20T09:00:00Z'), open: false }]);
   });
 });
+
+import { flightLine, readFlightLine } from './macCalendars';
+describe('through the Calendar app', () => {
+  it('a flight keeps its airports in a last line of the notes, and gets them back', () => {
+    const f = { no: 'AC 856', from: 'YYZ', to: 'LHR', fromZone: 'America/Toronto', toZone: 'Europe/London' };
+    expect(readFlightLine(`Seat 32A\n\n${flightLine(f)}`)).toEqual({ notes: 'Seat 32A', flight: f });
+    expect(readFlightLine(flightLine({ ...f, no: undefined } as never)).flight).toMatchObject({ from: 'YYZ', to: 'LHR' });
+    expect(readFlightLine('just notes')).toEqual({ notes: 'just notes' });
+  });
+});
+
+import { parseItinerary } from './flights';
+describe('a pasted confirmation email', () => {
+  it('finds every segment, each on its own clock', () => {
+    const email = `Booking confirmation ABC123
+      Flight 1   AC 856   Sat 12 Dec 2026
+      Toronto (YYZ)  Departs 18:40   →   London Heathrow (LHR)  Arrives 06:55 +1
+      Operated by Air Canada · Economy
+      Flight 2   AC 857   Sat 19 Dec 2026
+      London Heathrow (LHR)  Departs 11:15   →   Toronto (YYZ)  Arrives 14:05
+      Baggage: 1 x 23kg`;
+    const fs = parseItinerary(email, NOW);
+    expect(fs.map((f) => [f.flight.no, f.flight.from, f.flight.to])).toEqual([['AC 856', 'YYZ', 'LHR'], ['AC 857', 'LHR', 'YYZ']]);
+    expect(fs[0].start).toBe(at('2026-12-12T23:40:00Z'));
+    expect(fs[0].end).toBe(at('2026-12-13T06:55:00Z'));
+    expect(fs[1].end).toBe(at('2026-12-19T19:05:00Z'));
+  });
+  it('reads US-style dates and 12-hour times, and skips repeated segments', () => {
+    const email = 'UA 901 San Francisco (SFO) to Frankfurt (FRA) December 3, 2026 3:55 PM - 11:50 AM. ' +
+      'Your trip: UA 901 SFO FRA December 3, 2026 3:55 PM 11:50 AM. LH 1280 FRA 1:20 PM → ATH 5:15 PM Dec 4';
+    const fs = parseItinerary(email, NOW);
+    expect(fs.map((f) => f.flight.no)).toEqual(['UA 901', 'LH 1280']);
+    expect((fs[0].end - fs[0].start) / 3_600_000).toBeCloseTo(10.9166, 3);
+    expect(fs[1].flight.toZone).toBe('Europe/Athens');
+  });
+});

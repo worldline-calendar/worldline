@@ -86,3 +86,32 @@ describe('editing recurring events', () => {
     expect(shown).toEqual(['Sep 25', 'Oct 2']);
   });
 });
+
+describe('this and following', () => {
+  const weekly = master('m', 'Group meeting', t(9, 5, 10), [1]); // Mondays 10 AM from Mon Oct 5
+  let n = 0;
+  const id = () => `n${n++}`;
+  const occ = (d: number) => expand([weekly], t(9, d, 0), t(9, d, 23))[0].id;
+
+  it('a change from one date on leaves the earlier ones alone', () => {
+    const { events } = updateEvent([weekly], occ(19), { title: 'Group meeting (room 1318)' }, 'following', id);
+    const shown = expand(events, t(9, 1, 0), t(10, 10, 0)).map((e) => `${format(e.start, 'MMM d')} ${e.title}`);
+    expect(shown).toEqual([
+      'Oct 5 Group meeting', 'Oct 12 Group meeting',
+      'Oct 19 Group meeting (room 1318)', 'Oct 26 Group meeting (room 1318)', 'Nov 2 Group meeting (room 1318)', 'Nov 9 Group meeting (room 1318)',
+    ]);
+  });
+
+  it('moving from one date on moves only the later ones', () => {
+    const { events } = updateEvent([weekly], occ(19), { start: t(9, 20, 14), end: t(9, 20, 15) }, 'following', id);
+    const shown = expand(events, t(9, 1, 0), t(9, 31, 0)).map((e) => format(e.start, 'EEE MMM d h a'));
+    expect(shown).toEqual(['Mon Oct 5 10 AM', 'Mon Oct 12 10 AM', 'Tue Oct 20 2 PM', 'Tue Oct 27 2 PM']);
+  });
+
+  it('on the first occurrence it is the whole series; deleting from a date ends it there', () => {
+    const { events } = updateEvent([weekly], occ(5), { title: 'X' }, 'following', id);
+    expect(events).toHaveLength(1);
+    const cut = removeEvent([weekly], occ(19), 'following');
+    expect(expand(cut, t(9, 1, 0), t(10, 30, 0)).map((e) => format(e.start, 'MMM d'))).toEqual(['Oct 5', 'Oct 12']);
+  });
+});

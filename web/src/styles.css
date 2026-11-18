@@ -2785,3 +2785,13 @@ html.in-app .sidebar .mini { top: calc(8px - env(safe-area-inset-top)); }
 .prow.fl-end { align-items: flex-start; }
 .prow.fl-end > span { padding-top: 4px; }
 .prow.fl-end .pinputs { flex-wrap: wrap; justify-content: flex-end; min-width: 0; }
+/* a trip's hours alongside (TimeGrid): in the trip's colour */
+.tg-gutter-home.trip .tg-hour, .tg-day-head .home.trip, .home.trip { color: color-mix(in srgb, #3aa0ff 75%, var(--text-2)); }
+/* travel time before an event: a faint, hatched lead-in in its colour */
+.ev-travel {
+  position: absolute; z-index: 1; border-radius: 6px 6px 0 0; pointer-events: none; overflow: hidden;
+  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--c) 16%, transparent) 0 5px, transparent 5px 10px);
+  border-left: 2px dashed color-mix(in srgb, var(--c) 55%, transparent);
+  font-size: 10.5px; color: color-mix(in srgb, var(--c) 70%, var(--text-2)); padding: 1px 6px; white-space: nowrap;
+}
+.ev-travel.past { opacity: 0.5; }

@@ -1018,7 +1018,7 @@ export const useStore = create<State>()(
             selectedId: s.selectedId === id ? null : s.selectedId,
             pendingId: s.pendingId === id ? null : s.pendingId,
           }));
-          get().showToast(`Deleted “${ev.title || 'New Event'}”${scope === 'all' && ev.seriesId ? ' (all events)' : ''}`);
+          get().showToast(`Deleted “${ev.title || 'New Event'}”${scope === 'all' && ev.seriesId ? ' (all events)' : scope === 'following' && ev.seriesId ? ' (this and following)' : ''}`);
         },
         endSeries: (masterIds, at) => {
           masterIds = masterIds.filter((id) => !isLocked(get(), id));
