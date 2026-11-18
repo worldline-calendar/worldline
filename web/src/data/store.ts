@@ -19,7 +19,7 @@ import { newLinkKeys, pruneDecisions, type Accept, type Decision } from '../lib/
 import { endSeries, removeEvent, updateEvent, type Scope } from '../lib/mutate';
 import { normalizeFeedUrl, parseIcs } from '../lib/ics';
 import { fetchText, canFetchFeeds } from '../lib/platform';
-import { appStorage, dataReplaced, markLoadProblem, onFlush } from './persist';
+import { appStorage, dataReplaced, markLoadProblem, onFlush, saveSplit } from './persist';
 import { fmtWhen } from '../lib/format';
 import { STORE_VERSION } from './storeVersion';
 import { cleanCalendar, cleanEvent, cleanHabit, cleanLink, cleanList, cleanLogEntry, cleanNested, cleanProject, cleanTask, cleanThread, isNum, isStr } from './validate';
@@ -341,11 +341,28 @@ const json = createJSONStorage(appStorage)!;
 let lastSaved: Record<string, unknown> | null = null;
 let held: { name: string; value: StorageValue<unknown> } | null = null;
 let heldTimer: ReturnType<typeof setTimeout> | undefined;
+// The big collections are saved each under their own key (persist.ts saveSplit), and each is turned into text only
+// when it's a new object since the last save: a habit tick re-serialises the habit log, not ten years of events.
+const SPLIT = new Set(['events', 'tasks', 'habits', 'habitLog', 'habitNotes', 'projects', 'threads', 'projectLog', 'links', 'macKnown']);
+const partText = new Map<string, { obj: unknown; str: string }>();
 const handOver = () => {
   clearTimeout(heldTimer);
   const h = held;
   held = null;
-  if (h) void json.setItem(h.name, h.value);
+  if (!h) return;
+  const state = h.value.state as Record<string, unknown>;
+  const small: Record<string, unknown> = {};
+  const parts: Record<string, string> = {};
+  for (const k of Object.keys(state)) {
+    const v = state[k];
+    if (!SPLIT.has(k)) small[k] = v;
+    else if (v !== undefined) {
+      let c = partText.get(k);
+      if (!c || c.obj !== v) partText.set(k, (c = { obj: v, str: JSON.stringify(v) }));
+      parts[k] = c.str;
+    }
+  }
+  saveSplit(h.name, JSON.stringify(small), h.value.version ?? 0, parts);
 };
 onFlush(handOver);
 const savedStorage: PersistStorage<unknown> = {

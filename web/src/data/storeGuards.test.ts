@@ -4,7 +4,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 const noop = () => {};
 let writes = 0;
-const storage = { getItem: () => null, setItem: () => void writes++, removeItem: noop };
+const storage = { getItem: () => null, setItem: (k: string) => void (k === 'calendar-v1' && writes++), removeItem: noop }; // (a save writes its changed collections, then the head: one head write per save)
 Object.assign(globalThis, {
   localStorage: storage,
   window: { innerWidth: 1200, localStorage: storage, setTimeout, clearTimeout, setInterval, clearInterval, addEventListener: noop, removeEventListener: noop, matchMedia: () => ({ matches: false }) },

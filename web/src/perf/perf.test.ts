@@ -15,7 +15,8 @@ const DAY = 86_400_000;
 
 // ---- the app's environment, as in data/syncEngine.test.ts (node: no IndexedDB → localStorage)
 const mem = new Map<string, string>();
-const localStorage = { getItem: (k: string) => mem.get(k) ?? null, setItem: (k: string, v: string) => void mem.set(k, v), removeItem: (k: string) => void mem.delete(k) };
+let wrote: string[] = []; // (the keys each save writes)
+const localStorage = { getItem: (k: string) => mem.get(k) ?? null, setItem: (k: string, v: string) => void (mem.set(k, v), wrote.push(k)), removeItem: (k: string) => void mem.delete(k), key: (i: number) => [...mem.keys()][i] ?? null, get length() { return mem.size; } };
 const noop = () => {};
 if (RUN)
   Object.assign(globalThis, {
@@ -140,13 +141,26 @@ describe.runIf(RUN)('performance with ten years of data', () => {
       page: bench('keystroke in a project page (updateThread body)', '', (i) => st().updateThread(thread.id, { body: { ...thread.body!, content: [...thread.body!.content!, { type: 'paragraph', content: [{ type: 'text', text: `x${i}` }] }] } }, true), 9, 20),
       toast: bench('UI-only change (showToast): skipped by the save', '', (i) => st().showToast(`t${i}`), 9, 5),
     };
-    // the save each burst of changes causes, 250 ms later (store.ts handOver → JSON.stringify of everything)
-    bench('save after an edit: store debounce → JSON.stringify (sync part of persist.flush)', '', (i) => {
-      st().setHabitAmount('h-4', today, i % 2);
-      void P.flush();
-    }, 5, 150);
+    // the save each burst of changes causes, 250 ms later (store.ts handOver → JSON.stringify of only the collections
+    // that are new objects since the last save; persist.ts writes those keys, then the small head)
     await P.flush();
-    note('saved string written per save (every edit burst; Mac: also through IPC into SQLite)', '', MB(mem.get('calendar-v1')!.length));
+    const saveOf = async (op: string, edit: (i: number) => void, budget: number) => {
+      bench(`save after ${op}: store debounce → JSON.stringify (sync part of persist.flush)`, '', (i) => {
+        edit(i);
+        void P.flush();
+      }, 5, budget);
+      await P.flush();
+      wrote = [];
+      edit(99);
+      await P.flush();
+      const bytes = wrote.reduce((n, k) => n + mem.get(k)!.length, 0);
+      note(`  written by one save after ${op}`, wrote.map((k) => k.replace(/^calendar-v1:?/, '').replace(/\.\d+$/, '') || 'head').join(' + '), MB(bytes));
+      return [...wrote];
+    };
+    const tick = await saveOf('a habit tick', (i) => st().setHabitAmount('h-4', today, i % 2), 20);
+    const edit = await saveOf('an event edit', (i) => st().updateEvent(ev.id, { title: `Saved ${i}` }), 40);
+    expect(tick.some((k) => k.startsWith('calendar-v1:events'))).toBe(false); // a habit tick never re-writes the events
+    expect(edit.filter((k) => k !== 'calendar-v1').every((k) => k.startsWith('calendar-v1:events'))).toBe(true);
     expect(ms.toast).toBeLessThan(ms.key + 1);
   }, LIMIT);
 

@@ -65,8 +65,8 @@ async fn db_get(db: DbState<'_>, key: String) -> Result<Option<String>, String> 
   on_db(&db, move |d| d.get(&key)).await
 }
 #[tauri::command]
-async fn db_set(db: DbState<'_>, key: String, value: String, snapshot: Option<String>) -> Result<(), String> {
-  on_db(&db, move |d| d.set(&key, &value, now_ms(), snapshot.as_deref())).await
+async fn db_set(db: DbState<'_>, key: String, value: String, snapshot: Option<String>, full: Option<String>) -> Result<(), String> {
+  on_db(&db, move |d| d.set(&key, &value, now_ms(), snapshot.as_deref(), full.as_deref())).await
 }
 #[tauri::command]
 async fn db_del(db: DbState<'_>, key: String) -> Result<(), String> {
