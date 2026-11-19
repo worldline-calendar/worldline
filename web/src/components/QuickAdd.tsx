@@ -6,7 +6,7 @@ import { useMemo, useState, type CSSProperties } from 'react';
 import { format, isSameDay, isSameYear } from 'date-fns';
 import { newEventCalendarId, useStore } from '../data/store';
 import type { CalEvent } from '../data/types';
-import { parseQuick } from '../lib/quickparse';
+import { QUICK_MAX, parseQuick } from '../lib/quickparse';
 import { FLIGHT_COLOR, flightLength, flightTimes, parseFlight, parseItinerary } from '../lib/flights';
 import { parseCommand, type Change, type Command } from '../lib/commands';
 import { suggest, type SuggestionKind } from '../lib/suggest';
@@ -104,7 +104,7 @@ export function QuickAdd() {
 
   const typing = text.trim().length > 0;
   const cmd = useMemo(
-    () => (typing && !hasTaskPrefix(text) ? parseCommand(text, withTasks, calendars, new Date(), masters) : null),
+    () => (typing && text.length <= QUICK_MAX && !hasTaskPrefix(text) ? parseCommand(text, withTasks, calendars, new Date(), masters) : null),
     [typing, text, withTasks, calendars, masters],
   );
   const parsed = useMemo(() => (typing ? parseQuick(stripTaskPrefix(text), calendars) : null), [typing, text, calendars]);
@@ -126,7 +126,7 @@ export function QuickAdd() {
   // Logging a habit ("did gym", "read 20 pages") — a strict, separate reader; when it says no, nothing below changes.
   const habitPlan = useMemo(() => (typing && !hasTaskPrefix(text) ? parseHabitLog(text, habits) : null), [typing, text, habits]);
   const asYouType = useMemo(
-    () => (typing ? typeahead(text, withTasks, masters, calendars, weekAhead) : []),
+    () => (typing && text.length <= QUICK_MAX ? typeahead(text, withTasks, masters, calendars, weekAhead) : []),
     [typing, text, withTasks, masters, calendars, weekAhead],
   );
   const list = typing ? asYouType.map((x) => ({ ...x, id: x.phrase, kind: null as SuggestionKind | null })) : weekAhead;

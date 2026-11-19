@@ -52,10 +52,12 @@ export interface FlightPlan {
 /** A flight in what was typed, or null when it isn't one. Two airport codes are needed: written in capitals, or joined
  *  by an arrow / dash / "to" ("yyz to lhr"), so ordinary words ("the", "mad", "den") never read as airports. */
 export function parseFlight(text: string, now = new Date()): FlightPlan | null {
+  // (one flight is a line, not a page: a long paste goes to parseItinerary — and this stays fast on any input)
+  if (text.length > 300) return null;
   const codes = tokens(text, /\b[A-Za-z]{3}\b/g).filter((t) => airport(t.text));
   let pair: [Tok, Tok] | null = null;
   for (let i = 0; i < codes.length && !pair; i++)
-    for (let j = i + 1; j < codes.length && !pair; j++) {
+    for (let j = i + 1; j < Math.min(codes.length, i + 4) && !pair; j++) {
       const [a, b] = [codes[i], codes[j]];
       if (a.text.toUpperCase() === b.text.toUpperCase()) continue;
       const between = text.slice(a.end, b.start);
@@ -180,7 +182,9 @@ function dateIn(s: string, now: Date): [number, number, number] | null {
   if (!best) return null;
   const [y, mo, d] = best.ymd;
   if (mo < 0 || d < 1 || d > 31) return null;
-  if (y !== undefined) return [y, mo, d];
+  const real = (yy: number) => new Date(yy, mo, d).getDate() === d; // (no "31 Feb" rolled into March)
+  if (y !== undefined) return real(y) ? [y, mo, d] : null;
+  if (!real(2028)) return null; // (Feb 29 is real in a leap year)
   const thisYear = new Date(now.getFullYear(), mo, d);
   return [thisYear.getTime() < now.getTime() - 30 * DAY ? now.getFullYear() + 1 : now.getFullYear(), mo, d];
 }

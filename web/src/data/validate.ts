@@ -37,9 +37,14 @@ const TEXT = ['location', 'notes', 'timeZone', 'seriesId', 'linkedTo', 'bookedVi
 const NUMS = ['createdAt', 'originalStart', 'leadDays', 'travelMin'] as const;
 
 /** An event the views can show, or null. */
+const YEARS = 7.3e12; // ~ years 1739–2201: anything outside is a damaged record (and would take forever to repeat)
+const SERIES_SPAN = 366 * 86_400_000; // one occurrence of a series lasts at most a year
 export function cleanEvent(e: unknown): CalEvent | null {
   if (!isObj(e) || !str(e.id) || !str(e.calendarId) || !num(e.start) || !num(e.end)) return null;
+  if (Math.abs(e.start) > YEARS || Math.abs(e.end) > YEARS) return null;
   const fine =
+    (e.timeZone === undefined || zoneOk(e.timeZone)) &&
+    (e.recurrence === undefined || (e.end as number) - (e.start as number) <= SERIES_SPAN) &&
     e.recurrence === undefined && e.exdates === undefined && str(e.title) && e.end >= e.start &&
     (e.url === undefined || webUrl(e.url) === e.url) &&
     TEXT.every((k) => e[k] === undefined || str(e[k])) && NUMS.every((k) => e[k] === undefined || num(e[k])) &&
@@ -49,6 +54,8 @@ export function cleanEvent(e: unknown): CalEvent | null {
   const out = { ...e } as Record<string, unknown>;
   out.title = str(out.title) ? out.title : out.title == null ? '' : String(out.title);
   if ((out.end as number) < (out.start as number)) out.end = out.start;
+  if (out.timeZone !== undefined && !zoneOk(out.timeZone)) out.timeZone = undefined;
+  if (out.recurrence !== undefined && (out.end as number) - (out.start as number) > SERIES_SPAN) out.end = (out.start as number) + SERIES_SPAN;
   if (out.url !== undefined) out.url = webUrl(out.url);
   for (const k of TEXT) if (out[k] !== undefined && !str(out[k])) out[k] = undefined;
   for (const k of NUMS) if (out[k] !== undefined && !num(out[k])) out[k] = undefined;
@@ -136,7 +143,8 @@ export function cleanHabit(h: unknown): Habit | null {
   });
 }
 
-const okPin = (p: unknown) => isObj(p) && str(p.id) && str(p.label) && str(p.href);
+// (a pin opens a web address or is copied as a path: never a javascript:/data: link)
+const okPin = (p: unknown) => isObj(p) && str(p.id) && str(p.label) && str(p.href) && !/^\s*(?:javascript|data|vbscript|file):/i.test(p.href);
 const okIdea = (i: unknown) => isObj(i) && str(i.id) && str(i.text) && num(i.at);
 export function cleanProject(p: unknown): Project | null {
   if (!isObj(p) || !str(p.id)) return null;
@@ -189,3 +197,4 @@ export function cleanNested<V>(m: unknown, ok: (v: unknown) => v is V): Record<s
 export const safeKey = (k: string) => k !== '__proto__' && k !== 'constructor' && k !== 'prototype';
 export const isNum = num;
 export const isStr = str;
+export const isZone = zoneOk;

@@ -55,6 +55,19 @@ function updateLocal(events: CalEvent[], id: string, patch: Partial<CalEvent>, s
       // A weekly series on set weekdays moves its weekdays too (Mon + Wed, a day later → Tue + Thu).
       const r = master.recurrence;
       if (patch.recurrence === undefined && r?.freq === 'weekly' && r.byDay?.length && days % 7) mp.recurrence = { ...r, byDay: rotateDays(r.byDay, days) };
+      // Skipped dates and changed occurrences are named by their original start: they move with the series, or a
+      // deleted one would come back at the new time and a changed one would show twice.
+      if (days || minutes) {
+        const shift = (t: number) => {
+          if (master.allDay) return t + days * 86_400_000; // (day keys: UTC midnights)
+          const w = wallClock(t, tz);
+          return instantOf(w.y, w.m, w.d + days, w.h * 60 + w.min + minutes, tz);
+        };
+        if (master.exdates?.length) mp.exdates = master.exdates.map(shift);
+        const moved = events.map((e) => (e.seriesId === masterId && e.originalStart !== undefined ? { ...e, originalStart: shift(e.originalStart) } : e));
+        const next = moved.map((e) => (e.id === masterId ? { ...e, ...mp } : e));
+        return { events: next, id: occurrenceId(masterId, master.allDay ? encodeDay(patch.start ?? occ.start) : patch.start ?? occ.start) };
+      }
     }
     const next = events.map((e) => (e.id === masterId ? { ...e, ...mp } : e));
     const newStart = patch.start ?? occ.start;

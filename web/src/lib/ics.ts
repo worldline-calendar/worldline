@@ -312,11 +312,17 @@ export function parseIcs(text: string, calendarId: string, from: number, to: num
         opts.until = new Date(Date.UTC(c.y, c.m, c.d) + DAY - 1);
       } else opts.until = new Date(untilIsUtc ? floating(toWall(u)) : u + (untilIsDate ? DAY - 1 : 0));
     }
-    const rr = new RRule({ ...opts, dtstart: new Date(floating(start)) });
+    // (a rule the library can't expand — "BYDAY=XX" — costs only this event, never the rest of the feed)
+    let dates: Date[];
+    const a = floating(toWall(from)) - 2 * DAY, b = floating(toWall(to)) + 2 * DAY;
+    try {
+      dates = new RRule({ ...opts, dtstart: new Date(floating(start)) }).between(new Date(a), new Date(b), true, upTo);
+    } catch {
+      continue;
+    }
     const skip = new Set(whens(v.filter((p) => p.name === 'EXDATE'), defaultTz).map(keyOf));
     const extra = whens(v.filter((p) => p.name === 'RDATE'), defaultTz);
-    const a = floating(toWall(from)) - 2 * DAY, b = floating(toWall(to)) + 2 * DAY;
-    const occ: When[] = rr.between(new Date(a), new Date(b), true, upTo).map((d) => ({
+    const occ: When[] = dates.map((d) => ({
       allDay: start.allDay, y: d.getUTCFullYear(), m: d.getUTCMonth(), d: d.getUTCDate(), minutes: d.getUTCHours() * 60 + d.getUTCMinutes(), tz: start.tz,
     }));
     const used = new Set<string>();

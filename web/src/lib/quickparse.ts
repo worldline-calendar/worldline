@@ -264,7 +264,9 @@ const at = (day: Date, minutes: number) => {
   return d;
 };
 
+export const QUICK_MAX = 400; // (a sentence, not a pasted page: longer text is read up to here — fast on any paste)
 export function parseQuick(input: string, calendars: CalendarSource[], now = new Date()): Parsed {
+  if (input.length > QUICK_MAX) input = input.slice(0, QUICK_MAX);
   const [shielded, unshield] = shieldNames(fixDateTypos(input));
   const repeat = takeRepeat(shielded);
   const [afterLead, lead] = takeLead(repeat.text);

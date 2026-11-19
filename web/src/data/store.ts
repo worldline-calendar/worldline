@@ -22,7 +22,7 @@ import { fetchText, canFetchFeeds } from '../lib/platform';
 import { appStorage, dataReplaced, markLoadProblem, onFlush, saveSplit } from './persist';
 import { fmtWhen } from '../lib/format';
 import { STORE_VERSION } from './storeVersion';
-import { cleanCalendar, cleanEvent, cleanHabit, cleanLink, cleanList, cleanLogEntry, cleanNested, cleanProject, cleanTask, cleanThread, isNum, isStr } from './validate';
+import { cleanCalendar, cleanEvent, cleanHabit, cleanLink, cleanList, cleanLogEntry, cleanNested, cleanProject, cleanTask, cleanThread, isNum, isStr, isZone } from './validate';
 import type { UpdateStatus } from '../lib/updates';
 import { rebaseList, rebaseNested } from '../lib/sync/rebase';
 import type { SyncStatus } from '../lib/sync/status';
@@ -405,6 +405,7 @@ export function cleanSaved(persisted: unknown, current: Pick<State, 'view' | 'ho
   ok('page', (x) => ['calendar', 'habits', 'projects'].includes(x as string), current.page);
   ok('hourH', (x) => num(x) && (x as number) >= HOUR_H_RANGE[0] && (x as number) <= HOUR_H_RANGE[1], current.hourH);
   for (const k of ['defaultCalendarId', 'homeZone', 'theme', 'myName'] as const) ok(k, (x) => typeof x === 'string', undefined);
+  ok('homeZone', isZone, undefined);
   for (const k of ['showHomeHours', 'showDeadlines', 'showTasks'] as const) ok(k, (x) => typeof x === 'boolean', undefined);
   for (const k of Object.keys(out)) if (out[k] === undefined) delete out[k];
   return out as Partial<State>;
@@ -1172,6 +1173,7 @@ function cleanSynced<P extends Record<string, unknown>>(p: P): P {
   if ('habitLog' in out) out.habitLog = cleanNested(out.habitLog, isNum);
   if ('habitNotes' in out) out.habitNotes = cleanNested(out.habitNotes, isStr);
   for (const k of ['myName', 'homeZone', 'defaultCalendarId'] as const) if (k in out && out[k] !== undefined && !isStr(out[k])) delete out[k];
+  if ('homeZone' in out && out.homeZone !== undefined && !isZone(out.homeZone)) delete out.homeZone; // (used to place times: must be a real zone)
   for (const k of ['skipped', 'dismissed'] as const) if (k in out && !Array.isArray(out[k])) delete out[k];
   return out as P;
 }

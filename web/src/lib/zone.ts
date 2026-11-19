@@ -16,8 +16,13 @@ export const zoneCity = (tz: string) => tz.split('/').pop()!.replace(/_/g, ' ');
 
 /** Short name at instant t: "EDT", "CET", or "GMT+5:30" when there is no common abbreviation. */
 export function zoneAbbr(tz: string, t = Date.now()) {
-  const part = (locale: string) =>
-    new Intl.DateTimeFormat(locale, { timeZone: tz, timeZoneName: 'short' }).formatToParts(t).find((p) => p.type === 'timeZoneName')?.value ?? '';
+  const part = (locale: string) => {
+    try {
+      return new Intl.DateTimeFormat(locale, { timeZone: tz, timeZoneName: 'short' }).formatToParts(t).find((p) => p.type === 'timeZoneName')?.value ?? '';
+    } catch {
+      return '';
+    }
+  };
   const us = part('en-US');
   if (!us.startsWith('GMT')) return us;
   const gb = part('en-GB'); // Europe: "CET", "BST"
@@ -30,7 +35,10 @@ const clocks = new Map<string, Intl.DateTimeFormat>();
 const clock = (tz: string) => {
   let f = clocks.get(tz);
   if (!f) {
-    f = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' });
+    const opts = { hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' } as const;
+    // (a zone this device doesn't know — from a damaged record or an older/newer zone list — reads as this device's
+    // own: a time a little off is better than a calendar that can't draw)
+    try { f = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: tz }); } catch { f = new Intl.DateTimeFormat('en-US', opts); }
     clocks.set(tz, f);
   }
   return f;
