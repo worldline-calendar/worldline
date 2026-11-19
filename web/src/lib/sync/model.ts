@@ -40,7 +40,17 @@ const ORDERED = new Set<string>(['projects']);
 
 /** Yjs stores JSON: no undefined (a missing field is "not set"). */
 const clean = (v: unknown) => (v === undefined ? undefined : JSON.parse(JSON.stringify(v)));
-const same = (a: unknown, b: unknown) => a === b || JSON.stringify(a) === JSON.stringify(b);
+/** Equal as JSON, whatever order the fields are in (a record that came back through another device can list them
+ *  differently — that's no reason to replace it and redraw). */
+function same(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  if (Array.isArray(a)) return a.length === (b as unknown[]).length && a.every((x, i) => same(x, (b as unknown[])[i]));
+  const ka = Object.keys(a).filter((k) => (a as Record<string, unknown>)[k] !== undefined);
+  const kb = Object.keys(b).filter((k) => (b as Record<string, unknown>)[k] !== undefined);
+  return ka.length === kb.length && ka.every((k) => same((a as Record<string, unknown>)[k], (b as Record<string, unknown>)[k]));
+}
 
 /** Set one value (undefined: remove it), only if it differs — so writing the same thing again sends nothing. */
 function put(y: Y.Map<unknown>, key: string, value: unknown) {
@@ -180,6 +190,8 @@ export function readDoc(doc: Y.Doc, prev: Partial<Synced> = {}): Partial<Synced>
     const before = new Map((prev[c] ?? []).map((r, i) => [r.id, { r, i }]));
     const rows: { rec: Rec; o: number; at: number }[] = [];
     ymap.forEach((y, id) => {
+      // (another device's entry that isn't a record, or an id like `__proto__`: skipped — never stops reading the rest)
+      if (!(y instanceof Y.Map) || !id || !safeKey(id)) return;
       const obj = y.toJSON() as Record<string, unknown>;
       const o = typeof obj[ORDER] === 'number' ? (obj[ORDER] as number) : Infinity;
       delete obj[ORDER];

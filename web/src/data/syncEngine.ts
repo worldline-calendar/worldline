@@ -184,7 +184,14 @@ export function startEngine(cfg: SyncConfig, transport: Transport, mode: 'resume
     clearTimeout(applyTimer);
     applyTimer = undefined;
     if (stopped || paused || docIsEmpty(doc)) return; // (joining: nothing of the group's has arrived yet)
-    const got = readDoc(doc, prev);
+    let got: ReturnType<typeof readDoc>;
+    try {
+      got = readDoc(doc, prev);
+    } catch (e) {
+      // (whatever another device sent, reading it must never throw here, on a timer, forever after)
+      console.error('Sync: could not read a change from another device:', e);
+      return;
+    }
     if (Array.isArray(got.calendars) && got.calendars.length === 0) delete got.calendars; // never leave a device with no calendar
     const now = st() as unknown as Record<string, unknown>;
     const patch: Record<string, unknown> = {};

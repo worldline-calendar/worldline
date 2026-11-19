@@ -181,6 +181,7 @@ export class SnapshotAssembler {
     if (cur.pieces.some((x) => !x)) return null;
     this.parts.delete(key);
     this.done.add(key);
+    if (this.done.size > 500) this.done.delete(this.done.values().next().value!); // (the oldest go: a long session stays small)
     const all = new Uint8Array(cur.pieces.reduce((s, x) => s + x!.length, 0));
     let o = 0;
     for (const x of cur.pieces) {
