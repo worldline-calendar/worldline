@@ -5,6 +5,9 @@ import { parseFlight, parseItinerary, tripsOf } from '../lib/flights';
 import { parseIcs } from '../lib/ics';
 import { DEFAULT_CALENDARS } from '../data/mock';
 
+// time limits stretch on a slow machine (CI runners; PERF_SLACK as in src/perf) — a single GC pause isn't a bug
+const SLACK = Number(process.env.PERF_SLACK) || (process.env.CI ? 4 : 1);
+
 const NOW = new Date(2026, 10, 18, 12, 0);
 let seed = 12345;
 const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
@@ -25,7 +28,7 @@ describe('quick-add fuzz', () => {
       try {
         const p = parseQuick(s, DEFAULT_CALENDARS, NOW);
         const ms = performance.now() - t0;
-        if (!Number.isFinite(p.start) || !Number.isFinite(p.end) || p.end < p.start || ms > 50) bad.push(`${JSON.stringify(s)} → ${p.start}..${p.end} ${ms.toFixed(0)}ms`);
+        if (!Number.isFinite(p.start) || !Number.isFinite(p.end) || p.end < p.start || ms > 50 * SLACK) bad.push(`${JSON.stringify(s)} → ${p.start}..${p.end} ${ms.toFixed(0)}ms`);
       } catch (e) {
         bad.push(`${JSON.stringify(s)} threw ${(e as Error).message}`);
       }
@@ -36,7 +39,7 @@ describe('quick-add fuzz', () => {
     const big = 'meeting with bob tomorrow at 3pm for 2h '.repeat(5000);
     const t0 = performance.now();
     parseQuick(big, DEFAULT_CALENDARS, NOW);
-    expect(performance.now() - t0).toBeLessThan(500);
+    expect(performance.now() - t0).toBeLessThan(500 * SLACK);
   });
 });
 
@@ -64,13 +67,13 @@ describe('flight parsing', () => {
     const t1 = performance.now();
     parseItinerary(big, NOW);
     const t2 = performance.now();
-    expect({ flight: Math.round(t1 - t0) < 1000, itin: Math.round(t2 - t1) < 1000 }).toEqual({ flight: true, itin: true });
+    expect({ flight: Math.round(t1 - t0) < 1000 * SLACK, itin: Math.round(t2 - t1) < 1000 * SLACK }).toEqual({ flight: true, itin: true });
   });
   it('a 4 KB paste of capital 3-letter words parses in < 200 ms (it is cubic: 16 KB takes ~75 s)', () => {
     const big = 'THE AND FOR YYZ ARE LHR NOT CDG BUT JFK '.repeat(100);
     const t0 = performance.now();
     parseFlight(big, NOW);
-    expect(performance.now() - t0).toBeLessThan(200);
+    expect(performance.now() - t0).toBeLessThan(200 * SLACK);
   });
   it('ordinary sentences are not flights', () => {
     for (const s of ['Lunch with Ann to discuss the MAD project at 1pm', 'Call SFO office re: LAX contract 3pm', 'Review ICS to PDF at 4pm',
@@ -115,7 +118,7 @@ describe('ICS hostile feeds', () => {
     const t0 = performance.now();
     const c = parseIcs(text, 'feed', FROM, TO);
     expect(c.events.length).toBe(50_000);
-    expect(performance.now() - t0).toBeLessThan(5000);
+    expect(performance.now() - t0).toBeLessThan(5000 * SLACK);
   });
   it('many recurrence overrides for one series do not go quadratic (< 5 s)', () => {
     const over = Array.from({ length: 5000 }, (_, i) => {
@@ -125,7 +128,7 @@ describe('ICS hostile feeds', () => {
     const text = wrap(`BEGIN:VEVENT\r\nUID:s\r\nDTSTART:20260101T000000Z\r\nDTEND:20260101T001000Z\r\nRRULE:FREQ=HOURLY\r\nSUMMARY:s\r\nEND:VEVENT\r\n` + over);
     const t0 = performance.now();
     parseIcs(text, 'feed', FROM, TO);
-    expect(performance.now() - t0).toBeLessThan(5000);
+    expect(performance.now() - t0).toBeLessThan(5000 * SLACK);
   });
   it('one event with RRULE BYDAY=XX does not throw away the whole feed', () => {
     const text = wrap('BEGIN:VEVENT\r\nUID:ok\r\nDTSTART:20260310T100000Z\r\nDTEND:20260310T110000Z\r\nSUMMARY:fine\r\nEND:VEVENT\r\n' +

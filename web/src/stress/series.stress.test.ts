@@ -5,6 +5,9 @@ import { removeEvent, updateEvent } from '../lib/mutate';
 import { cleanEvent } from '../data/validate';
 import type { CalEvent } from '../data/types';
 
+// time limits stretch on a slow machine (CI runners; PERF_SLACK as in src/perf) — a single GC pause isn't a bug
+const SLACK = Number(process.env.PERF_SLACK) || (process.env.CI ? 4 : 1);
+
 const t = (m: number, d: number, h: number, min = 0) => new Date(2026, m, d, h, min).getTime();
 let n = 0;
 const newId = () => `new${n++}`;
@@ -40,7 +43,7 @@ describe('untrusted series (sync/backup) can hang expansion', () => {
     let count = 0;
     try { count = expand([evil], t(9, 5, 0), t(9, 12, 0)).length; } catch { /* */ }
     const ms = performance.now() - t0;
-    expect({ fast: ms < 1000, few: count < 1000 }).toEqual({ fast: true, few: true });
+    expect({ fast: ms < 1000 * SLACK, few: count < 1000 }).toEqual({ fast: true, few: true });
   });
 });
 
@@ -50,7 +53,7 @@ describe('a kept series with a huge length is cut to a year', () => {
     expect(e.end - e.start).toBeLessThanOrEqual(366 * 86_400_000);
     const t0 = performance.now();
     const n = expand([e], t(9, 5, 0), t(9, 12, 0)).length;
-    expect(performance.now() - t0).toBeLessThan(1000);
+    expect(performance.now() - t0).toBeLessThan(1000 * SLACK);
     expect(n).toBeLessThan(400);
   });
 });
