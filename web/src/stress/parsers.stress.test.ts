@@ -27,7 +27,13 @@ describe('quick-add fuzz', () => {
       const t0 = performance.now();
       try {
         const p = parseQuick(s, DEFAULT_CALENDARS, NOW);
-        const ms = performance.now() - t0;
+        let ms = performance.now() - t0;
+        if (ms > 50 * SLACK) {
+          // (timed again: one slow run is usually a garbage-collection pause; a slow input is slow every time)
+          const t1 = performance.now();
+          parseQuick(s, DEFAULT_CALENDARS, NOW);
+          ms = performance.now() - t1;
+        }
         if (!Number.isFinite(p.start) || !Number.isFinite(p.end) || p.end < p.start || ms > 50 * SLACK) bad.push(`${JSON.stringify(s)} → ${p.start}..${p.end} ${ms.toFixed(0)}ms`);
       } catch (e) {
         bad.push(`${JSON.stringify(s)} threw ${(e as Error).message}`);

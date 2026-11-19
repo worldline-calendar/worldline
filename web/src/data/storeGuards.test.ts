@@ -98,6 +98,7 @@ describe('saving', () => {
     const id = st().createEvent({ calendarId: 'personal', title: 'A', start: t(9), end: t(10), allDay: false });
     for (let i = 0; i < 30; i++) st().updateEvent(id, { title: `A${i}` }, true);
     await new Promise((r) => setTimeout(r, 400));
+    await persist.flush(); // (whatever's still pending: a slow machine may not have written yet — it's still one save)
     expect(writes).toBe(1);
   });
 });
