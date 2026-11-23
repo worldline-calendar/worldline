@@ -25,7 +25,7 @@ const DATE_WORDS = [
   'morning', 'afternoon', 'evening', 'midnight', 'weekend',
 ];
 // Real words that sit one typo away from a date word.
-const KEEP = new Set(['sundae', 'mourning', 'mondale', 'augusta', 'eventing']);
+const KEEP = new Set(['sundae', 'mourning', 'mondale', 'augusta', 'eventing', 'remember', 'remembers', 'member', 'members', 'dismember', 'november']);
 
 /** Is `a` what you get from `b` by dropping letters? ("tursday" from "thursday") */
 const isSubsequence = (a: string, b: string) => {

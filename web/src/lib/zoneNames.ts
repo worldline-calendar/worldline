@@ -40,3 +40,22 @@ export function zoneByName(name: string): string | undefined {
   names ??= build();
   return names.get(name.trim().toLowerCase().replace(/\s+/g, ' '));
 }
+
+/** Zone abbreviations people write after a time ("3pm PST", "13:00 CEST"): the zone whose clock they mean. */
+export const ZONE_ABBR: Record<string, string> = {
+  PST: 'America/Los_Angeles', PDT: 'America/Los_Angeles', PT: 'America/Los_Angeles',
+  MST: 'America/Denver', MDT: 'America/Denver', MT: 'America/Denver',
+  CST: 'America/Chicago', CDT: 'America/Chicago', CT: 'America/Chicago',
+  EST: 'America/New_York', EDT: 'America/New_York', ET: 'America/New_York',
+  AST: 'America/Halifax', ADT: 'America/Halifax', NST: 'America/St_Johns', NDT: 'America/St_Johns',
+  AKST: 'America/Anchorage', AKDT: 'America/Anchorage', HST: 'Pacific/Honolulu',
+  UTC: 'UTC', GMT: 'UTC', Z: 'UTC', BST: 'Europe/London', WET: 'Europe/Lisbon', WEST: 'Europe/Lisbon',
+  CET: 'Europe/Paris', CEST: 'Europe/Paris', EET: 'Europe/Athens', EEST: 'Europe/Athens', MSK: 'Europe/Moscow',
+  IST: 'Asia/Kolkata', PKT: 'Asia/Karachi', SGT: 'Asia/Singapore', HKT: 'Asia/Hong_Kong', CST8: 'Asia/Shanghai',
+  JST: 'Asia/Tokyo', KST: 'Asia/Seoul', AWST: 'Australia/Perth', ACST: 'Australia/Adelaide', ACDT: 'Australia/Adelaide',
+  AEST: 'Australia/Sydney', AEDT: 'Australia/Sydney', NZST: 'Pacific/Auckland', NZDT: 'Pacific/Auckland',
+};
+/** Region words that name a North American zone right after a time ("11am pacific", "2 eastern"). */
+export const ZONE_WORDS: Record<string, string> = {
+  pacific: 'America/Los_Angeles', mountain: 'America/Denver', central: 'America/Chicago', eastern: 'America/New_York', atlantic: 'America/Halifax',
+};

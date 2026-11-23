@@ -92,7 +92,7 @@ const CASES: [string, Expect][] = [
   ['submit abstract eod friday', { title: 'Submit abstract', start: '2026-10-09 17:00' }],
 
   // dates
-  ['rent due the 15th', { title: 'Rent due', start: '2026-10-15 17:00', end: '17:00' }],
+  ['rent due the 15th', { title: 'Rent', start: '2026-10-15 17:00', end: '17:00' }],
   ['haircut on the 3rd', { title: 'Haircut', start: '2026-11-03' }],
   ['flight dec 3rd 9am', { title: 'Flight', start: '2026-12-03 09:00' }],
   ['committee meeting thursday after next at 2', { title: 'Committee meeting', start: '2026-10-15 14:00' }],
@@ -123,7 +123,7 @@ const CASES: [string, Expect][] = [
   ['yoga @ the studio tomorrow 7am', { title: 'Yoga', start: '2026-10-08 07:00', loc: 'the studio' }],
   ['work from home friday', { title: 'Work from home', start: '2026-10-09' }],
   ['Dinner at 7pm at Pai', { title: 'Dinner', start: '2026-10-08 19:00', loc: 'Pai' }],
-  ['study session at the library tomorrow 2pm', { title: 'Study session at the library', start: '2026-10-08 14:00' }],
+  ['study session at the library tomorrow 2pm', { title: 'Study session', start: '2026-10-08 14:00', loc: 'the library' }],
 ];
 
 function describeResult(r: ReturnType<typeof parseQuick>) {
@@ -191,7 +191,7 @@ describe('parseQuick — deadlines', () => {
   const f = (t: number) => format(t, 'EEE MMM d HH:mm');
   it.each([
     ['NSERC proposal due nov 18', 'NSERC proposal', 'Wed Nov 18 17:00', 14],
-    ['abstract due fri 3pm', 'Abstract due', 'Fri Oct 9 15:00', 14],
+    ['abstract due fri 3pm', 'Abstract', 'Fri Oct 9 15:00', 14],
     ['Deadline for AAS abstract oct 30', 'AAS abstract', 'Fri Oct 30 17:00', 14],
     ['finish slides by thursday', 'Finish slides', 'Thu Oct 8 17:00', 14],
     ['thesis ch 4 due in 2 weeks, needs 10 days', 'Thesis ch 4', 'Wed Oct 21 17:00', 10],

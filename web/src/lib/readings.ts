@@ -13,6 +13,7 @@ export interface Reading {
   id: string;
   label: string; // what this one means, shortly: "Thursdays 8–10 PM"
   parsed: Parsed;
+  kind?: 'event' | 'task' | 'deadline'; // (another kind of thing altogether: "as a task", "as a deadline")
 }
 
 const MIN = 60_000;

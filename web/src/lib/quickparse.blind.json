@@ -563,9 +563,10 @@
   },
   {
     "input": "Flu shot at the pharmacy tomorrow",
-    "title": "Flu shot at the pharmacy",
+    "title": "Flu shot",
     "start": "2026-10-08",
-    "end": "2026-10-08"
+    "end": "2026-10-08",
+    "loc": "the pharmacy"
   },
   {
     "input": "Submit jobs on cluster tomorrow morning",
