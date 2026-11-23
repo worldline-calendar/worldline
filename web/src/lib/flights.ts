@@ -63,7 +63,8 @@ export function parseFlight(text: string, now = new Date()): FlightPlan | null {
       const between = text.slice(a.end, b.start);
       const joined = SEP.test(between) || SEP.test(between.replace(TIME, ' ').replace(/\s+/g, ' '));
       const caps = a.text === a.text.toUpperCase() && b.text === b.text.toUpperCase();
-      if (joined || (caps && /flight|✈|→|->/i.test(text)) || (caps && FLIGHT_NO.test(text.replace(a.text, '').replace(b.text, '')))) pair = [a, b];
+      const bracketed = text[a.start - 1] === '(' && text[a.end] === ')' && text[b.start - 1] === '(' && text[b.end] === ')'; // "Toronto (YYZ) … Phoenix (PHX)"
+      if (joined || (caps && bracketed) || (caps && /flight|✈|→|->/i.test(text)) || (caps && FLIGHT_NO.test(text.replace(a.text, '').replace(b.text, '')))) pair = [a, b];
     }
   if (!pair) return null;
   const from = airport(pair[0].text)!, to = airport(pair[1].text)!;
@@ -87,8 +88,10 @@ export function parseFlight(text: string, now = new Date()): FlightPlan | null {
   if (noMatch) left = left.replace(noMatch[0], ' ');
   const plusDays = Number(/\+\s?(\d)\b/.exec(left)?.[1] ?? 0);
   left = left.replace(/\+\s?\d\b/, ' ').replace(/\b(?:flight|fly|flying)\b|✈|→|->|–|—|›|»|\bto\b|-/gi, ' ');
-  const p = parseQuick(left, [], now);
-  const day = p.hasDay ? new Date(p.start) : now;
+  // (a written date first — "Tue 13 Jan 2027", "December 3, 2026" — then words like "next friday")
+  const written = dateIn(left, now);
+  const p = written ? null : parseQuick(left, [], now);
+  const day = written ? new Date(written[0], written[1], written[2]) : p!.hasDay ? new Date(p!.start) : now;
   const y = day.getFullYear(), m = day.getMonth(), d = day.getDate();
 
   const start = instantOf(y, m, d, minutesOf(dep.text), from.zone);

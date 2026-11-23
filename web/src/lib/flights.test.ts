@@ -95,3 +95,12 @@ describe('a pasted confirmation email', () => {
     expect(fs[1].flight.toZone).toBe('Europe/Athens');
   });
 });
+
+describe('a flight line copied from an email', () => {
+  it('keeps its written date (no arrow between the airports)', () => {
+    const f = parseFlight('Tue 13 Jan 2027 Toronto (YYZ) 07:45 - Phoenix (PHX) 10:32', NOW)!;
+    expect(f).not.toBeNull();
+    expect(f.start).toBe(at('2027-01-13T12:45:00Z')); // 7:45 EST
+    expect(f.end).toBe(at('2027-01-13T17:32:00Z')); // 10:32 MST
+  });
+});

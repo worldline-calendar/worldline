@@ -16,6 +16,8 @@ import type { CalendarSource, Recurrence } from '../data/types';
 import { MIN, dayIndex } from './dates';
 import { fixDateTypos } from './fuzzy';
 import { prefs } from './prefs';
+import { zoneByName } from './zoneNames';
+import { instantOf } from './zone';
 
 export interface Parsed {
   title: string;
@@ -33,6 +35,7 @@ export interface Parsed {
   recurrence?: Recurrence; // "every friday", "weekly", "every other tue and thu until dec 15"
   repeatDays?: number[]; // weekdays actually named in a repeat phrase ("on Fridays")
   deadline?: { leadDays: number }; // "due", "deadline", "by friday", "needs 3 weeks"
+  timeZone?: string; // "9am Tokyo time": the times are on this zone's clock (a series repeats on it)
 }
 
 // ---- deadlines ---------------------------------------------------------------------------
@@ -89,6 +92,20 @@ function takeRepeat(input: string): RepeatInfo {
     t = t.replace(re, (...m) => (fn(...(m as string[])), ' '));
   };
 
+  // "repeating / recurring" say only that it repeats (how is said elsewhere, or it's weekly)
+  let wantsRepeat = false;
+  take(/\b(?:repeating|repeats?|recurring|recurrent)\b/i, () => (wantsRepeat = true));
+  // "first Monday of the month", "every last friday", "the 2nd tuesday of each month", "third thursday monthly"
+  t = t.replace(
+    new RegExp(`\\b(?:(?:every|each|on)\\s+(?:the\\s+)?|the\\s+)?(first|1st|second|2nd|third|3rd|fourth|4th|last)\\s+(${WD})s?(\\s+of\\s+(?:every|each|the|a)\\s+month|\\s+(?:of\\s+)?(?:every|each)\\s+month|\\s+monthly|\\s+a\\s+month)?\\b`, 'i'),
+    (whole: string, n: string, wd: string, monthWords?: string) => {
+      if (!monthWords && !/^\s*(every|each)/i.test(whole) && !wantsRepeat) return whole; // ("the first monday" alone: a date)
+      const nth = /last/i.test(n) ? -1 : /^(first|1)/i.test(n) ? 1 : /^(second|2)/i.test(n) ? 2 : /^(third|3)/i.test(n) ? 3 : 4;
+      rule = { freq: 'monthly', interval: 1, byDay: [wdOf(wd)!], nth };
+      byDayGiven = true;
+      return ' ';
+    },
+  );
   take(/\b(?:every|each|on)\s+weekdays?\b|\bweekdays\b/i, () => set('weekly', 1, [1, 2, 3, 4, 5]));
   if (!rule)
     take(new RegExp(`\\b(?:every|each)\\s+(other\\s+|second\\s+|2nd\\s+)?(${WD_LIST})\\b`, 'i'), (_, other, list) =>
@@ -115,6 +132,18 @@ function takeRepeat(input: string): RepeatInfo {
       set('weekly', interval, days(m[1].replace(/s\b/gi, '')));
     }
   }
+  // Timetable shorthand: "MWF", "TR", "TTh", "MTWRF" — and a list of weekdays with no "every": "mon wed fri", "tues/thurs"
+  if (!rule)
+    take(/(?<![\w'])(mtwrf|mtwthf|mwf|mw|tth|tuth|tr|wf)(?![\w'])/i, (_, code) => {
+      const c = code.toLowerCase().replace('th', 'r').replace('tu', 't');
+      const map: Record<string, number> = { m: 1, t: 2, w: 3, r: 4, f: 5 };
+      set('weekly', 1, [...new Set([...c].map((ch) => map[ch]))].sort());
+    });
+  if (!rule)
+    take(new RegExp(`\\b(?:on\\s+)?(${WD}s?(?:\\s*(?:,|/|&|\\+|and|\\s)\\s*${WD}s?)+)\\b`, 'i'), (_, list) =>
+      set('weekly', 1, [...new Set(list.split(/\s*(?:,|\/|&|\+|\band\b|\s)\s*/).map((w: string) => wdOf(w.trim())).filter((d: number | undefined): d is number => d !== undefined))].sort()),
+    );
+  if (!rule && wantsRepeat) set('weekly');
   if (!rule) return { text: input, byDayGiven: false };
 
   let untilText: string | undefined;
@@ -258,6 +287,25 @@ function takeDuration(t: string): [string, number | undefined] {
 const isSpecific = (r: chrono.ParsedResult) =>
   r.start.isCertain('hour') || r.start.isCertain('day') || r.start.isCertain('weekday');
 
+const DEFAULT_BLOCK_START = 9 * 60; // a block with a length but no time starts at 9 AM
+
+/** "9am Tokyo time", "at 4 in Taipei time", "10am New York time": the zone, taken out of the text (an unknown place
+ *  is left alone). */
+function takeZone(t: string): [string, string | undefined] {
+  const m = /\b(?:in\s+)?((?:[A-Za-z][\w.'-]*\s+){0,2}[A-Za-z][\w.'-]*)\s+time\b/i.exec(t);
+  if (!m) return [t, undefined];
+  const words = m[1].split(/\s+/);
+  for (let k = Math.min(3, words.length); k >= 1; k--) {
+    const name = words.slice(-k).join(' ');
+    const zone = zoneByName(name);
+    if (zone) {
+      const phrase = new RegExp(`\\b(?:in\\s+)?${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s+time\\b`, 'i');
+      return [t.replace(phrase, ' '), zone];
+    }
+  }
+  return [t, undefined];
+}
+
 const at = (day: Date, minutes: number) => {
   const d = startOfDay(day);
   d.setMinutes(minutes);
@@ -269,7 +317,8 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
   if (input.length > QUICK_MAX) input = input.slice(0, QUICK_MAX);
   const [shielded, unshield] = shieldNames(fixDateTypos(input));
   const repeat = takeRepeat(shielded);
-  const [afterLead, lead] = takeLead(repeat.text);
+  const [afterLeadRaw, lead] = takeLead(repeat.text);
+  const [afterLead, zone] = takeZone(afterLeadRaw);
   let isDeadline = lead !== undefined || /\b(due|deadline)\b/i.test(afterLead);
   let text = normalize(afterLead, now);
 
@@ -328,7 +377,9 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
   } else if (dateRes || meal) {
     const day = dateRes ? dateRes.start.date() : now;
     const part = PART_OF_DAY.find(([re]) => re.test(context));
-    const minutes = part?.[1] ?? meal?.[1];
+    const minutesFromWords = part?.[1] ?? meal?.[1];
+    // a length but no time ("write 2h friday"): a block in the morning, not a whole day
+    const minutes = minutesFromWords ?? (durMin !== undefined && !forceAllDay ? DEFAULT_BLOCK_START : undefined);
     if (minutes !== undefined && !forceAllDay) {
       timeFromWords = true;
       start = at(day, minutes);
@@ -357,6 +408,13 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
   let recurrence: Recurrence | undefined;
   if (repeat.rule) {
     recurrence = { ...repeat.rule };
+    if (!timeRes && !timeFromWords && durMin !== undefined && !forceAllDay) {
+      // "read papers 30 min every day": a block at the usual time, not an all-day event
+      allDay = false;
+      start = at(start, DEFAULT_BLOCK_START);
+      end = new Date(start.getTime() + durMin * MIN);
+      timeFromWords = true;
+    }
     const timed = !!timeRes || timeFromWords;
     if (!timed && !forceAllDay && !allDay) {
       // "gym every monday" with no time → all-day on those days
@@ -364,7 +422,20 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
       start = startOfDay(start);
       end = addDays(start, 1);
     }
-    if (recurrence.byDay && recurrence.byDay.length) {
+    if (recurrence.nth && recurrence.byDay?.length === 1) {
+      // "first Monday of the month": the first such day from the given date (or from today)
+      const len = end.getTime() - start.getTime();
+      let d = dateRes ? new Date(start) : at(now, timed ? start.getHours() * 60 + start.getMinutes() : 0);
+      if (allDay) d = startOfDay(d);
+      const isNth = (x: Date) => {
+        if (x.getDay() !== recurrence!.byDay![0]) return false;
+        const dim = new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate();
+        return recurrence!.nth! > 0 ? Math.ceil(x.getDate() / 7) === recurrence!.nth : x.getDate() + 7 > dim;
+      };
+      for (let k = 0; k < 400 && (!isNth(d) || (!dateRes && timed && d < now)); k++) d = addDays(d, 1);
+      start = d;
+      end = new Date(d.getTime() + len);
+    } else if (recurrence.byDay && recurrence.byDay.length) {
       // First occurrence: the first matching weekday from the given date (or from today).
       const len = end.getTime() - start.getTime();
       let d = dateRes ? new Date(start) : at(now, timed ? start.getHours() * 60 + start.getMinutes() : 0);
@@ -398,6 +469,8 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
             r.freq === 'daily' ? diffDays % r.interval === 0
             : r.freq === 'weekly'
               ? r.byDay!.includes(d.getDay()) && (Math.floor(dayIndex(d) / 7) - Math.floor(dayIndex(start) / 7)) % r.interval === 0
+            : r.freq === 'monthly' && r.nth
+              ? d.getDay() === r.byDay![0] && (r.nth > 0 ? Math.ceil(d.getDate() / 7) === r.nth : d.getDate() + 7 > new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate())
             : r.freq === 'monthly'
               ? d.getDate() === start.getDate() && ((d.getFullYear() - start.getFullYear()) * 12 + d.getMonth() - start.getMonth()) % r.interval === 0
             : d.getDate() === start.getDate() && d.getMonth() === start.getMonth() && (d.getFullYear() - start.getFullYear()) % r.interval === 0;
@@ -455,8 +528,19 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
   }
   title = title.charAt(0).toUpperCase() + title.slice(1);
 
+  // "9am Tokyo time": the clock time is Tokyo's — the same wall time there, as an instant here
+  let timeZone: string | undefined;
+  if (zone && !allDay && (timeRes || timeFromWords)) {
+    const shifted = instantOf(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours() * 60 + start.getMinutes(), zone);
+    const delta = shifted - start.getTime();
+    start = new Date(shifted);
+    end = new Date(end.getTime() + delta);
+    timeZone = zone;
+  }
+
   return {
     title,
+    timeZone,
     start: start.getTime(),
     end: end.getTime(),
     allDay,

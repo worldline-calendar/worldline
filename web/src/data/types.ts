@@ -61,6 +61,7 @@ export interface Recurrence {
   interval: number; // every N days/weeks/months/years
   byDay?: number[]; // weekly: weekdays (0 = Sunday … 6 = Saturday)
   until?: number; // last possible start (inclusive); an all-day series: the last date (a day key — lib/recurrence.ts)
+  nth?: number; // monthly on a weekday: which one (1–4; -1 = the last) — "first Monday of the month"; byDay holds the day
 }
 
 export interface Range {

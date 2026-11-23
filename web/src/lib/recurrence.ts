@@ -75,7 +75,13 @@ function occursOn(r: Recurrence, b: ReturnType<typeof basis>, e: number) {
     }
     case 'monthly': {
       const x = fromEpochDay(e);
-      return x.d === b.first.d && ((x.y - b.first.y) * 12 + x.m - b.first.m) % r.interval === 0;
+      if (((x.y - b.first.y) * 12 + x.m - b.first.m) % r.interval !== 0) return false;
+      if (r.nth && r.byDay?.length === 1) {
+        // the nth (or last) such weekday of the month
+        if (weekdayOf(e) !== r.byDay[0]) return false;
+        return r.nth > 0 ? Math.ceil(x.d / 7) === r.nth : x.d + 7 > new Date(Date.UTC(x.y, x.m + 1, 0)).getUTCDate();
+      }
+      return x.d === b.first.d;
     }
     case 'yearly': {
       const x = fromEpochDay(e);
@@ -204,6 +210,7 @@ export function resolveEvent(events: CalEvent[], id: string | null): CalEvent | 
 /** The weekday a series repeats on, in its own zone (for weekly rules). */
 export const seriesWeekday = (master: CalEvent) => weekdayOf(basis(master).m0);
 
+const NTH_WORD: Record<number, string> = { 1: 'first', 2: 'second', 3: 'third', 4: 'fourth', [-1]: 'last' };
 const WEEKDAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const listDays = (days: number[]) => {
   const sorted = [...days].sort((x, y) => ((x + 6) % 7) - ((y + 6) % 7)); // Monday first
@@ -223,7 +230,7 @@ export function describeRecurrence(r: Recurrence, start: number) {
     const list = listDays(days);
     s = list === 'weekdays' && n === 1 ? 'Every weekday' : `${every} on ${list}`;
   }
-  if (r.freq === 'monthly') s += ` on the ${format(start, 'do')}`;
+  if (r.freq === 'monthly') s += r.nth && r.byDay?.length === 1 ? ` on the ${NTH_WORD[r.nth] ?? `${r.nth}th`} ${WEEKDAY[r.byDay[0]]}` : ` on the ${format(start, 'do')}`;
   if (r.freq === 'yearly') s += ` on ${format(start, 'MMM d')}`;
   if (r.until !== undefined) s += ` · until ${format(untilInstant(r)!, 'MMM d')}`;
   return s;

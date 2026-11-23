@@ -23,7 +23,13 @@ import { canUpdate, checkForUpdate } from './lib/updates';
 import { isApp } from './lib/platform';
 
 // The Projects tab brings a document editor with it: load it the first time it's opened.
-const ProjectsPage = lazy(() => import('./components/Projects').then((m) => ({ default: m.ProjectsPage })));
+const loadProjects = () => import('./components/Projects');
+const ProjectsPage = lazy(() => loadProjects().then((m) => ({ default: m.ProjectsPage })));
+// (fetched once the app is idle, so the first tap on Projects never opens a blank page while it loads)
+if (typeof window !== 'undefined') {
+  const idle = (window as Window & { requestIdleCallback?: (f: () => void) => void }).requestIdleCallback ?? ((f: () => void) => setTimeout(f, 2000));
+  idle(() => void loadProjects().catch(() => undefined));
+}
 
 const inField = (t: EventTarget | null) => !!(t as HTMLElement | null)?.closest?.('input, textarea, select, [contenteditable]');
 

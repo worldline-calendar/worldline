@@ -6,7 +6,8 @@ import { useMemo, useState, type CSSProperties } from 'react';
 import { format, isSameDay, isSameYear } from 'date-fns';
 import { newEventCalendarId, useStore } from '../data/store';
 import type { CalEvent } from '../data/types';
-import { QUICK_MAX, parseQuick } from '../lib/quickparse';
+import { QUICK_MAX, parseQuick, type Parsed } from '../lib/quickparse';
+import { readings } from '../lib/readings';
 import { FLIGHT_COLOR, flightLength, flightTimes, parseFlight, parseItinerary } from '../lib/flights';
 import { parseCommand, type Change, type Command } from '../lib/commands';
 import { suggest, type SuggestionKind } from '../lib/suggest';
@@ -140,6 +141,11 @@ export function QuickAdd() {
   const n = cmd?.matches.length ?? 0;
   const targets: CalEvent[] = !cmd || !n ? [] : cmd.all ? cmd.matches : [cmd.matches[matchIdx % n]];
   const habitMode = !!habitPlan && !habitOff && !(cmd && n > 0); // a command that finds something still wins
+  // Other ways to read it (lib/readings.ts), a tap each: "all day" or an evening slot, 7 PM or 7 AM, next or this Friday
+  const alts = useMemo(
+    () => (typing && kind === 'event' && !flightPlan && itinerary.length < 2 && !(cmd && n > 0) && !habitMode && text.length <= QUICK_MAX ? readings(stripTaskPrefix(text), calendars) : []),
+    [typing, kind, flightPlan, itinerary.length, cmd, n, habitMode, text, calendars],
+  );
   const habitNow = useMemo(() => {
     if (!habitPlan) return null;
     const h = habitPlan.habit;
@@ -168,7 +174,9 @@ export function QuickAdd() {
 
   const cycleKind = () => setKindOverride(KINDS[(KINDS.findIndex((k) => k.id === kind) + 1) % KINDS.length].id);
 
-  const create = () => {
+  const parsedNow = parsed;
+  const create = (alt?: Parsed) => {
+    const parsed = alt ?? parsedNow;
     if (!parsed) return;
     if (kind === 'task') {
       const t = taskFromParsed(parsed);
@@ -192,6 +200,7 @@ export function QuickAdd() {
       calendarId: deadline ? '' : cal.id, // deadlines don't belong to a calendar
       title, start, end, allDay, location,
       ...(recurrence ? { recurrence } : {}),
+      ...(parsed.timeZone && !deadline ? { timeZone: parsed.timeZone } : {}),
       ...(deadline ? { kind: 'deadline' as const, leadDays: deadline.leadDays } : {}),
     });
     close();
@@ -558,6 +567,16 @@ export function QuickAdd() {
             )}
           </div>
         ) : null}
+        {parsed && alts.length > 0 && !flightPlan && itinerary.length < 2 && !(cmd && n > 0) && !habitMode && (
+          <div className="qa-alts" role="group" aria-label="Or did you mean">
+            <span className="qa-alts-or">Or</span>
+            {alts.map((a) => (
+              <button key={a.id} className="qa-alt" onClick={() => create(a.parsed)} title="Add it this way">
+                {a.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {suggestionList ??
           (!typing && (

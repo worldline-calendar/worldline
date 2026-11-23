@@ -47,6 +47,8 @@ pub struct EkRule {
   interval: i64,
   by_day: Vec<i64>, // 0 = Sunday … 6 = Saturday
   until: Option<f64>,
+  #[serde(default)]
+  nth: Option<i64>, // monthly on the nth (1–4, -1 last) of its one weekday: "first Monday of the month"
 }
 
 #[derive(Deserialize)]
@@ -213,7 +215,16 @@ fn rule(r: &EkRule) -> Retained<EKRecurrenceRule> {
     };
     let end = r.until.map(|u| EKRecurrenceEnd::recurrenceEndWithEndDate(&date(u)));
     // (weekdays 0–6 only: anything else from synced data is dropped, never handed to EventKit)
-    let days: Vec<Retained<EKRecurrenceDayOfWeek>> = r.by_day.iter().filter(|d| (0..7).contains(*d)).map(|d| EKRecurrenceDayOfWeek::dayOfWeek(EKWeekday((d + 1) as isize))).collect();
+    let nth = r.nth.filter(|n| matches!(n, 1..=4 | -1) && r.freq == "monthly" && r.by_day.len() == 1);
+    let days: Vec<Retained<EKRecurrenceDayOfWeek>> = r
+      .by_day
+      .iter()
+      .filter(|d| (0..7).contains(*d))
+      .map(|d| match nth {
+        Some(n) => EKRecurrenceDayOfWeek::dayOfWeek_weekNumber(EKWeekday((d + 1) as isize), n as isize),
+        None => EKRecurrenceDayOfWeek::dayOfWeek(EKWeekday((d + 1) as isize)),
+      })
+      .collect();
     let alloc = EKRecurrenceRule::alloc();
     if days.is_empty() {
       EKRecurrenceRule::initRecurrenceWithFrequency_interval_end(alloc, freq, r.interval.max(1) as _, end.as_deref())
@@ -313,9 +324,9 @@ mod tests {
     assert!(check(&ev(f64::INFINITY, 1.7e12)).is_err());
     assert!(check(&ev(1e16, 1e16)).is_err());
     let mut r = ev(1.7e12, 1.7e12 + 1.0);
-    r.rule = Some(EkRule { freq: "weekly".into(), interval: 0, by_day: vec![9], until: None });
+    r.rule = Some(EkRule { freq: "weekly".into(), interval: 0, by_day: vec![9], until: None, nth: None });
     assert!(check(&r).is_err());
-    r.rule = Some(EkRule { freq: "weekly".into(), interval: 2, by_day: vec![1, 9], until: Some(1.8e12) });
+    r.rule = Some(EkRule { freq: "weekly".into(), interval: 2, by_day: vec![1, 9], until: Some(1.8e12), nth: None });
     assert!(check(&r).is_ok());
     let mut big = ev(1.7e12, 1.7e12);
     big.title = "x".repeat(20_000);

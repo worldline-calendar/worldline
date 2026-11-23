@@ -20,7 +20,8 @@ export function cleanRecurrence(r: unknown): Recurrence | undefined {
   if (!isObj(r) || !FREQS.includes(r.freq as string)) return undefined;
   const interval = num(r.interval) && r.interval >= 1 ? Math.min(Math.round(r.interval), 1000) : 1;
   const byDay = Array.isArray(r.byDay) ? [...new Set(r.byDay.filter((d) => Number.isInteger(d) && d >= 0 && d <= 6))] : undefined;
-  return { freq: r.freq as Recurrence['freq'], interval, ...(byDay ? { byDay } : {}), ...(num(r.until) ? { until: r.until } : {}) };
+  const nth = r.freq === 'monthly' && byDay?.length === 1 && [1, 2, 3, 4, -1].includes(r.nth as number) ? (r.nth as number) : undefined;
+  return { freq: r.freq as Recurrence['freq'], interval, ...(byDay ? { byDay } : {}), ...(num(r.until) ? { until: r.until } : {}), ...(nth ? { nth } : {}) };
 }
 
 /** A web address that's safe to open from a link: http(s) only (never `javascript:` or `data:`). */
