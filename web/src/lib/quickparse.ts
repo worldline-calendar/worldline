@@ -63,10 +63,10 @@ function takeLead(t: string): [string, number | undefined] {
 
 // ---- repeats ----------------------------------------------------------------------------
 const WD_NAMES: [RegExp, number][] = [
-  [/^sun/i, 0], [/^mon/i, 1], [/^tue/i, 2], [/^wed/i, 3], [/^thu/i, 4], [/^fri/i, 5], [/^sat/i, 6],
+  [/^sun/i, 0], [/^mon/i, 1], [/^tue?/i, 2], [/^wed/i, 3], [/^th/i, 4], [/^fri/i, 5], [/^sat/i, 6],
 ];
 const wdOf = (w: string) => WD_NAMES.find(([re]) => re.test(w))?.[1];
-const WD = '(?:mon|tues?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?|sun)(?:day)?';
+const WD = '(?:mon|tues?|tu|wed(?:nes)?|thu(?:rs?)?|th|fri|sat(?:ur)?|sun)(?:day)?';
 const WD_LIST = `${WD}s?(?:(?:\\s*(?:,|and|&|\\+|/)\\s*|\\s+)${WD}s?)*`;
 const MONTH_RE = '(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*';
 const UNIT_FREQ: Record<string, Recurrence['freq']> = { day: 'daily', week: 'weekly', month: 'monthly', year: 'yearly' };
@@ -101,7 +101,9 @@ function takeRepeat(input: string): RepeatInfo {
   t = t.replace(
     new RegExp(`\\b(?:(?:every|each|on)\\s+(?:the\\s+)?|the\\s+)?(first|1st|second|2nd|third|3rd|fourth|4th|last)\\s+(${WD})s?(\\s+of\\s+(?:(?:every|each|the|a)\\s+)?month|\\s+(?:of\\s+)?(?:every|each)\\s+month|\\s+monthly|\\s+a\\s+month)?\\b`, 'i'),
     (whole: string, n: string, wd: string, monthWords?: string) => {
-      if (!monthWords && !/^\s*(every|each)/i.test(whole) && !wantsRepeat && !/\bmonthly\b|\b(?:every|each)\s+month\b/i.test(input)) return whole; // ("the first monday" alone: a date)
+      const ofMonth = new RegExp(`^\\s*(?:of|in)\\s+${MONTH_RE}`, 'i').test(input.slice(input.toLowerCase().indexOf(whole.trim().toLowerCase()) + whole.trim().length));
+      if (ofMonth) return whole; // ("first saturday of december": one date)
+      if (!monthWords && !/^\s*(every|each)/i.test(whole) && !wantsRepeat && !/\bmonthly\b|\b(?:every|each)\s+month\b/i.test(input) && /^\s*the\b/i.test(whole)) return whole; // ("the first monday" alone: a date)
       if (!monthWords && /^second$/i.test(n) && !/\bmonthly\b|\bmonth\b/i.test(input)) return whole; // ("every second friday": every other one)
       const nth = /last/i.test(n) ? -1 : /^(first|1)/i.test(n) ? 1 : /^(second|2)/i.test(n) ? 2 : /^(third|3)/i.test(n) ? 3 : 4;
       rule = { freq: 'monthly', interval: 1, byDay: [wdOf(wd)!], nth };
@@ -226,7 +228,7 @@ const ADDRESS_AT =
 function shieldNames(t: string): [string, (x: string) => string] {
   const saved: string[] = [];
   const hide = (m: string) => `Zqx${saved.push(m) - 1}x`;
-  const out = t.replace(ADDRESS, hide).replace(ADDRESS_AT, hide).replace(LONE_MONTH, hide).replace(LONG_NUMBER, hide).replace(LONE_WEEKEND, hide);
+  const out = t.replace(/\b1:1s?\b|\b1-on-1s?\b/gi, hide).replace(ADDRESS, hide).replace(ADDRESS_AT, hide).replace(LONE_MONTH, hide).replace(LONG_NUMBER, hide).replace(LONE_WEEKEND, hide);
   return [out, (x) => x.replace(/Zqx(\d+)x/g, (_, i: string) => saved[+i])];
 }
 
@@ -254,12 +256,15 @@ function normalize(input: string, now: Date) {
   t = t.replace(/\b(\d{1,2}|noon)\s*-?ish\b/gi, '$1').replace(/\b(?:twice|three times|\d+ times|once)\s+(?:a|per|each)\s+week\b/gi, ' ').replace(/\b(?:like|around|about|approx\.?|~)\s+(?=\d)/gi, '');
   t = t.replace(/\b(\d{1,2}(?::\d\d)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+([ap])\s?\.?\s?m\b\.?/gi, '$1 $2m');
   t = t.replace(/\b(?:a|one|1)\s+(day|week|month|year)\s+from\s+(?:today|now)\b/gi, 'in 1 $1').replace(/\b(\d+|two|three|four|five|six)\s+(days|weeks|months|years)\s+from\s+(?:today|now)\b/gi, 'in $1 $2');
+  t = resolveChains(t, now);
   t = t.replace(/\b(?:the\s+)?day after tomorrow\b/gi, 'in 2 days').replace(/\ba week from tomorrow\b/gi, 'in 8 days').replace(/\blater today\b/gi, 'today');
   t = t.replace(/[–—]/g, '-').replace(/\bhalf-hour\b/gi, 'half hour');
   t = t.replace(/\b(mon|tue|tues|wed|weds|thu|thur|thurs|fri|sat|sun)(\d)/gi, '$1 $2'); // "tues3pm"
   t = t.replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g, (m, y, mo, d) => (+mo >= 1 && +mo <= 12 ? `${MONTHS3[+mo - 1]} ${+d} ${y}` : m)); // ISO dates
   t = t.replace(/\b(\d{1,2})(?:st|nd|rd|th)?\s+of\s+((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\b/gi, '$2 $1'); // "3rd of December"
   t = t.replace(new RegExp(`\\b((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\\s+(?:the\\s+)?(${Object.keys(ORDINAL_WORDS).join('|')})\\b`, 'gi'), (_, m: string, o: string) => `${m} ${ORDINAL_WORDS[o.toLowerCase()]}`);
+  t = t.replace(new RegExp(`\\bthe\\s+(${Object.keys(ORDINAL_WORDS).sort((a, b) => b.length - a.length).join('|')})\\b(?!\\s+(?:${WEEKDAY_ALT})\\b)`, 'gi'), (_, o: string) => { const n = ORDINAL_WORDS[o.toLowerCase()]; return `the ${n}${n % 10 === 1 && n !== 11 ? 'st' : n % 10 === 2 && n !== 12 ? 'nd' : n % 10 === 3 && n !== 13 ? 'rd' : 'th'}`; });
+  t = t.replace(/\b(\d{1,2})(?:st|nd|rd|th)\s+of\s+((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\b/gi, '$2 $1');
   t = t.replace(/\bnext week\s+((?:mon|tue|wed|thu|fri|sat|sun)[a-z]*)\b/gi, '$1 next week');
   t = t.replace(/\bmid-?afternoon\b/gi, '3pm').replace(/\bmid-?morning\b/gi, '10am').replace(/\blate afternoon\b/gi, '4pm').replace(/\bearly evening\b/gi, '6pm');
   t = t.replace(/\b([01]\d|2[0-3])([0-5]\d)\s*-\s*([01]\d|2[0-3])([0-5]\d)\b/g, '$1:$2-$3:$4'); // "1300-1500"
@@ -276,10 +281,11 @@ function normalize(input: string, now: Date) {
   t = t.replace(/\bnext year\s+(?=(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b)/gi, ' ');
   t = t.replace(/\b(?:the\s+)?following\s+(?=(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*\b)/gi, 'next ');
   // nouns that end in "night" aren't the night ("pizza night", "trivia night"); hidden from the date reader
-  t = t.replace(/\b(?!(?:to|tomorrow|tonight|last|this|next|every|each|on|at|mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b)([a-z]+)\s+night\b/gi, '$1 Nyght');
   t = t.replace(/\ball\s+morning\b/gi, '9am-12pm').replace(/\ball\s+afternoon\b/gi, '1pm-5pm').replace(/\ball\s+evening\b/gi, '6pm-10pm');
   t = t.replace(/\bthis\s+(morning|afternoon|evening)\b/gi, 'today $1');
-  t = t.replace(/(-|–|\bto|\buntil|\btill|\bthrough)\s*noon\b/gi, '$1 12pm').replace(/\bnoon\s*(-|–|to\b)/gi, '12pm $1');
+  t = t.replace(/(-|–|\bto|\buntil|\btill|\bthrough)\s*noon\b/gi, '$1 12pm').replace(/\bnoon\s*(-|–|to\b|till\b|until\b)/gi, '12pm $1');
+  t = t.replace(/\b(\d{1,2})\s*(?:pm)?\s*(?:-|to|till|until)\s*midnight\b/gi, '$1pm - 11:59pm').replace(/\s*\b(?:till|until|to)\s+late\b/gi, ' ');
+  t = t.replace(/\bfor\s+a\s+couple(?:\s+of)?\s+hours\b/gi, 'for 2 hours').replace(/\ban\s+hour\s+and\s+a\s+half\b/gi, '90 min');
   t = t.replace(/\bend of (?:the\s+)?week\b/gi, 'friday');
   {
     const n = new Date(now);
@@ -295,6 +301,9 @@ function normalize(input: string, now: Date) {
     return M[+m1 - 1] && M[+m2 - 1] ? `${M[+m1 - 1]} ${d1} - ${M[+m2 - 1]} ${d2}` : _;
   });
   t = t.replace(/[,;]?\s*\b(?:checklist|to-?dos?|steps)\s*:.*$/i, ' ');
+  t = t.replace(new RegExp(`\\b((?:${WEEKDAY_ALT})(?:day)?s?|today|tomorrow|tonight|monthly|weekly|daily|fortnight|week|weekend)\\s+(1[0-2]|[1-9])(?=\\s+[a-z])(?!\\s+(?:am|pm|a\\.m|p\\.m|o'?clock|hours?|hrs?|mins?|minutes?|days?|weeks?|months?|times?|people|kids)\\b)`, 'gi'), '$1 at $2');
+  t = t.replace(/^(\s*)(1[0-2]|[1-9])(?=\s+(?:tomorrow|today|tonight|this|next|(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*)\b)/i, '$1at $2');
+  t = t.replace(/\b2moro+w?\b|\b2morrow\b/gi, 'tomorrow').replace(/\bteh\b/gi, 'the').replace(/~\s*/g, '');
   t = t.replace(/\btues\b/gi, 'tuesday').replace(/\bthurs?\b/gi, 'thursday').replace(/\bweds\b/gi, 'wednesday');
   t = t.replace(/\b(tmrw|tmrrw|tmr|tmw|tomoz)\b/gi, 'tomorrow').replace(/\btonite\b/gi, 'tonight');
   t = t.replace(/\b(lunchtime|midday)\b/gi, 'noon').replace(/\b(eod|end of (?:the )?day)\b/gi, '5pm');
@@ -305,7 +314,7 @@ function normalize(input: string, now: Date) {
 
   // Number words when clearly a time: "at three", "three pm", "seven thirty"
   const nw = Object.keys(NUMBER_WORDS).join('|');
-  t = t.replace(new RegExp(`\\b(at|from|to|until|till|-)\\s+(${nw})\\b`, 'gi'), (_, p: string, w: string) => `${p} ${NUMBER_WORDS[w.toLowerCase()]}`);
+  t = t.replace(new RegExp(`\\b(at|from|to|until|till|-|around|about|like|by)\\s+(${nw})\\b`, 'gi'), (_, p: string, w: string) => `${p} ${NUMBER_WORDS[w.toLowerCase()]}`);
   t = t.replace(new RegExp(`\\b(${nw})(?=\\s*(?:am|pm|o'?clock|thirty|fifteen|forty-?five)\\b)`, 'gi'), (w) => String(NUMBER_WORDS[w.toLowerCase()]));
   t = t.replace(/\b(\d{1,2})\s+thirty\b/gi, '$1:30').replace(/\b(\d{1,2})\s+fifteen\b/gi, '$1:15').replace(/\b(\d{1,2})\s+forty-?five\b/gi, '$1:45');
   t = t.replace(/(?:\bat\s+)?\b(\d{1,2})\s*o'?clock\b/gi, 'at $1');
@@ -360,7 +369,7 @@ function normalize(input: string, now: Date) {
 }
 
 const DURATION =
-  /\s(?:(?:for\s+|(?=(?:an?|one|half an?|half|\d+(?:\.\d+)?)\s*(?:hours?|hrs?|minutes?|mins?)\b|\d+m\b))(?:(an?|one|half an?|half|\d+(?:\.\d+)?)\s*(hours?|hrs?|h|minutes?|mins?|m)\b(?:\s*(?:and\s*)?(a half|\d+)\s*(?:minutes?|mins?|m)?\b)?)|(\d+)h(\d{1,2})?m?\b|(\d+)\s?(?:min|mins)\b(?<!\bin\s+\d+\s?mins?))/i;
+  /\s(?:(?:for\s+|(?=(?:an?|one|two|three|four|five|six|half an?|half|\d+(?:\.\d+)?)\s*(?:hours?|hrs?|minutes?|mins?)\b|\d+m\b))(?:(an?|one|two|three|four|five|six|half an?|half|\d+(?:\.\d+)?)\s*(hours?|hrs?|h|minutes?|mins?|m)\b(?:\s*(?:and\s*)?(a half|\d+)\s*(?:minutes?|mins?|m)?\b)?)|(\d+)h(\d{1,2})?m?\b|(\d+)\s?(?:min|mins)\b(?<!\bin\s+\d+\s?mins?))/i;
 
 function takeDuration(t: string): [string, number | undefined] {
   let minutes: number | undefined;
@@ -370,7 +379,7 @@ function takeDuration(t: string): [string, number | undefined] {
     if (ch) minutes = +ch * 60 + (cm ? +cm : 0);
     else if (cmin) minutes = +cmin;
     else {
-      const n = q === 'a' || q === 'an' || q === 'one' ? 1 : /^half/i.test(q) ? 0.5 : parseFloat(q);
+      const n = q === 'a' || q === 'an' || q === 'one' ? 1 : /^half/i.test(q) ? 0.5 : NUMBER_WORDS[q.toLowerCase()] ?? parseFloat(q);
       minutes = n * (unit[0].toLowerCase() === 'h' ? 60 : 1);
       if (extra) minutes += extra === 'a half' ? 30 : +extra;
     }
@@ -409,12 +418,12 @@ function cleanTitle(title: string, input: string) {
   if (named && !new RegExp(`\\b${named[1]}\\b`, 'i').test(t)) t = t.replace(new RegExp(`\\b${named[2]}\\b`, 'i'), `${named[1]} ${named[2]}`);
   for (const m of input.matchAll(new RegExp(`\\b${WD_WORD}\\s+(night|evening|morning|afternoon)s?\\b`, 'gi'))) t = t.replace(new RegExp(`\\b${m[1]}s?\\b`, 'i'), ' ');
   // a part of the day said as *when* ("this evening call dad", "tomorrow morning run") — but "evening run" keeps it
-  for (const m of input.matchAll(/\b(?:this|today|tomorrow|tmrw|tonight)\s+(morning|afternoon|evening)\b/gi)) t = t.replace(new RegExp(`\\b${m[1]}\\b`, 'i'), ' ');
+  for (const m of input.matchAll(/\b(?:this|today|tomorrow|tmrw|tonight|every|each)\s+(morning|afternoon|evening|night)\b/gi)) t = t.replace(new RegExp(`\\b${m[1]}\\b`, 'i'), ' ');
   if (/\bmonthly\s+on\s+the\b/i.test(input)) t = t.replace(/\bmonthly\b/i, ' ');
   t = t.replace(/[A-Za-z]{4,}/g, (w) => fixWord(w));
   return t.replace(/\s+/g, ' ').trim();
 }
-const VOCAB = ['meeting', 'call', 'appointment', 'dentist', 'doctor', 'dinner', 'lunch', 'breakfast', 'rehearsal', 'interview', 'conference', 'seminar', 'lecture', 'presentation', 'review', 'session', 'inspection', 'showing', 'birthday', 'party', 'practice', 'workout', 'training', 'deadline', 'proposal', 'report', 'submission', 'tutorial', 'office', 'hours', 'consultation', 'therapy', 'haircut', 'flight', 'hotel', 'wedding', 'reception', 'ceremony', 'concert', 'webinar', 'workshop', 'standup', 'retreat', 'defense', 'committee', 'colloquium', 'meetup', 'coffee', 'drinks', 'client', 'contractor', 'designer', 'teacher', 'student', 'project', 'invoice', 'payment'];
+const VOCAB = ['meeting', 'call', 'appointment', 'dentist', 'doctor', 'dinner', 'lunch', 'breakfast', 'rehearsal', 'interview', 'conference', 'seminar', 'lecture', 'presentation', 'review', 'session', 'inspection', 'showing', 'birthday', 'party', 'practice', 'workout', 'training', 'deadline', 'proposal', 'report', 'submission', 'tutorial', 'office', 'hours', 'consultation', 'therapy', 'haircut', 'flight', 'hotel', 'wedding', 'reception', 'ceremony', 'concert', 'webinar', 'workshop', 'standup', 'retreat', 'committee', 'colloquium', 'meetup', 'coffee', 'drinks', 'client', 'contractor', 'designer', 'teacher', 'student', 'project', 'invoice', 'payment'];
 /** A common calendar word typed with a slip ("meetign", "calll", "apointment") — names and other words are left alone. */
 function fixWord(w: string) {
   const lw = w.toLowerCase();
@@ -433,8 +442,89 @@ const ORDINAL_WORDS: Record<string, number> = {
   first: 1, second: 2, third: 3, fourth: 4, fifth: 5, sixth: 6, seventh: 7, eighth: 8, ninth: 9, tenth: 10, eleventh: 11, twelfth: 12,
   thirteenth: 13, fourteenth: 14, fifteenth: 15, sixteenth: 16, seventeenth: 17, eighteenth: 18, nineteenth: 19, twentieth: 20,
   'twenty-first': 21, 'twenty first': 21, 'twenty-second': 22, 'twenty second': 22, 'twenty-third': 23, 'twenty third': 23,
-  'twenty-fourth': 24, 'twenty fourth': 24, 'twenty-fifth': 25, 'twenty fifth': 25, thirtieth: 30, 'thirty-first': 31, 'thirty first': 31,
+  'twenty-fourth': 24, 'twenty fourth': 24, 'twenty-fifth': 25, 'twenty fifth': 25, 'twenty-sixth': 26, 'twenty sixth': 26,
+  'twenty-seventh': 27, 'twenty seventh': 27, 'twenty-eighth': 28, 'twenty eighth': 28, 'twenty-ninth': 29, 'twenty ninth': 29, thirtieth: 30, 'thirty-first': 31, 'thirty first': 31,
 };
+// ---- what people say while thinking ------------------------------------------------------
+const CORRECTION = String.raw`(?:no\s+wait|wait\s+no|no,?|nope|actually(?:\s+make\s+(?:it|that))?|make\s+(?:it|that)|(?:er|uh|um)?\s*i\s+mean|sorry|scratch\s+that|or\s+rather|rather)`;
+const WHEN_TOKEN = String.raw`(?:(?:next|this)\s+)?(?:mon|tue|tues|wed|weds|thu|thur|thurs|fri|sat|sun)(?:day)?|\d{1,2}(?::\d\d)?\s*(?:am|pm)?`;
+/** "thursday no wait friday 2pm", "at 3 actually make it 4", "3pm, no 3:30", "next tuesday er I mean this tuesday",
+ *  "dinner at 5. no 6.": the earlier "when" is taken back. Then the filler of thinking out loud goes. */
+function takeBackCorrections(t: string) {
+  const re = new RegExp(`(?:\\bat\\s+)?\\b(${WHEN_TOKEN})\\s*[,.;]?\\s*\\b${CORRECTION}\\b[,.;]?\\s*(?=(?:at\\s+)?(?:${WHEN_TOKEN})\\b)`, 'i');
+  for (let k = 0; k < 3 && re.test(t); k++) t = t.replace(re, (m) => (/^\s*at\b/i.test(m) ? 'at ' : ' '));
+  t = t.replace(/(\d)\s*\.\s+(?=\w)/g, '$1 '); // "at 5. no 6." leftovers
+  return t
+    .replace(/^\s*(?:um+|uh+|er+|erm|so|ok(?:ay)?|hmm+)\b[\s,]*/gi, ' ')
+    .replace(/\b(?:um+|uh+|erm|er)\b[,]?/gi, ' ')
+    .replace(/\bi\s+(?:think|guess|believe)\b|\bi'?m\s+pretty\s+sure\b|\bsometime\b|\bmaybe\b(?=\s+\d)|\bwe\s+have\s+the\b|\bwe\s+have\b/gi, ' ')
+    .replace(/[,.]?\s*\b(?:period|full stop)\s*$/i, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+const HUNDREDS: Record<string, number> = { thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, 'twenty-one': 21, 'twenty-two': 22, 'twenty-three': 23 };
+const WEEKDAY_ALT = 'mon|tue|tues|wed|weds|thu|thur|thurs|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday';
+// ---- dates counted from other dates ---------------------------------------------------------
+const WD_INDEX: Record<string, number> = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
+const wdNum = (w: string) => WD_INDEX[w.slice(0, 3).toLowerCase()];
+const dateWords = (d: Date) => ` ${MONTHS3[d.getMonth()]} ${d.getDate()} ${d.getFullYear()} `;
+const spanWords = (a: Date, b: Date) => ` ${MONTHS3[a.getMonth()]} ${a.getDate()} ${a.getFullYear()} - ${MONTHS3[b.getMonth()]} ${b.getDate()} ${b.getFullYear()} `;
+const N_WORD: Record<string, number> = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, couple: 2, 'a couple of': 2 };
+const nOf = (w: string) => N_WORD[w.toLowerCase()] ?? +w;
+/** The next `wd` after today (today itself doesn't count), as a date. */
+function coming(now: Date, wd: number, includeToday = false) {
+  const d = startOfDay(now);
+  const k = (wd - d.getDay() + 7) % 7 || (includeToday ? 0 : 7);
+  return addDays(d, k);
+}
+/** "a week from friday", "3 weeks from tomorrow", "monday after next", "thursday week", "end of next week", "in a
+ *  fortnight", "this coming friday", "the weekend after next", "mid december", "early next week", "net 30" — and spans:
+ *  "tue thru thu", "rest of the week", "the week of dec 7", "today and tomorrow", "next week" (as days), "3 days
+ *  starting wednesday": each written out as plain dates the date reader can't misread. */
+function resolveChains(t: string, now: Date) {
+  const WDX = '(mon|tue|tues|wed|weds|thu|thur|thurs|fri|sat|sun)[a-z]*';
+  const NUM = '(a|an|one|two|three|four|five|six|seven|eight|nine|ten|\\d+)';
+  const today = startOfDay(now);
+  t = t.replace(new RegExp(`\\b${NUM}\\s+(day|week|month)s?\\s+(?:from|after)\\s+(today|now|tomorrow|${WDX})\\b`, 'gi'), (_, n: string, unit: string, base: string) => {
+    const b = /today|now/i.test(base) ? today : /tomorrow/i.test(base) ? addDays(today, 1) : coming(now, wdNum(base));
+    const k = nOf(n);
+    return dateWords(unit.toLowerCase() === 'month' ? addMonths(b, k) : addDays(b, unit.toLowerCase() === 'week' ? 7 * k : k));
+  });
+  t = t.replace(new RegExp(`\\b(?:the\\s+)?${WDX}\\s+after\\s+next\\b`, 'gi'), (_, w: string) => dateWords(addDays(coming(now, wdNum(w)), 7)));
+  t = t.replace(new RegExp(`\\b${WDX}\\s+week\\b(?!\\s*(?:of|end))`, 'gi'), (m, w: string) => (/\b(?:next|this|last)\s*$/i.test(t.slice(0, t.indexOf(m))) ? m : dateWords(addDays(coming(now, wdNum(w)), 7))));
+  t = t.replace(/\bend of next week\b/gi, () => dateWords(addDays(coming(now, 5), 7)));
+  t = t.replace(/\b(?:in\s+)?a\s+fortnight\b/gi, 'in 14 days');
+  t = t.replace(new RegExp(`\\bthis\\s+coming\\s+${WDX}\\b`, 'gi'), (_, w: string) => dateWords(coming(now, wdNum(w))));
+  t = t.replace(/\b(?:the\s+)?weekend\s+after\s+next\b/gi, () => dateWords(addDays(coming(now, 6, true), 7)));
+  t = t.replace(/\bearly next week\b/gi, () => dateWords(addDays(coming(now, 1), 0)));
+  t = t.replace(/\bnet\s+(\d+)(?:\s+(?:days?\s+)?(?:from\s+today)?)?/gi, (_, n: string) => `in ${n} days`);
+  t = t.replace(/\b(mid|middle of)[-\s]+((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\b/gi, (_, _m: string, mo: string) => `${mo} 15`);
+  // spans of days
+  t = t.replace(new RegExp(`\\b${WDX}\\s*(?:-|–|to|thru|through|till|until)\\s*${WDX}\\b`, 'gi'), (m, a: string, b: string) => {
+    if (/\d\s*$/.test(t.slice(0, t.indexOf(m)))) return m;
+    const s0 = coming(now, wdNum(a), true);
+    let e0 = coming(now, wdNum(b), true);
+    if (e0 < s0) e0 = addDays(e0, 7);
+    return spanWords(s0, e0);
+  });
+  t = t.replace(/\b((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\s+(\d{1,2})\s+(?:and|&)\s+(\d{1,2})\b(?!\s*(?:am|pm|:))/gi, '$1 $2 - $1 $3'); // "feb 4 and 5"
+  t = t.replace(/\b(?:the\s+)?rest\s+of\s+(?:the|this)\s+week\b/gi, () => spanWords(today, addDays(coming(now, 5, true), 0)));
+  t = t.replace(/\btoday\s+and\s+tomorrow\b/gi, () => spanWords(today, addDays(today, 1)));
+  t = t.replace(/\b(?:the\s+|whole\s+)?week\s+of\s+((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\s+(\d{1,2})\b/gi, (_, mo: string, d: string) => {
+    const m = MONTHS3.indexOf(mo.slice(0, 3).toLowerCase());
+    let a = new Date(now.getFullYear(), m, +d);
+    if (a < today) a = new Date(now.getFullYear() + 1, m, +d);
+    const mon = addDays(a, -((a.getDay() + 6) % 7));
+    return spanWords(mon, addDays(mon, 4));
+  });
+  t = t.replace(new RegExp(`\\b${NUM}\\s+days?\\s+(?:starting|from|beginning)\\s+(?:on\\s+)?(today|tomorrow|${WDX})\\b`, 'gi'), (_, n: string, base: string) => {
+    const b = /today/i.test(base) ? today : /tomorrow/i.test(base) ? addDays(today, 1) : coming(now, wdNum(base), true);
+    return spanWords(b, addDays(b, nOf(n) - 1));
+  });
+  return t;
+}
+
 const DEFAULT_BLOCK_START = 9 * 60; // a block with a length but no time starts at 9 AM
 
 /** "9am Tokyo time", "at 4 in Taipei time", "10am New York time": the zone, taken out of the text (an unknown place
@@ -476,12 +566,19 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
     .trim();
   // a sentence in capitals reads as one in lowercase ("SHOWING 123 PINE ST SUN 2PM")
   if (/[A-Z]{3,}/.test(input) && input === input.toUpperCase() && /[A-Z].*\s.*[A-Z]/.test(input)) input = input.toLowerCase();
+  input = takeBackCorrections(input);
+  // nouns that end in "night" aren't the night ("pizza night") — but "thursday night" is
+  input = input.replace(/\b(?!(?:to|tomorrow|tonight|last|this|next|every|each|on|at|mon|tue|tues|wed|weds|thu|thur|thurs|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday|late|the)\b)([a-z]+)\s+night\b/gi, '$1 Nyght');
+  input = input.replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|twenty-one|twenty-two|twenty-three|1[0-9]|2[0-3])\s+hundred(?:\s+hours)?\b/gi, (_, w: string) => `${NUMBER_WORDS[w.toLowerCase()] ?? HUNDREDS[w.toLowerCase()] ?? w}:00`);
+  input = input.replace(/\bb4\b/gi, 'before').replace(/\b2\s*mor+ow\b|\b2moro+w?\b/gi, 'tomorrow').replace(/\bweeknights?\b/gi, 'weekdays').replace(/\b(\w+)-long\b/gi, (m, u: string) => (/^(hour|day|week)$/i.test(u) ? `for 1 ${u}` : m));
   const [shielded, unshield] = shieldNames(fixDateTypos(input));
   const repeat = takeRepeat(shielded);
+  if (repeat.rule) repeat.text = repeat.text.replace(/^(\s*)(1[0-2]|[1-9])(?=\s+[a-z])(?!\s+(?:am|pm|hours?|hrs?|mins?|minutes?|days?|weeks?|months?|times?)\b)/i, '$1at $2');
   const [afterLeadRaw, lead] = takeLead(repeat.text);
   const [afterLead, zone] = takeZone(afterLeadRaw);
   let isDeadline = lead !== undefined || /\b(due|deadline)\b/i.test(afterLead) ||
-    /\b(?:closes|cut-?off|expires|ends)\b(?=\s+(?:on\s+)?(?:today|tomorrow|tonight|mon|tue|wed|thu|fri|sat|sun|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|\d))/i.test(afterLead);
+    /\b(?:closes?|cut-?off|expires|ends)\b(?=\s+(?:on\s+|in\s+)?(?:today|tomorrow|tonight|mon|tue|wed|thu|fri|sat|sun|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|\d))/i.test(afterLead) ||
+    /^\s*(?:the\s+)?(?:cut-?off|deadline)\s+(?:for|to)\b/i.test(afterLead);
   let text = normalize(afterLead, now);
 
   // ---- 2. calendar, duration, all-day -------------------------------------------------
@@ -532,7 +629,9 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
     const c = timeRes.start;
     let h = c.get('hour')!;
     const m = c.get('minute') ?? 0;
-    if (!c.isCertain('meridiem') && h >= 1 && h <= 7 && !morning) h += 12; // "at 7" → 7 PM
+    // "at 7" → 7 PM; but "carpool 7:45", "yoga 6:30" (minutes, nothing evening-ish about it) → the morning
+    const earlyWithMinutes = (h === 6 || h === 7) && m > 0 && /\b(?:carpool|commute|bus|train|drop[- ]?off|school|gym|run|jog|yoga|workout|swim|standup|stand-up|rounds|shift|breakfast|class|lecture|meds|alarm|wake)\b/i.test(input);
+    if (!c.isCertain('meridiem') && h >= 1 && h <= 7 && !morning && !earlyWithMinutes) h += 12;
     // "from 10:30 until 12pm": the end's PM doesn't make the start 10:30 PM
     const e0 = timeRes.end;
     if (!c.isCertain('meridiem') && e0?.isCertain('meridiem') && c.get('hour')! >= 12) {
@@ -542,8 +641,8 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
     if (dateRes && dateRes !== timeRes) start = at(dateRes.start.date(), h * 60 + m);
     else if (dateRes) start = c.isCertain('meridiem') ? c.date() : at(c.date(), h * 60 + m);
     else {
-      start = at(now, h * 60 + m); // time only: today, or tomorrow if it has passed
-      if (start < now) start = addDays(start, 1);
+      start = at(now, h * 60 + m); // time only: today, or tomorrow if it has passed (this very minute counts as passed)
+      if (start <= now) start = addDays(start, 1);
     }
     end = new Date(start.getTime() + (durMin ?? prefs.defaultEventMin) * MIN);
     const e = timeRes.end;
@@ -589,10 +688,19 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
     start = addDays(start, -1);
     end = addDays(end, -1);
   }
+  if (isDeadline && dateRes && dateRes.start.isCertain('weekday') && !dateRes.start.isCertain('day') && !/\b(?:this|today)\b/i.test(dateRes.text) && startOfDay(start).getTime() === startOfDay(now).getTime()) {
+    // ("submit chapter 3 by monday", said on a Monday: next Monday)
+    start = addDays(start, 7);
+    end = addDays(end, 7);
+  }
   if (!isDeadline && dateRes && dateRes.start.isCertain('weekday') && !dateRes.start.isCertain('day') && !/\b(?:this|next|today|coming)\b/i.test(dateRes.text)) {
     const today = startOfDay(now).getTime();
     const timedNow = !allDay && (!!timeRes || timeFromWords);
-    if (timedNow && startOfDay(start).getTime() === today + 7 * 86_400_000) {
+    if (timedNow && startOfDay(start).getTime() === today && start <= now) {
+      // ("board meeting 10 to 2 monday", said Monday at 10: next Monday's)
+      start = addDays(start, 7);
+      end = addDays(end, 7);
+    } else if (timedNow && startOfDay(start).getTime() === today + 7 * 86_400_000) {
       const earlier = addDays(start, -7);
       if (earlier > now) {
         end = addDays(end, -7);
@@ -736,7 +844,7 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
     // "Deadline for X" → "X"; "X due" / "X deadline" → "X" unless only one word would be left ("Tax deadline")
     text = text.replace(/^\s*(?:the\s+)?(?:deadline|due)(?:\s+(?:for|of|on|date))?\s*:?\s+/i, ' ');
     // ("due to dean": a person it goes to, kept)
-    const stripped = text.replace(/\b(?:is\s+)?due(?!\s+to\b)(?:\s+(?:on|by|at|date))?\b|\b(?:deadline|cut-?off|closes|expires)(?:\s+(?:for|of|on))?\b|:/gi, ' ');
+    const stripped = text.replace(/\b(?:is\s+)?due(?!\s+to\b)(?:\s+(?:on|by|at|date))?\b|\b(?:deadline|cut-?off|closes?|expires)(?:\s+(?:for|of|on|to))?\b|:/gi, ' ');
     // ("due" always goes; "deadline" stays when it would leave one word: "Tax deadline", not "Tax")
     const words = (x: string) => x.trim().split(/\s+/).filter((w) => w && !/^(on|at|by|the|for)$/i.test(w)).length;
     if (words(stripped) >= 1) text = stripped;

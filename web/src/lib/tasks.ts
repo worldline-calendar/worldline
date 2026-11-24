@@ -103,7 +103,7 @@ export const hasTaskPrefix = (s: string) => TASK_PREFIX.test(s);
 export const stripTaskPrefix = (s: string) => s.replace(TASK_PREFIX, '');
 
 // Sentences that start with an action are to-dos even when they have a date ("pay rent friday").
-const ACTION =
+export const ACTION =
   /^(?:e-?mail|call|phone|text|message|reply|respond|ask|tell|remind|buy|get|grab|order|pick up|drop off|return|send|mail|post|ship|pay|book(?!\s+club)|renew|cancel|submit|apply|register|sign|file|finish|write|draft|edit|read|review|revise|proofread|fix|debug|update|upgrade|install|backup|back up|clean|tidy|wash|water|feed|print|scan|upload|download|prepare|prep|plan|organi[sz]e|check|look into|follow up|research|make|bring|take|move|pack|charge|refill|test|run|merge|push|commit)\b/i;
 
 export function guessKind(input: string, p: Parsed): ItemKind {

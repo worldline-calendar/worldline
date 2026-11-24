@@ -8,6 +8,8 @@ import { parseQuick, type Parsed } from './quickparse';
 import { describeRecurrence } from './recurrence';
 import { fmtTime } from './format';
 import { localZone, zoneCity } from './zone';
+import { ACTION } from './tasks';
+import { typoDistance } from './fuzzy';
 
 type Kind = 'event' | 'task' | 'deadline';
 
@@ -52,7 +54,7 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
     if (kind === 'deadline') add('as-task', `A to-do · due ${day(base.start)}`, base, 'task');
     if (kind === 'task' && base.hasDay) {
       if (/\b(?:by|before|due)\b/i.test(text)) add('as-deadline', `A deadline · ${day(base.start)}`, { ...base, deadline: base.deadline ?? { leadDays: 7 } }, 'deadline');
-      const allDay = { ...base, allDay: true, start: startOfDay(base.start).getTime(), end: startOfDay(base.start).getTime() + 86_400_000 };
+      const allDay = base.allDay ? base : { ...base, allDay: true, start: startOfDay(base.start).getTime(), end: startOfDay(base.start).getTime() + 86_400_000 };
       add('as-event', `An event · ${base.hasTime ? when(base) : `${day(base.start)} · all day`}`, base.hasTime ? base : allDay, 'event');
     } else if (kind === 'task' && (base.hasTime || base.timeFromWords)) add('as-event', `An event · ${when(base)}`, base, 'event');
     titleVariants(text, base, kind, add);
@@ -60,7 +62,7 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
   }
 
   // a bare hour read as PM ("at 7" → 7 PM): or the morning — and 8–11 read as AM: or the evening
-  if (base.hasTime && !/\b\d{1,2}(:\d{2})?\s*(a|p)\.?m?\b|\bnoon\b|\bmidnight\b|\b\d{1,2}:\d{2}\b/i.test(text)) {
+  if (base.hasTime && !/\b\d{1,2}(:\d{2})?\s*(a|p)\.?m?\b|\bnoon\b|\bmidnight\b|\b(?:1[3-9]|2[0-3]|0\d):\d{2}\b/i.test(text)) {
     const h = new Date(base.start).getHours();
     const flip = h >= 12 ? -12 : 12;
     const p = { ...base, start: base.start + flip * 60 * MIN, end: base.end + flip * 60 * MIN };
@@ -131,9 +133,9 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
     add('local', `${fmtTime(p.start)} ${zoneCity(localZone())} time`, { ...p, title: base.title });
   }
 
-  // an event on a day that reads like a to-do ("clean the garage saturday"): or a to-do for that day
-  if (!base.recurrence && base.allDay && /^(?:e-?mail|call|buy|get|order|pay|book|renew|cancel|submit|send|finish|write|clean|fix|pick up|drop off|return|prep|prepare|grade|review|read|print|file|sign)\b/i.test(text.trim()))
-    add('as-task', `A to-do · due ${day(base.start)}`, base, 'task');
+  // an event that reads like a to-do ("clean the garage saturday", "pay nanny every 2 weeks"): or a to-do for that day
+  if ((base.allDay || base.recurrence) && (ACTION.test(text.trim()) || /^(?:photocopy|copy|transfer|invoice|backup|back up|change|replace|refill|pay|check|update)\b/i.test(text.trim())))
+    add('as-task', `A to-do · due ${day(base.start)}`, { ...base, recurrence: undefined }, 'task');
 
   titleVariants(text, base, kind, add);
 
@@ -150,6 +152,22 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
  *  sync"), the weekday ("Sunday brunch"). */
 function titleVariants(text: string, base: Parsed, kind: Kind, add: (id: string, label: string, p: Parsed, as?: Kind) => void) {
   const titled = (t: string) => `Titled “${t}”`;
+  // a word the reader corrected ("Cofee" → "Coffee"): or as typed
+  const typed = text.split(/\s+/);
+  const asTyped = base.title.replace(/[A-Za-z]{4,}/g, (w) => {
+    if (typed.some((x) => x.toLowerCase() === w.toLowerCase())) return w;
+    const orig = typed.find((x) => /^[A-Za-z]+$/.test(x) && x.length >= 3 && typoDistance(x.toLowerCase(), w.toLowerCase()) <= 2);
+    return orig ? (w[0] === w[0].toUpperCase() ? orig[0].toUpperCase() + orig.slice(1) : orig) : w;
+  });
+  if (asTyped !== base.title) add('title-typed', titled(asTyped), { ...base, title: asTyped }, kind);
+  // leftovers of how it was said ("Or sun brunch w ali", "7 book club", "Lab meeting, no"): a tidied title
+  const tidy = base.title
+    .replace(/\b(?:or|no|just|wait|maybe|like|ish|and|then|also|um|uh)\b|\?|\b\d{1,2}\b(?!:)|\b(?:mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun)(?:day)?s?\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/gi, ' ')
+    .replace(/\s*[,;]\s*$/, '').replace(/^\s*[,;]\s*/, '').replace(/\s+/g, ' ').trim();
+  if (tidy && tidy.length >= 3 && tidy.toLowerCase() !== base.title.toLowerCase()) {
+    const t = tidy[0].toUpperCase() + tidy.slice(1);
+    add('title-tidy', titled(t), { ...base, title: t }, kind);
+  }
   const has = (w: string) => new RegExp(`\\b${w}\\b`, 'i').test(base.title);
   if (base.location && !/^\d|zqx/i.test(base.location)) {
     const t = `${base.title} ${/^(?:the|room|rm)\b|'s\b/i.test(base.location) || /^[a-z]/.test(base.location) ? 'at' : 'in'} ${base.location}`;
@@ -171,5 +189,9 @@ function titleVariants(text: string, base: Parsed, kind: Kind, add: (id: string,
   if (wd && !has(wd[1]) && base.title.toLowerCase().startsWith(wd[2].toLowerCase())) {
     const t = `${wd[1][0].toUpperCase()}${wd[1].slice(1).toLowerCase()} ${base.title[0].toLowerCase()}${base.title.slice(1)}`;
     add('title-wd', titled(t), { ...base, title: t }, kind);
+    if (!base.allDay && base.timeFromWords && !base.hasTime) {
+      const d0 = startOfDay(base.start).getTime();
+      add('title-wd-allday', `${titled(t)} · all day`, { ...base, title: t, allDay: true, start: d0, end: d0 + 86_400_000 }, kind);
+    }
   }
 }
