@@ -15,10 +15,19 @@ export async function readDocument(file: File): Promise<{ text: string; kind: 'p
 
 async function pdfText(file: File) {
   const pdfjs = await import('pdfjs-dist');
-  const worker = (await import('pdfjs-dist/build/pdf.worker.min.mjs?url')).default;
-  pdfjs.GlobalWorkerOptions.workerSrc = worker;
-  const task = pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) });
-  const doc = await task.promise;
+  const data = new Uint8Array(await file.arrayBuffer());
+  let task;
+  let doc;
+  try {
+    pdfjs.GlobalWorkerOptions.workerSrc = (await import('pdfjs-dist/build/pdf.worker.min.mjs?url')).default;
+    task = pdfjs.getDocument({ data: data.slice() });
+    doc = await task.promise;
+  } catch {
+    // the worker couldn't start (a webview that won't run it): read on the page itself — slower, same result
+    (globalThis as { pdfjsWorker?: unknown }).pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.min.mjs');
+    task = pdfjs.getDocument({ data });
+    doc = await task.promise;
+  }
   const pages: string[] = [];
   for (let i = 1; i <= Math.min(doc.numPages, MAX_PAGES); i++) {
     const page = await doc.getPage(i);

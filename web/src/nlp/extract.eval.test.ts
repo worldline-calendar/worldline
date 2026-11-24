@@ -14,7 +14,7 @@ interface Doc { id: string; type: string; text: string; items: Item[] }
 const NOW = new Date(2026, 10, 23, 10);
 const load = (p: string): Doc[] | null => (existsSync(p) ? (JSON.parse(readFileSync(p, 'utf8')) as Doc[]) : null);
 const sets = { xdev: load(resolve(__dirname, 'extract.dev.json')), xheldout: load(resolve(__dirname, '../../test-heldout/extract.heldout.json')) };
-const FLOOR: Record<string, { found: number; real: number }> = { xdev: { found: 0, real: 0 }, xheldout: { found: 0, real: 0 } };
+const FLOOR: Record<string, { found: number; real: number }> = { xdev: { found: 0.72, real: 0.67 }, xheldout: { found: 0.69, real: 0.56 } };
 
 const pad = (n: number) => String(n).padStart(2, '0');
 function startOf(p: Proposal) {

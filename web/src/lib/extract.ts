@@ -63,6 +63,7 @@ function joinWrapped(lines: { s: string; at: number }[]) {
 function rawLines(text: string) {
   const lines: { s: string; at: number }[] = [];
   let at = 0, signed = false, quoted = false;
+  let inHeader = /^\s*(?:from|to|sent|date|subject)\s*:/i.test(text);
   for (const raw of text.split('\n')) {
     const s = raw.replace(/\r$/, '');
     const here = at;
@@ -70,7 +71,9 @@ function rawLines(text: string) {
     if (QUOTED.test(s)) quoted = true;
     if (quoted || signed) continue;
     if (SIGNOFF.test(s)) { signed = lines.length > 0; continue; }
-    if (HEADER.test(s) || FOOTER.test(s)) continue;
+    // (header lines only at the top of an email: "Date: December 2" further down is the appointment)
+    if ((inHeader && HEADER.test(s)) || FOOTER.test(s)) continue;
+    if (!s.trim()) inHeader = false;
     lines.push({ s, at: here });
   }
   return lines;
@@ -108,7 +111,24 @@ function icsRule(text: string) {
 
 /** Written dates made plain for the reader: a weekday in front of a full date goes ("Thursday, December 10", "Thu 17
  *  Dec 2026" — the date says it), "Dep 10:00 Arr 14:24" is a range. */
+const SMALL: Record<string, number> = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9 };
+const ORD_W: Record<string, number> = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5, sixth: 6, seventh: 7, eighth: 8, ninth: 9, tenth: 10, eleventh: 11, twelfth: 12, thirteenth: 13, fourteenth: 14, fifteenth: 15, sixteenth: 16, seventeenth: 17, eighteenth: 18, nineteenth: 19, twentieth: 20, thirtieth: 30 };
+const ordWord = (w: string) => {
+  const m = /^(twenty|thirty)[-\s]?(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)$/i.exec(w);
+  return m ? (m[1].toLowerCase() === 'twenty' ? 20 : 30) + ORD_W[m[2].toLowerCase()] : ORD_W[w.toLowerCase()];
+};
+const ORD_RE = '(?:(?:twenty|thirty)[-\\s]?(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth|thirteenth|fourteenth|fifteenth|sixteenth|seventeenth|eighteenth|nineteenth|twentieth|thirtieth)';
+/** Formal dates in words: "June twelfth, two thousand twenty-seven" → "June 12 2027"; "the first of April" → "April 1". */
+function wordDates(t: string) {
+  const MON = '(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*';
+  t = t.replace(/\btwo thousand(?:\s+and)?\s+(twenty|thirty)(?:[-\s](one|two|three|four|five|six|seven|eight|nine))?\b/gi, (_, tens: string, one?: string) => String(2000 + (tens.toLowerCase() === 'twenty' ? 20 : 30) + (one ? SMALL[one.toLowerCase()] : 0)));
+  t = t.replace(new RegExp(`\\b${MON}\\s+(?:the\\s+)?(${ORD_RE})\\b`, 'gi'), (m, _mo: string, o: string) => m.replace(o, String(ordWord(o))).replace(/\s+the\s+/i, ' '));
+  t = t.replace(new RegExp(`\\b(?:the\\s+)?(${ORD_RE})\\s+(?:day\\s+)?of\\s+${MON}\\b`, 'gi'), (m, o: string) => `${m.replace(/^(?:the\s+)?\S+(?:[-\s](?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth))?\s+(?:day\s+)?of\s+/i, '')} ${ordWord(o)}`);
+  return t;
+}
+
 function plainDates(t: string) {
+  t = wordDates(t);
   const WD = '(?:mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun)(?:day|nesday|sday|urday)?\\.?,?';
   const MON = '(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\\.?';
   return t
@@ -150,9 +170,10 @@ function units(text: string): Unit[] {
     flush();
     if (!s.trim()) continue;
     // a short line with no date of its own is a heading for what follows ("Train 45 Toronto → Ottawa")
+    if (/^\s*(?:dear|hi|hello|hey|good (?:morning|afternoon|evening))\b[^.!?\d]{0,40},?\s*$/i.test(s)) continue; // ("Hi TAs," alone)
     if (s.trim().length <= 70 && !/\d{1,2}[:/]\d|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d/i.test(s) && !/[.!?]$/.test(s.trim())) heading = s.trim().replace(/[:\-–]\s*$/, '');
     // a line may hold several sentences; each is a unit (bullets and "Date: thing" newsletter lines too)
-    const re = /[^.!?\n]+(?:[.!?]+(?=\s|$)|$)/g;
+    const re = /[^.!?\n—]+?(?:[.!?]+(?=\s|$)|\s+—\s+|\s+-{1,2}\s+(?=[a-z])|$)/gi;
     for (const m of s.matchAll(re)) {
       const t = m[0].trim();
       if (t.length < 4) continue;
@@ -208,6 +229,7 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
     return { proposals: [], skipped: [{ text: text.slice(0, 80), why: 'an automatic reply or terms — nothing to add' }] };
   const flights = parseItinerary(text, now);
   const docNow = documentDate(text, now);
+  const thread = /^\s*(?:\[[^\]]+\]\s*)?[A-Z][\w .'-]{0,20}:\s+\S/m.test(text) && (text.match(/^\s*(?:\[[^\]]+\]\s*)?[A-Z][\w .'-]{0,20}:\s+\S/gm)?.length ?? 0) >= 2 || /^\s*(?:re|fwd?):/im.test(text) || /\bwrote:\s*$/im.test(text);
   const appt = appointmentTitle(text);
   const subject = appt ?? subjectOf(text);
 
@@ -225,6 +247,15 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
     if (len && lastEvent && !lastEvent.parsed.allDay && !hasWhen(s.replace(len[0], ''), docNow)) {
       const n = /^an?$|^one$/i.test(len[1]) ? 1 : len[1] === 'two' ? 2 : len[1] === 'three' ? 3 : +len[1];
       lastEvent.parsed = { ...lastEvent.parsed, end: lastEvent.parsed.start + n * (/^h/i.test(len[2]) ? 3_600_000 : 60_000) };
+      continue;
+    }
+    // a chore that belongs to the thing just mentioned ("please bring the vaccine record", "bring snacks pls", "also book
+    // the projector beforehand", "I'll make mashed potatoes"): a to-do due that day
+    const chore = /^(?:(?:also|and|so|pls|please|just|oh|and also)\s+)*(?:i'?ll\s+|you'?ll need to\s+|you need to\s+|remember to\s+|don'?t forget to\s+|make sure to\s+|be sure to\s+)?(bring|book|make|pick up|send|print|pack|fill out|fill in|sign|order|buy|prepare|prep)\b\s+(.{3,80}?)(?:\s+(?:pls|please|beforehand|before(?:\s+then)?|ahead of time|in advance|that day|with you))*[.!]*$/i.exec(s.trim());
+    if (chore && lastEvent && !hasWhen(s, docNow)) {
+      const title = `${chore[1][0].toUpperCase()}${chore[1].slice(1).toLowerCase()} ${chore[2].replace(/\s+(?:pls|please)$/i, '')}`.trim();
+      const d0 = startOfDay(lastEvent.parsed.start).getTime();
+      proposals.push({ kind: 'task', parsed: { title, start: d0, end: d0, allDay: false, hasDate: true, hasDay: true, hasTime: false, timeFromWords: false, hasEnd: false }, from: u.from, to: u.to, confidence: 0.5, why: `for ${lastEvent.parsed.title}` });
       continue;
     }
     if (!hasWhen(s, docNow)) {
@@ -253,6 +284,25 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
     for (const part of parts) {
       const p = parseQuick(part.slice(0, 300), calendars, docNow);
       if (!p.hasDate) continue;
+      // a time with no day of its own, after something with a day ("climbing tomorrow? 6pm at Basecamp", "ok 3",
+      // "fine gerstein 3pm"): the time of that thing, not a new one today
+      if (lastEvent && p.hasTime && !p.hasDay && !p.recurrence && lastEvent.parsed.hasDay) {
+        const day = new Date(lastEvent.parsed.start);
+        const at = new Date(p.start);
+        const start = new Date(day.getFullYear(), day.getMonth(), day.getDate(), at.getHours(), at.getMinutes()).getTime();
+        const len = p.hasEnd ? p.end - p.start : lastEvent.parsed.allDay ? 3_600_000 : lastEvent.parsed.end - lastEvent.parsed.start;
+        lastEvent.parsed = { ...lastEvent.parsed, allDay: false, hasTime: true, start, end: start + len, location: u.where ?? p.location ?? lastEvent.parsed.location };
+        lastEvent.to = u.to;
+        lastEvent.why = 'time from a later line';
+        continue;
+      }
+      // in a thread, "ok sunday then! meet at Union 8am", "actually thursday at 4": the plan changed, not a second one
+      if (lastEvent && thread && /\b(?:then|instead|actually|ok(?:ay)?|let'?s do|works better|moved? to|change(?:d)? to|switch(?:ed)? to)\b/i.test(part) && p.hasDay) {
+        lastEvent.parsed = { ...lastEvent.parsed, allDay: p.allDay, hasTime: p.hasTime, start: p.start, end: p.allDay ? p.end : p.start + (p.hasEnd ? p.end - p.start : 3_600_000), location: p.location ?? lastEvent.parsed.location };
+        lastEvent.to = u.to;
+        lastEvent.why = 'changed later in the thread';
+        continue;
+      }
       if (p.start < startOfDay(docNow).getTime() - DAY && !p.recurrence) { skipped.push({ text: part, why: 'already past' }); continue; }
       const deadlineWords = /\b(?:due|deadline|by|before|no later than|rsvp|register|registration|submit|submission|closes?|cut-?off|apply|send)\b/i.test(part);
       let kind: ExtractKind = guessKind(part, p) === 'task' ? 'task' : p.deadline ? 'deadline' : 'event';
@@ -263,6 +313,21 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
       const prop: Proposal = { kind, parsed, from: u.from, to: u.to, confidence: Math.min(1, confidence) };
       proposals.push(prop);
       if (kind === 'event') lastEvent = prop;
+    }
+  }
+
+  // a schedule's own time ("All seminars are Tuesdays 11:00–12:00", "every session runs 7–9 pm"): its all-day rows get it
+  const common = /\b(?:all|every|each)\s+(?:seminars?|sessions?|talks?|classes|lectures?|meetings?|events?|games?|practices?|shifts?|rehearsals?)\b[^.\n]{0,80}?\b(\d{1,2}(?::\d\d)?\s*(?:am|pm)?)\s*(?:-|–|to|until)\s*(\d{1,2}(?::\d\d)?\s*(?:am|pm)?)/i.exec(text)
+    ?? /\b(?:all|every|each)\s+(?:seminars?|sessions?|talks?|classes|lectures?|meetings?|events?|games?|practices?|shifts?|rehearsals?)\b[^.\n]{0,80}?\bat\s+(\d{1,2}(?::\d\d)?\s*(?:am|pm)?)/i.exec(text);
+  if (common) {
+    const p = parseQuick(`x today ${common[1]}${common[2] ? ` - ${common[2]}` : ''}`, calendars, docNow);
+    if (p.hasTime) {
+      const startMin = new Date(p.start).getHours() * 60 + new Date(p.start).getMinutes(), len = p.end - p.start;
+      for (const q of proposals) if (q.kind === 'event' && q.parsed.allDay && startOfDay(q.parsed.end - 1).getTime() === startOfDay(q.parsed.start).getTime()) {
+        const d = new Date(q.parsed.start);
+        const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, startMin).getTime();
+        q.parsed = { ...q.parsed, allDay: false, hasTime: true, start, end: start + len };
+      }
     }
   }
 
