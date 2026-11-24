@@ -79,3 +79,13 @@ describe('more monthly patterns', () => {
     expect(rep('newsletter bi-monthly')).toBe('Every 2 months on the 23rd');
   });
 });
+
+describe('24-hour ranges', () => {
+  const now = new Date(2026, 10, 23, 10);
+  it('reads both ends as written, overnight included', () => {
+    const a = parseQuick('Dec 6 07:00-19:30', DEFAULT_CALENDARS, now);
+    expect([new Date(a.start).getHours(), new Date(a.end).getHours()]).toEqual([7, 19]);
+    const b = parseQuick('Dec 1 19:00-07:30', DEFAULT_CALENDARS, now);
+    expect(new Date(b.end).getDate()).toBe(2);
+  });
+});

@@ -143,7 +143,8 @@ export function DropExtract() {
   return (
     <Portal>
       <div className="dx-scrim" onMouseDown={(e) => e.target === e.currentTarget && close()}>
-        <div className="dx" role="dialog" aria-modal="true" aria-label="Find events, deadlines and to-dos">
+        <div className="dx" role="dialog" aria-modal="true" aria-label="Find events, deadlines and to-dos" tabIndex={-1} ref={(n) => { if (n && !n.contains(document.activeElement)) n.focus(); }}
+          onKeyDown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); close(); } }}>
           <div className="dx-head">
             <h2>Find events, deadlines and to-dos</h2>
             <button className="icon-btn" onClick={close} aria-label="Close">✕</button>

@@ -1,0 +1,1525 @@
+[
+ {
+  "id": "outlook-invite-1",
+  "type": "outlook invite",
+  "text": "Subject: Q1 Budget Review\nWhen: Tuesday, December 1, 2026 2:00 PM-3:00 PM (UTC-05:00) Eastern Time (US & Canada).\nWhere: Conference Room 4B / Microsoft Teams Meeting\n\n*~*~*~*~*~*~*~*~*~*~*\nHi all, please bring your department's draft numbers.\n________________________________________________________________________________\nMicrosoft Teams meeting\nJoin on your computer, mobile app or room device\nClick here to join the meeting\nMeeting ID: 284 551 902 117\nPasscode: Xk9a2B\nDownload Teams | Join on the web\nOr call in (audio only)\n+1 647-555-0199,,618273645#   Canada, Toronto\nPhone Conference ID: 618 273 645#\nFind a local number | Reset PIN\nLearn More | Meeting options\n________________________________________________________________________________",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Q1 Budget Review",
+    "start": "2026-12-01 14:00",
+    "end": "2026-12-01 15:00",
+    "loc": "Conference Room 4B"
+   }
+  ]
+ },
+ {
+  "id": "outlook-invite-pacific",
+  "type": "outlook invite",
+  "text": "Subject: Vendor onboarding call\nWhen: Thursday, December 3, 2026 10:00 AM-10:45 AM (UTC-08:00) Pacific Time (US & Canada).\nWhere: Zoom\n\nOrganizer: Priya Natarajan\nRequired: you; Marcus Lee",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Vendor onboarding call",
+    "start": "2026-12-03 10:00",
+    "end": "2026-12-03 10:45",
+    "zone": "America/Los_Angeles"
+   }
+  ]
+ },
+ {
+  "id": "zoom-boilerplate",
+  "type": "zoom invite",
+  "text": "Dana Whitfield is inviting you to a scheduled Zoom meeting.\n\nTopic: Kitchen reno – design walkthrough\nTime: Dec 9, 2026 06:30 PM Eastern Time (US and Canada)\n\nJoin Zoom Meeting\nhttps://us02web.zoom.us/j/81234567890?pwd=QWxhZGRpbjpvcGVuIHNlc2FtZQ\n\nMeeting ID: 812 3456 7890\nPasscode: 445210\n\n---\nOne tap mobile\n+16465588656,,81234567890#,,,,*445210# US (New York)\n+13017158592,,81234567890#,,,,*445210# US (Washington DC)\n\n---\nDial by your location\n• +1 646 558 8656 US (New York)\n• +1 438 809 7799 Canada\nMeeting ID: 812 3456 7890\nPasscode: 445210\nFind your local number: https://us02web.zoom.us/u/kdX1",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Kitchen reno design walkthrough",
+    "start": "2026-12-09 18:30",
+    "end": "2026-12-09 19:30"
+   }
+  ]
+ },
+ {
+  "id": "teams-recurring",
+  "type": "teams invite",
+  "text": "Weekly Ops Standup\nOccurs every Monday from 9:00 AM to 9:15 AM effective 11/30/2026 (UTC-05:00) Eastern Time (US & Canada)\n\n________________________________________________________________________________\nMicrosoft Teams Need help?\nJoin the meeting now\nMeeting ID: 239 004 118 552\nPasscode: hT7qPw\nDial in by phone\n+1 416-555-0110,,902114#\nPhone conference ID: 902 114#\nFor organizers: Meeting options | Reset dial-in PIN\n________________________________________________________________________________",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Weekly Ops Standup",
+    "start": "2026-11-30 09:00",
+    "end": "2026-11-30 09:15",
+    "repeat": "FREQ=WEEKLY;BYDAY=MO"
+   }
+  ]
+ },
+ {
+  "id": "gmail-invite",
+  "type": "google calendar invite",
+  "text": "Invitation: Holiday potluck planning @ Wed Dec 2, 2026 12pm - 12:30pm (EST) (you@example.com)\n\nHoliday potluck planning\nWhen  Wednesday Dec 2, 2026 ⋅ 12pm – 12:30pm (Eastern Time - Toronto)\nLocation  Break room, 3rd floor\nGuests  Tamsin Ross - organizer\nView all guest info\nReply for you@example.com  Yes  No  Maybe  More options\nInvitation from Google Calendar\nYou are receiving this email because you are an attendee on the event.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Holiday potluck planning",
+    "start": "2026-12-02 12:00",
+    "end": "2026-12-02 12:30",
+    "loc": "Break room, 3rd floor"
+   }
+  ]
+ },
+ {
+  "id": "eventbrite-1",
+  "type": "ticket confirmation",
+  "text": "You're going to Toronto Winter Craft Fair!\n\nOrder #4419082731 — 2 x General Admission\nSaturday, December 12, 2026 · 10:00 AM - 5:00 PM EST\nEnercare Centre, 100 Princes' Blvd, Toronto, ON\n\nAdd to calendar: Google | Outlook | iCal\nDoors open 30 minutes early. No refunds within 7 days of the event.\nQuestions? Contact the organizer.\nEventbrite, 535 Mission St, San Francisco, CA",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Toronto Winter Craft Fair",
+    "start": "2026-12-12 10:00",
+    "end": "2026-12-12 17:00",
+    "loc": "Enercare Centre, 100 Princes' Blvd, Toronto, ON"
+   }
+  ]
+ },
+ {
+  "id": "ticket-concert",
+  "type": "ticket confirmation",
+  "text": "Ticketmaster\nYour order is confirmed!\nThe Weather Station\nMassey Hall, Toronto\nFri, Dec 18, 2026 • 8:00 PM\nSection 3, Row K, Seats 12-13\nMobile entry: your tickets will be available in the app 48 hours before the show.\nOrder total: $142.60",
+  "items": [
+   {
+    "kind": "event",
+    "title": "The Weather Station concert",
+    "start": "2026-12-18 20:00",
+    "end": "2026-12-18 21:00",
+    "loc": "Massey Hall, Toronto"
+   }
+  ]
+ },
+ {
+  "id": "ticket-hockey-and-parking",
+  "type": "ticket confirmation",
+  "text": "ORDER CONFIRMATION\nToronto Maple Leafs vs Ottawa Senators\nScotiabank Arena\nSaturday, January 9, 2027 – 7:00 PM\n2 tickets, Sec 312 Row 4\n\nAdd-on: Event parking, Lot B — valid from 5:00 PM on game day.\nTransfer deadline for tickets: January 8, 2027 at 11:59 PM ET.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Leafs vs Senators",
+    "start": "2027-01-09 19:00",
+    "end": "2027-01-09 20:00",
+    "loc": "Scotiabank Arena"
+   },
+   {
+    "kind": "deadline",
+    "title": "Ticket transfer deadline",
+    "start": "2027-01-08 23:59",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "hotel-itinerary",
+  "type": "travel itinerary",
+  "text": "Booking confirmation — Fairmont Château Laurier\nGuest: B. Gail\nCheck-in: Friday, December 18, 2026 (from 4:00 PM)\nCheck-out: Sunday, December 20, 2026 (by 11:00 AM)\n2 nights, 1 King room\nFree cancellation until Wednesday, December 16, 2026, 6:00 PM local time.\nAddress: 1 Rideau St, Ottawa, ON",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Hotel check-in, Fairmont Château Laurier",
+    "start": "2026-12-18 16:00",
+    "end": "2026-12-18 17:00",
+    "loc": "1 Rideau St, Ottawa, ON"
+   },
+   {
+    "kind": "event",
+    "title": "Hotel check-out",
+    "start": "2026-12-20 11:00",
+    "end": "2026-12-20 12:00",
+    "loc": "1 Rideau St, Ottawa, ON"
+   },
+   {
+    "kind": "deadline",
+    "title": "Free cancellation ends",
+    "start": "2026-12-16 18:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "car-rental",
+  "type": "travel itinerary",
+  "text": "Enterprise Rent-A-Car  |  Reservation Confirmed\nConfirmation #: 1182736455\nPICK-UP   Tue, Dec 22, 2026 @ 9:00 AM\n          Toronto Pearson Airport (YYZ), Terminal 1\nRETURN    Mon, Dec 28, 2026 @ 9:00 AM\n          Toronto Pearson Airport (YYZ), Terminal 1\nVehicle: Intermediate SUV or similar\nEstimated total: CAD 389.40",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Car rental pick-up",
+    "start": "2026-12-22 09:00",
+    "end": "2026-12-22 10:00",
+    "loc": "Toronto Pearson Airport, Terminal 1"
+   },
+   {
+    "kind": "event",
+    "title": "Car rental return",
+    "start": "2026-12-28 09:00",
+    "end": "2026-12-28 10:00",
+    "loc": "Toronto Pearson Airport, Terminal 1"
+   }
+  ]
+ },
+ {
+  "id": "ferry-bc",
+  "type": "travel itinerary",
+  "text": "BC Ferries — Booking Confirmation\nRoute: Tsawwassen – Swartz Bay\nSailing: Wednesday, December 23, 2026, 3:00 PM PST\nVehicle: Passenger vehicle under 7 ft\nPlease arrive at the terminal at least 30 minutes before sailing; check-in closes 30 minutes before departure.\nReturn sailing: Sunday, December 27, 2026, 11:00 AM PST (Swartz Bay – Tsawwassen)",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Ferry Tsawwassen to Swartz Bay",
+    "start": "2026-12-23 15:00",
+    "end": "2026-12-23 16:00",
+    "zone": "America/Vancouver",
+    "loc": "Tsawwassen terminal"
+   },
+   {
+    "kind": "event",
+    "title": "Ferry Swartz Bay to Tsawwassen",
+    "start": "2026-12-27 11:00",
+    "end": "2026-12-27 12:00",
+    "zone": "America/Vancouver",
+    "loc": "Swartz Bay terminal"
+   },
+   {
+    "kind": "deadline",
+    "title": "Ferry check-in closes",
+    "start": "2026-12-23 14:30",
+    "end": null,
+    "zone": "America/Vancouver"
+   }
+  ]
+ },
+ {
+  "id": "trip-plan-mixed",
+  "type": "travel itinerary",
+  "text": "TRIP: Montréal, Jan 15–17, 2027\n\nFri Jan 15 – VIA Rail 63, dep Union Station 9:30 AM, arr Montréal 2:39 PM\nFri Jan 15 – Hotel Le Germain check-in after 3 PM\nSat Jan 16 – Dinner at Joe Beef, 7:30 PM (deposit paid)\nSun Jan 17 – Check out by noon; VIA 68 departs 4:00 PM\n\nReminder: renew passport before booking spring trip!",
+  "items": [
+   {
+    "kind": "event",
+    "title": "VIA Rail 63 to Montréal",
+    "start": "2027-01-15 09:30",
+    "end": "2027-01-15 14:39",
+    "loc": "Union Station"
+   },
+   {
+    "kind": "event",
+    "title": "Hotel Le Germain check-in",
+    "start": "2027-01-15 15:00",
+    "end": "2027-01-15 16:00"
+   },
+   {
+    "kind": "event",
+    "title": "Dinner at Joe Beef",
+    "start": "2027-01-16 19:30",
+    "end": "2027-01-16 20:30",
+    "loc": "Joe Beef"
+   },
+   {
+    "kind": "event",
+    "title": "Hotel check-out",
+    "start": "2027-01-17 12:00",
+    "end": "2027-01-17 13:00"
+   },
+   {
+    "kind": "event",
+    "title": "VIA 68 to Toronto",
+    "start": "2027-01-17 16:00",
+    "end": "2027-01-17 17:00"
+   },
+   {
+    "kind": "task",
+    "title": "Renew passport",
+    "start": null,
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "medical-portal",
+  "type": "medical reminder",
+  "text": "MyChart Appointment Reminder\n\nYou have an upcoming appointment:\nAnnual physical with Dr. Amelia Okafor\nThursday, December 10, 2026 at 8:40 AM\nArrive by 8:25 AM to complete check-in.\nLocation: Bloor West Family Health Team, 2250 Bloor St W, Suite 300\n\nFasting bloodwork: please complete at any LifeLabs before your visit.\nTo cancel, call 416-555-0144 at least 24 hours in advance.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Annual physical, Dr. Okafor",
+    "start": "2026-12-10 08:40",
+    "end": "2026-12-10 09:40",
+    "loc": "2250 Bloor St W, Suite 300"
+   },
+   {
+    "kind": "task",
+    "title": "Fasting bloodwork at LifeLabs",
+    "start": "2026-12-10",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "dentist-text",
+  "type": "sms reminder",
+  "text": "Hi Braden, this is Smile Dental reminding you of your hygiene appt on Mon Dec 7 at 3:15pm. Reply C to confirm or call 416-555-0177. Msg&data rates may apply. Reply STOP to opt out.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Dental hygiene appointment",
+    "start": "2026-12-07 15:15",
+    "end": "2026-12-07 16:15"
+   }
+  ]
+ },
+ {
+  "id": "physio-series",
+  "type": "medical reminder",
+  "text": "Your physiotherapy appointments at Core Rehab:\n• Tue Dec 1, 5:00–5:45 PM — Initial assessment (Jen K.)\n• Fri Dec 4, 5:00–5:30 PM — Treatment\n• Tue Dec 8, 5:00–5:30 PM — Treatment\nPlease bring your insurance card to the first visit. 24h cancellation policy applies.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Physio initial assessment",
+    "start": "2026-12-01 17:00",
+    "end": "2026-12-01 17:45"
+   },
+   {
+    "kind": "event",
+    "title": "Physio treatment",
+    "start": "2026-12-04 17:00",
+    "end": "2026-12-04 17:30"
+   },
+   {
+    "kind": "event",
+    "title": "Physio treatment",
+    "start": "2026-12-08 17:00",
+    "end": "2026-12-08 17:30"
+   }
+  ]
+ },
+ {
+  "id": "vet-reminder",
+  "type": "email",
+  "text": "From: Riverdale Animal Hospital\nSubject: Milo is due for vaccines\n\nMilo is due for his annual rabies and DHPP boosters by December 15, 2026. We've booked a tentative appointment for Saturday, December 5 at 11:00 AM. Please call to confirm.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Milo vet appointment",
+    "start": "2026-12-05 11:00",
+    "end": "2026-12-05 12:00",
+    "loc": "Riverdale Animal Hospital"
+   },
+   {
+    "kind": "deadline",
+    "title": "Milo vaccines due",
+    "start": "2026-12-15 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "school-district",
+  "type": "school calendar",
+  "text": "Toronto District School Board — Remaining 2026–27 Key Dates\n\nFriday, December 4, 2026 – PA Day (elementary; no school for students)\nDecember 21, 2026 – January 1, 2027 – Winter Break\nMonday, January 4, 2027 – Classes resume\nFriday, January 29, 2027 – PA Day (secondary)\nMonday, February 15, 2027 – Family Day (schools closed)\nMarch 15–19, 2027 – March Break",
+  "items": [
+   {
+    "kind": "event",
+    "title": "PA Day (elementary)",
+    "start": "2026-12-04",
+    "end": "2026-12-04",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Winter Break",
+    "start": "2026-12-21",
+    "end": "2027-01-01",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Classes resume",
+    "start": "2027-01-04",
+    "end": "2027-01-04",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "PA Day (secondary)",
+    "start": "2027-01-29",
+    "end": "2027-01-29",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Family Day, schools closed",
+    "start": "2027-02-15",
+    "end": "2027-02-15",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "March Break",
+    "start": "2027-03-15",
+    "end": "2027-03-19",
+    "allDay": true
+   }
+  ]
+ },
+ {
+  "id": "school-newsletter",
+  "type": "school newsletter",
+  "text": "<p><b>Maple Grove PS — December Newsletter</b></p>\n<ul><li>Winter Concert: <b>Thursday, Dec 17</b>, 6:30&nbsp;pm in the gym</li>\n<li>Pizza lunch order forms due <b>Friday, Dec 4</b></li>\n<li>Pajama Day: Friday, Dec 18 (wear your PJs!)</li></ul>\n<p>Last day before break is Friday, December 18. Have a wonderful holiday!</p>",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Winter Concert",
+    "start": "2026-12-17 18:30",
+    "end": "2026-12-17 19:30",
+    "loc": "Maple Grove PS gym"
+   },
+   {
+    "kind": "deadline",
+    "title": "Pizza lunch order forms due",
+    "start": "2026-12-04 17:00",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "Pajama Day",
+    "start": "2026-12-18",
+    "end": "2026-12-18",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Last day before break",
+    "start": "2026-12-18",
+    "end": "2026-12-18",
+    "allDay": true
+   }
+  ]
+ },
+ {
+  "id": "soccer-schedule",
+  "type": "sports schedule",
+  "text": "U10 Thunder — Winter Indoor Schedule\nSat Dec 5   9:00 AM   vs Lions     @ Field 3\nSat Dec 12  10:30 AM  @ Comets     @ Field 1\nSat Dec 19  9:00 AM   vs Rockets   @ Field 3\nSat Jan 9   11:00 AM  vs Lions     @ Field 2\nGames are 50 min. Arrive 20 min early for warm-up. Snack schedule to follow.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Thunder vs Lions",
+    "start": "2026-12-05 09:00",
+    "end": "2026-12-05 09:50",
+    "loc": "Field 3"
+   },
+   {
+    "kind": "event",
+    "title": "Thunder @ Comets",
+    "start": "2026-12-12 10:30",
+    "end": "2026-12-12 11:20",
+    "loc": "Field 1"
+   },
+   {
+    "kind": "event",
+    "title": "Thunder vs Rockets",
+    "start": "2026-12-19 09:00",
+    "end": "2026-12-19 09:50",
+    "loc": "Field 3"
+   },
+   {
+    "kind": "event",
+    "title": "Thunder vs Lions",
+    "start": "2027-01-09 11:00",
+    "end": "2027-01-09 11:50",
+    "loc": "Field 2"
+   }
+  ]
+ },
+ {
+  "id": "hockey-practice",
+  "type": "team email",
+  "text": "Hey parents!\nPractices for the Novice Blue team move to Wednesdays 5:45–6:45 PM at Ted Reeve Arena starting Dec 2. Tournament in Barrie is Sat–Sun Jan 23–24 — schedule TBA. Team fees ($180) due to Coach Mike by Dec 11.\nThanks, Mike",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Novice Blue practice",
+    "start": "2026-12-02 17:45",
+    "end": "2026-12-02 18:45",
+    "loc": "Ted Reeve Arena",
+    "repeat": "FREQ=WEEKLY;BYDAY=WE"
+   },
+   {
+    "kind": "event",
+    "title": "Barrie tournament",
+    "start": "2027-01-23",
+    "end": "2027-01-24",
+    "allDay": true
+   },
+   {
+    "kind": "deadline",
+    "title": "Team fees due",
+    "start": "2026-12-11 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "rota-1",
+  "type": "shift schedule",
+  "text": "Rota wk of Nov 30 — Braden\nMon 7a-3p\nTue off\nWed 3p-11p\nThu 3p-11p\nFri off\nSat 7a-3p\nSun off\nSwap requests to Kayla by Thursday.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Shift",
+    "start": "2026-11-30 07:00",
+    "end": "2026-11-30 15:00"
+   },
+   {
+    "kind": "event",
+    "title": "Shift",
+    "start": "2026-12-02 15:00",
+    "end": "2026-12-02 23:00"
+   },
+   {
+    "kind": "event",
+    "title": "Shift",
+    "start": "2026-12-03 15:00",
+    "end": "2026-12-03 23:00"
+   },
+   {
+    "kind": "event",
+    "title": "Shift",
+    "start": "2026-12-05 07:00",
+    "end": "2026-12-05 15:00"
+   },
+   {
+    "kind": "deadline",
+    "title": "Shift swap requests to Kayla",
+    "start": "2026-11-26 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "rota-nights",
+  "type": "shift schedule",
+  "text": "NURSING UNIT 7W — DEC SCHEDULE (B. Gail)\n12/1 N  19:00-07:30\n12/2 N  19:00-07:30\n12/6 D  07:00-19:30\n12/10 OFF\n12/12 D 07:00-19:30\nMandatory in-service: 12/9 1400-1530, Rm 7-110",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Night shift",
+    "start": "2026-12-01 19:00",
+    "end": "2026-12-02 07:30"
+   },
+   {
+    "kind": "event",
+    "title": "Night shift",
+    "start": "2026-12-02 19:00",
+    "end": "2026-12-03 07:30"
+   },
+   {
+    "kind": "event",
+    "title": "Day shift",
+    "start": "2026-12-06 07:00",
+    "end": "2026-12-06 19:30"
+   },
+   {
+    "kind": "event",
+    "title": "Day shift",
+    "start": "2026-12-12 07:00",
+    "end": "2026-12-12 19:30"
+   },
+   {
+    "kind": "event",
+    "title": "Mandatory in-service",
+    "start": "2026-12-09 14:00",
+    "end": "2026-12-09 15:30",
+    "loc": "Rm 7-110"
+   }
+  ]
+ },
+ {
+  "id": "retail-shifts-slack",
+  "type": "slack message",
+  "text": "#store-112-schedule\nJordan T  11:02 AM\n@Braden you're on Black Friday doors 5:30a-1:30p and then Sunday 12-6. thx!!",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Black Friday shift",
+    "start": "2026-11-27 05:30",
+    "end": "2026-11-27 13:30"
+   },
+   {
+    "kind": "event",
+    "title": "Shift",
+    "start": "2026-11-29 12:00",
+    "end": "2026-11-29 18:00"
+   }
+  ]
+ },
+ {
+  "id": "utility-appt",
+  "type": "service appointment",
+  "text": "Enbridge Gas: Your appointment is confirmed.\nService: Furnace safety inspection\nDate: Wednesday, December 2, 2026\nArrival window: between 8 am and 12 pm\nAn adult (18+) must be home. Please ensure clear access to the furnace and meter.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Furnace inspection (Enbridge)",
+    "start": "2026-12-02 08:00",
+    "end": "2026-12-02 12:00"
+   }
+  ]
+ },
+ {
+  "id": "internet-install",
+  "type": "service appointment",
+  "text": "Rogers — Installation Appointment\nFri Dec 11, 2026, 1:00 PM – 5:00 PM\nYour technician will call 30 min before arriving.\nReturn your old modem within 30 days of install to avoid a $150 fee.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Rogers internet install",
+    "start": "2026-12-11 13:00",
+    "end": "2026-12-11 17:00"
+   },
+   {
+    "kind": "deadline",
+    "title": "Return old modem",
+    "start": "2027-01-10 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "appliance-delivery",
+  "type": "service appointment",
+  "text": "Home Depot delivery update: Your washer/dryer will be delivered Tue 12/8 between 7:00 AM and 11:00 AM. Haul-away of old appliances included. Please disconnect your old units the night before.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Washer/dryer delivery",
+    "start": "2026-12-08 07:00",
+    "end": "2026-12-08 11:00"
+   },
+   {
+    "kind": "task",
+    "title": "Disconnect old washer and dryer",
+    "start": "2026-12-07",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "condo-notice",
+  "type": "condo notice",
+  "text": "NOTICE TO ALL RESIDENTS — TSCC 2291\n\n1. Water shut-off: Thursday, December 3, 9:00 a.m. to 1:00 p.m. (all units, risers A–D).\n2. Annual General Meeting: Tuesday, December 15, 2026 at 7:00 p.m., Party Room. Proxies must be submitted to management by Friday, December 11 at 5:00 p.m.\n3. Garage cleaning: Monday, December 7 — vehicles must be moved out of P1 by 8:00 a.m.\n\nThank you for your cooperation. — Management",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Water shut-off",
+    "start": "2026-12-03 09:00",
+    "end": "2026-12-03 13:00"
+   },
+   {
+    "kind": "event",
+    "title": "Condo AGM",
+    "start": "2026-12-15 19:00",
+    "end": "2026-12-15 20:00",
+    "loc": "Party Room"
+   },
+   {
+    "kind": "deadline",
+    "title": "Submit AGM proxy",
+    "start": "2026-12-11 17:00",
+    "end": null
+   },
+   {
+    "kind": "task",
+    "title": "Move car out of P1 for garage cleaning",
+    "start": "2026-12-07",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "condo-elevator",
+  "type": "condo notice",
+  "text": "Elevator #2 will be out of service from Monday, November 30 to Friday, December 4 for modernization. Please book move-ins through the office.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Elevator #2 out of service",
+    "start": "2026-11-30",
+    "end": "2026-12-04",
+    "allDay": true
+   }
+  ]
+ },
+ {
+  "id": "church-bulletin",
+  "type": "church bulletin",
+  "text": "ST. MARK'S ANGLICAN — Weekly Bulletin, Sunday November 29, 2026 (Advent I)\n\nThis Week\nWed Dec 2 · 7:00 pm · Advent Taizé service\nThu Dec 3 · 10:00 am · Food bank sorting (volunteers welcome)\nSat Dec 5 · 9 am–2 pm · Christmas Bazaar in the parish hall\n\nLooking Ahead\nChristmas Eve services: 4:00 pm (family) and 10:30 pm (choral)\nPoinsettia orders due to the office by Dec 13.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Advent Taizé service",
+    "start": "2026-12-02 19:00",
+    "end": "2026-12-02 20:00",
+    "loc": "St. Mark's"
+   },
+   {
+    "kind": "event",
+    "title": "Food bank sorting",
+    "start": "2026-12-03 10:00",
+    "end": "2026-12-03 11:00"
+   },
+   {
+    "kind": "event",
+    "title": "Christmas Bazaar",
+    "start": "2026-12-05 09:00",
+    "end": "2026-12-05 14:00",
+    "loc": "Parish hall"
+   },
+   {
+    "kind": "event",
+    "title": "Christmas Eve family service",
+    "start": "2026-12-24 16:00",
+    "end": "2026-12-24 17:00"
+   },
+   {
+    "kind": "event",
+    "title": "Christmas Eve choral service",
+    "start": "2026-12-24 22:30",
+    "end": "2026-12-24 23:30"
+   },
+   {
+    "kind": "deadline",
+    "title": "Poinsettia orders due",
+    "start": "2026-12-13 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "synagogue-email",
+  "type": "email",
+  "text": "Join us for our Community Hanukkah Party on Sunday, December 6, 2026, 4–6 pm at Beth Tzedec. Latke cook-off entries due by Thursday, Dec 3!",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Community Hanukkah Party",
+    "start": "2026-12-06 16:00",
+    "end": "2026-12-06 18:00",
+    "loc": "Beth Tzedec"
+   },
+   {
+    "kind": "deadline",
+    "title": "Latke cook-off entries due",
+    "start": "2026-12-03 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "bday-invite",
+  "type": "party invite",
+  "text": "🎈 You're invited! 🎈\nEmma is turning 7!\nSaturday, December 12 · 2:00–4:00 pm\nSky Zone Trampoline Park, 45 Esna Park Dr\nPlease wear grip socks (available on site).\nRSVP to Sarah's mom (Lisa) by Nov 30: 647-555-0112",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Emma's 7th birthday party",
+    "start": "2026-12-12 14:00",
+    "end": "2026-12-12 16:00",
+    "loc": "Sky Zone Trampoline Park, 45 Esna Park Dr"
+   },
+   {
+    "kind": "deadline",
+    "title": "RSVP to Emma's party",
+    "start": "2026-11-30 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "bday-text",
+  "type": "text thread",
+  "text": "Lisa: Hi! Noah's party is next Sunday at 1, at our place. Drop off is fine 😊\nLisa: Can you let me know by Friday if he's coming?\nMe: Will do, thanks!",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Noah's birthday party",
+    "start": "2026-11-29 13:00",
+    "end": "2026-11-29 14:00"
+   },
+   {
+    "kind": "deadline",
+    "title": "Tell Lisa if coming to Noah's party",
+    "start": "2026-11-27 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "grant-email",
+  "type": "email",
+  "text": "From: Ontario Arts Council <noreply@arts.on.ca>\nSubject: Project Grants for Visual Artists — deadline reminder\n\nThe next deadline for Project Grants: Visual Artists is Wednesday, January 13, 2027 at 1:00 p.m. ET. Applications must be submitted through Nova. An information webinar will be held on Wednesday, December 9 at noon ET (register on our website).",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "OAC Visual Artists grant deadline",
+    "start": "2027-01-13 13:00",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "OAC info webinar",
+    "start": "2026-12-09 12:00",
+    "end": "2026-12-09 13:00"
+   }
+  ]
+ },
+ {
+  "id": "journal-revision",
+  "type": "email",
+  "text": "Dear Mr. Gail,\n\nManuscript ID MNRAS-26-4471 — \"A Field Guide to Backyard Comets\"\n\nThe reviewer's report is attached. We would be glad to receive a revised version within 30 days, i.e. by 23 December 2026. Please also return the signed copyright form at your earliest convenience.\n\nKind regards,\nEditorial Office",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Revised manuscript due",
+    "start": "2026-12-23 17:00",
+    "end": null
+   },
+   {
+    "kind": "task",
+    "title": "Return signed copyright form",
+    "start": null,
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "forwarded-1",
+  "type": "forwarded email",
+  "text": "FYI — can you make this?\n\n---------- Forwarded message ---------\nFrom: Hannah Cole <hcole@northwindlaw.ca>\nDate: Fri, Nov 20, 2026 at 4:51 PM\nSubject: Closing — 88 Galley Ave\nTo: Mark Gail\n\nHi Mark, the closing is set for Wednesday, December 16. Please come to our office at 11:00 am to sign. Bring two pieces of government ID. Funds must be wired by Tuesday, December 15 at noon.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Signing for 88 Galley Ave closing",
+    "start": "2026-12-16 11:00",
+    "end": "2026-12-16 12:00",
+    "loc": "Northwind Law office"
+   },
+   {
+    "kind": "deadline",
+    "title": "Wire closing funds",
+    "start": "2026-12-15 12:00",
+    "end": null
+   },
+   {
+    "kind": "task",
+    "title": "Bring two pieces of government ID",
+    "start": "2026-12-16",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "forwarded-relative",
+  "type": "forwarded email",
+  "text": "---------- Forwarded message ---------\nFrom: Coach Ray <ray@eastendswim.ca>\nDate: Thu, Nov 19, 2026 at 8:02 PM\nSubject: Meet this weekend\n\nSwimmers, meet is this Saturday at Etobicoke Olympium, warm-up at 7:15 am, events start 8:30. Next Friday is the deadline to order team caps.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Swim meet warm-up",
+    "start": "2026-11-21 07:15",
+    "end": "2026-11-21 08:15",
+    "loc": "Etobicoke Olympium"
+   },
+   {
+    "kind": "event",
+    "title": "Swim meet",
+    "start": "2026-11-21 08:30",
+    "end": "2026-11-21 09:30",
+    "loc": "Etobicoke Olympium"
+   },
+   {
+    "kind": "deadline",
+    "title": "Order team caps",
+    "start": "2026-11-27 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "reply-quoted",
+  "type": "email reply",
+  "text": "Thursday works — let's do 2pm on Dec 3 at the Starbucks on Queen.\n\nOn Mon, Nov 23, 2026 at 9:12 AM Bob Tran <bob.tran@gmail.com> wrote:\n> Hey, want to catch up about the reunion? I'm free Tuesday Nov 24 at 10 or\n> Thursday afternoon. Also don't forget the deposit is due Nov 25.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Coffee with Bob",
+    "start": "2026-12-03 14:00",
+    "end": "2026-12-03 15:00",
+    "loc": "Starbucks on Queen"
+   }
+  ]
+ },
+ {
+  "id": "reply-quoted-2",
+  "type": "email reply",
+  "text": "Sounds good. I'll drop the keys off Saturday morning.\n\nSent from my iPhone\n\n> On Nov 22, 2026, at 6:40 PM, Ines <ines.v@outlook.com> wrote:\n>\n> Can you water the plants while we're away Dec 10–14? Keys are with the concierge until Friday Dec 4.",
+  "items": [
+   {
+    "kind": "task",
+    "title": "Drop off keys",
+    "start": "2026-11-28",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "reply-chain-outlook",
+  "type": "email reply",
+  "text": "Confirmed, see you Monday Dec 14 at 9:30 for the audit kickoff.\nRahul\n\nFrom: Sophie Martin <smartin@acmeco.com>\nSent: Friday, November 20, 2026 3:15 PM\nTo: Rahul Desai <rdesai@acmeco.com>\nSubject: RE: audit kickoff\n\nWould Mon Dec 14 9:30 work? Alternatively Wed Dec 16 at 1:00.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Audit kickoff",
+    "start": "2026-12-14 09:30",
+    "end": "2026-12-14 10:30"
+   }
+  ]
+ },
+ {
+  "id": "html-pasted",
+  "type": "html email",
+  "text": "<div style=\"font-family:Arial\"><table><tr><td><b>Event:</b></td><td>Holiday Open House</td></tr>\n<tr><td><b>Date:</b></td><td>Thursday,&nbsp;December&nbsp;10,&nbsp;2026</td></tr>\n<tr><td><b>Time:</b></td><td>4:00&nbsp;PM&nbsp;&ndash;&nbsp;7:00&nbsp;PM</td></tr>\n<tr><td><b>Where:</b></td><td>Harbourfront Studio, 235 Queens Quay W</td></tr></table>\n<p>Please RSVP by <strong>Dec 4</strong>.</p><p style=\"font-size:9px\">Unsubscribe | View in browser</p></div>",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Holiday Open House",
+    "start": "2026-12-10 16:00",
+    "end": "2026-12-10 19:00",
+    "loc": "Harbourfront Studio, 235 Queens Quay W"
+   },
+   {
+    "kind": "deadline",
+    "title": "RSVP for Holiday Open House",
+    "start": "2026-12-04 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "html-leftover-md",
+  "type": "pasted rich text",
+  "text": "**Staff Training Day**  \\n\n*Date:* Mon, 1/18/27  \\n\n*Time:* 8:30–4:00 (lunch provided)  \\n\n[Register here](https://example.org/reg) by **Jan 8**",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Staff Training Day",
+    "start": "2027-01-18 08:30",
+    "end": "2027-01-18 16:00"
+   },
+   {
+    "kind": "deadline",
+    "title": "Register for Staff Training Day",
+    "start": "2027-01-08 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "slack-1",
+  "type": "slack message",
+  "text": "Maya Chen  2:14 PM\nheads up team: design review moved to thurs 3:30 instead of today. also pls get your self-assessments into Workday by EOD Friday 🙏",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Design review",
+    "start": "2026-11-26 15:30",
+    "end": "2026-11-26 16:30"
+   },
+   {
+    "kind": "deadline",
+    "title": "Self-assessment in Workday",
+    "start": "2026-11-27 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "slack-2",
+  "type": "slack message",
+  "text": "Kev  9:41 AM\noffsite is locked in: Jan 20–21 at the Collingwood lodge. bus leaves the office 7am on the 20th\nKev  9:42 AM\nand expense reports for Q4 due Dec 18, finance is strict this year",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Team offsite",
+    "start": "2027-01-20",
+    "end": "2027-01-21",
+    "allDay": true,
+    "loc": "Collingwood lodge"
+   },
+   {
+    "kind": "event",
+    "title": "Offsite bus leaves",
+    "start": "2027-01-20 07:00",
+    "end": "2027-01-20 08:00",
+    "loc": "Office"
+   },
+   {
+    "kind": "deadline",
+    "title": "Q4 expense reports due",
+    "start": "2026-12-18 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "teams-chat",
+  "type": "teams message",
+  "text": "[11/23 9:55 AM] Alvarez, Diego\nCan you cover the client demo tomorrow 11-11:30? I'll send the deck tonight.\n[11/23 9:57 AM] Gail, Braden\nyep, on it",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Client demo",
+    "start": "2026-11-24 11:00",
+    "end": "2026-11-24 11:30"
+   }
+  ]
+ },
+ {
+  "id": "text-thread-plans",
+  "type": "text thread",
+  "text": "Mom: Dinner at Auntie Joyce's on the 6th, 5:30\nMom: and can you pick up the cake from Bakery on Bloor that afternoon?\nMe: yes\nMom: also your cousin's wedding RSVP card is due Dec 1!!",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Dinner at Auntie Joyce's",
+    "start": "2026-12-06 17:30",
+    "end": "2026-12-06 18:30"
+   },
+   {
+    "kind": "task",
+    "title": "Pick up cake from Bakery on Bloor",
+    "start": "2026-12-06",
+    "end": null
+   },
+   {
+    "kind": "deadline",
+    "title": "Mail wedding RSVP card",
+    "start": "2026-12-01 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "library-hold",
+  "type": "notification",
+  "text": "Toronto Public Library\nYour hold is ready for pickup at Parkdale branch: \"The Overstory\".\nPick up by: Monday, November 30, 2026.\nItems due: \"Braiding Sweetgrass\" — due Tuesday, December 1, 2026.",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Pick up library hold",
+    "start": "2026-11-30 17:00",
+    "end": null
+   },
+   {
+    "kind": "deadline",
+    "title": "Return 'Braiding Sweetgrass'",
+    "start": "2026-12-01 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "car-service",
+  "type": "service appointment",
+  "text": "Thanks for booking with Midtown Honda Service.\nAppointment: Fri, 11/27/2026 7:30 AM — Oil change + winter tire swap\nDrop-off only; shuttle available. Est. ready by 12:00 PM.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Honda oil change + tire swap",
+    "start": "2026-11-27 07:30",
+    "end": "2026-11-27 08:30",
+    "loc": "Midtown Honda"
+   },
+   {
+    "kind": "task",
+    "title": "Pick up car from Midtown Honda",
+    "start": "2026-11-27",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "tax-letter",
+  "type": "letter",
+  "text": "CANADA REVENUE AGENCY\nNotice — Request for information\n\nWe are reviewing your 2025 return. Please send copies of your tuition receipts (T2202) within 30 days of the date of this letter.\n\nDate of this letter: November 16, 2026",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Send T2202 receipts to CRA",
+    "start": "2026-12-16 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "city-waste",
+  "type": "municipal notice",
+  "text": "City of Toronto — Holiday Collection Changes\nGarbage/recycling normally collected on Friday, December 25 will be collected Saturday, December 26.\nFriday, January 1, 2027 collection moves to Saturday, January 2.\nChristmas tree collection: weeks of January 4 and January 11, 2027.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Garbage pickup (holiday change)",
+    "start": "2026-12-26",
+    "end": "2026-12-26",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Garbage pickup (holiday change)",
+    "start": "2027-01-02",
+    "end": "2027-01-02",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Christmas tree collection",
+    "start": "2027-01-04",
+    "end": "2027-01-15",
+    "allDay": true
+   }
+  ]
+ },
+ {
+  "id": "parking-permit",
+  "type": "email",
+  "text": "Your on-street parking permit for Area 4K expires on December 31, 2026. Renew online before then to avoid a ticket. Renewals open December 1.",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Parking permit renewal",
+    "start": "2026-12-31 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "gym-class",
+  "type": "class booking",
+  "text": "You're booked! 🧘\nVinyasa Flow with Rachel\nThu, Nov 26 · 6:15 PM – 7:15 PM\nYoga Tree Annex, Studio B\nLate cancel (within 12 hours) fee: $15",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Vinyasa Flow",
+    "start": "2026-11-26 18:15",
+    "end": "2026-11-26 19:15",
+    "loc": "Yoga Tree Annex, Studio B"
+   }
+  ]
+ },
+ {
+  "id": "swim-lessons",
+  "type": "registration confirmation",
+  "text": "Registration confirmed: Swimmer 3 (Ages 6–12)\nSaturdays, 10:00 – 10:30 AM, January 9 – March 13, 2027\nLocation: Regent Park Aquatic Centre\nProgram code: 3301145",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Swimmer 3 lessons",
+    "start": "2027-01-09 10:00",
+    "end": "2027-01-09 10:30",
+    "loc": "Regent Park Aquatic Centre",
+    "repeat": "FREQ=WEEKLY;BYDAY=SA;UNTIL=20270313"
+   }
+  ]
+ },
+ {
+  "id": "book-club",
+  "type": "email",
+  "text": "Hi all — next book club is Tuesday the 8th at 7:30 at Jess's place. We're reading \"Tomorrow, and Tomorrow, and Tomorrow\". Bring snacks!",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Book club",
+    "start": "2026-12-08 19:30",
+    "end": "2026-12-08 20:30",
+    "loc": "Jess's place"
+   },
+   {
+    "kind": "task",
+    "title": "Read 'Tomorrow, and Tomorrow, and Tomorrow'",
+    "start": "2026-12-08",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "volunteer-signup",
+  "type": "signup confirmation",
+  "text": "SignUpGenius: You signed up for the following slots\nDaily Bread Food Bank — Holiday Hamper Packing\n12/12/2026  9:00am - 12:00pm  Packing line\n12/19/2026  1:00pm - 4:00pm   Loading dock\nLocation: 191 New Toronto St",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Hamper packing (Daily Bread)",
+    "start": "2026-12-12 09:00",
+    "end": "2026-12-12 12:00",
+    "loc": "191 New Toronto St"
+   },
+   {
+    "kind": "event",
+    "title": "Loading dock (Daily Bread)",
+    "start": "2026-12-19 13:00",
+    "end": "2026-12-19 16:00",
+    "loc": "191 New Toronto St"
+   }
+  ]
+ },
+ {
+  "id": "webinar-london",
+  "type": "email",
+  "text": "You're registered: \"Cross-border payroll in 2027\"\nDate: 2 December 2026\nTime: 15:00 – 16:00 GMT\nJoin link will be emailed 24 hours prior.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Cross-border payroll webinar",
+    "start": "2026-12-02 15:00",
+    "end": "2026-12-02 16:00",
+    "zone": "Europe/London"
+   }
+  ]
+ },
+ {
+  "id": "family-call-intl",
+  "type": "text thread",
+  "text": "Grandma (Manila): call us Sunday 8pm our time? that's your morning\nMe: ok!",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Call with Grandma",
+    "start": "2026-11-29 20:00",
+    "end": "2026-11-29 21:00",
+    "zone": "Asia/Manila"
+   }
+  ]
+ },
+ {
+  "id": "lease-letter",
+  "type": "letter",
+  "text": "Dear Tenant,\n\nThis is notice that your lease at 14 Harbord St, Unit 2 ends on February 28, 2027. Please let us know by December 31, 2026 whether you intend to renew. A unit inspection is scheduled for Wednesday, January 6, 2027 between 10:00 a.m. and 2:00 p.m.\n\nRegards, Kingsway Property Mgmt",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Lease renewal decision",
+    "start": "2026-12-31 17:00",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "Unit inspection",
+    "start": "2027-01-06 10:00",
+    "end": "2027-01-06 14:00",
+    "loc": "14 Harbord St, Unit 2"
+   },
+   {
+    "kind": "deadline",
+    "title": "Lease ends",
+    "start": "2027-02-28 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "daycare",
+  "type": "email",
+  "text": "Little Acorns Daycare — closures\nWe will be closed Dec 24 through Jan 1 inclusive. Re-enrolment forms for 2027 are due Dec 15. Our holiday sing-along is Friday Dec 18 at 3:30, families welcome!",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Daycare closed",
+    "start": "2026-12-24",
+    "end": "2027-01-01",
+    "allDay": true
+   },
+   {
+    "kind": "deadline",
+    "title": "Daycare re-enrolment forms due",
+    "start": "2026-12-15 17:00",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "Daycare holiday sing-along",
+    "start": "2026-12-18 15:30",
+    "end": "2026-12-18 16:30"
+   }
+  ]
+ },
+ {
+  "id": "work-deadlines-email",
+  "type": "email",
+  "text": "Subject: Year-end reminders\n\nTeam,\n- Timesheets for December: submit by Wed Dec 23, noon.\n- IT will patch laptops Sat Dec 19 overnight — leave yours plugged in at your desk Friday.\n- Holiday party: Thursday, Dec 17, 6 pm, The Drake (plus-ones welcome).\n- Benefits enrollment closes Monday, Nov 30.",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "December timesheets",
+    "start": "2026-12-23 12:00",
+    "end": null
+   },
+   {
+    "kind": "task",
+    "title": "Leave laptop plugged in at desk",
+    "start": "2026-12-18",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "Holiday party",
+    "start": "2026-12-17 18:00",
+    "end": "2026-12-17 19:00",
+    "loc": "The Drake"
+   },
+   {
+    "kind": "deadline",
+    "title": "Benefits enrollment closes",
+    "start": "2026-11-30 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "interview-invite",
+  "type": "email",
+  "text": "Hi Braden,\n\nThanks for applying to Shopify! We'd like to invite you to a 45-minute video interview on Monday, December 7, 2026 at 1:00 PM ET. Please complete the short online assessment beforehand, by Friday, December 4.\n\nBest,\nRecruiting",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Shopify video interview",
+    "start": "2026-12-07 13:00",
+    "end": "2026-12-07 13:45"
+   },
+   {
+    "kind": "deadline",
+    "title": "Shopify online assessment",
+    "start": "2026-12-04 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "wedding-save",
+  "type": "invitation",
+  "text": "SAVE THE DATE\nPriya & Daniel\nSaturday, the twenty-second of May, two thousand twenty-seven\nKelowna, British Columbia\nFormal invitation to follow. Please book accommodation by March 1.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Priya & Daniel's wedding",
+    "start": "2027-05-22",
+    "end": "2027-05-22",
+    "allDay": true,
+    "loc": "Kelowna, BC"
+   },
+   {
+    "kind": "deadline",
+    "title": "Book wedding accommodation",
+    "start": "2027-03-01 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "realtor-showings",
+  "type": "email",
+  "text": "Showings booked for Saturday:\n10:00 – 45 Lappin Ave\n10:45 – 112 Wallace Ave\n11:30 – 7 Brock Ave, Unit 3\nOffer night for Lappin is Tuesday Dec 1 at 7pm.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Showing: 45 Lappin Ave",
+    "start": "2026-11-28 10:00",
+    "end": "2026-11-28 10:45",
+    "loc": "45 Lappin Ave"
+   },
+   {
+    "kind": "event",
+    "title": "Showing: 112 Wallace Ave",
+    "start": "2026-11-28 10:45",
+    "end": "2026-11-28 11:30",
+    "loc": "112 Wallace Ave"
+   },
+   {
+    "kind": "event",
+    "title": "Showing: 7 Brock Ave, Unit 3",
+    "start": "2026-11-28 11:30",
+    "end": "2026-11-28 12:30",
+    "loc": "7 Brock Ave, Unit 3"
+   },
+   {
+    "kind": "deadline",
+    "title": "Offer night for 45 Lappin Ave",
+    "start": "2026-12-01 19:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "court-jury",
+  "type": "letter",
+  "text": "JURY SUMMONS\nYou are required to attend for jury selection on Monday, January 11, 2027 at 9:00 a.m.\nCourthouse: 361 University Ave, Toronto\nIf you wish to request a deferral, return the enclosed form by December 18, 2026.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Jury selection",
+    "start": "2027-01-11 09:00",
+    "end": "2027-01-11 10:00",
+    "loc": "361 University Ave, Toronto"
+   },
+   {
+    "kind": "deadline",
+    "title": "Jury deferral form",
+    "start": "2026-12-18 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "moving-checklist",
+  "type": "notes",
+  "text": "Move — Sat Dec 19\n- movers arrive 8am (Two Small Men)\n- book elevator w/ concierge by Dec 12\n- cancel Hydro at old place effective Dec 20\n- forward mail (Canada Post)",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Movers arrive",
+    "start": "2026-12-19 08:00",
+    "end": "2026-12-19 09:00"
+   },
+   {
+    "kind": "deadline",
+    "title": "Book elevator with concierge",
+    "start": "2026-12-12 17:00",
+    "end": null
+   },
+   {
+    "kind": "task",
+    "title": "Cancel Hydro at old place",
+    "start": "2026-12-20",
+    "end": null
+   },
+   {
+    "kind": "task",
+    "title": "Set up mail forwarding",
+    "start": null,
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "restaurant-res",
+  "type": "reservation",
+  "text": "OpenTable: Your reservation is confirmed\nAlo Restaurant · Party of 2\nThursday, December 31, 2026 at 9:15 PM\n163 Spadina Ave, 3rd Floor\nCredit card required; cancellation fee applies for no-shows or cancellations after 12/29.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Dinner at Alo",
+    "start": "2026-12-31 21:15",
+    "end": "2026-12-31 22:15",
+    "loc": "163 Spadina Ave, 3rd Floor"
+   },
+   {
+    "kind": "deadline",
+    "title": "Last day to cancel Alo without fee",
+    "start": "2026-12-29 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "conference-reg",
+  "type": "email",
+  "text": "Registration confirmed — Collision Toronto 2027\nJune 15–17, 2027, Enercare Centre\nBadge pickup opens June 14 at 2:00 PM.\nEarly-bird hotel block rate ends April 30, 2027.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Collision Toronto",
+    "start": "2027-06-15",
+    "end": "2027-06-17",
+    "allDay": true,
+    "loc": "Enercare Centre"
+   },
+   {
+    "kind": "event",
+    "title": "Collision badge pickup",
+    "start": "2027-06-14 14:00",
+    "end": "2027-06-14 15:00",
+    "loc": "Enercare Centre"
+   },
+   {
+    "kind": "deadline",
+    "title": "Hotel block rate ends",
+    "start": "2027-04-30 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "pickup-order",
+  "type": "notification",
+  "text": "Your order from IKEA North York is ready for pickup.\nPick up by: Sun, Nov 29, 2026, 9:00 PM\nBring your order number: 1043-778-221",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Pick up IKEA order",
+    "start": "2026-11-29 21:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "none-receipt",
+  "type": "receipt",
+  "text": "LOBLAWS #1023  — 11/22/2026 14:31\nBANANAS        1.29\nOAT MILK 1.75L 4.99\nSUBTOTAL       6.28\nHST 13%        0.65\nTOTAL          6.93\nVISA ****8812  APPROVED\nReturn policy: within 30 days with receipt.",
+  "items": []
+ },
+ {
+  "id": "none-shipping",
+  "type": "shipping notice",
+  "text": "Your package has shipped! 📦\nOrder #112-5548839-221\nCarrier: Canada Post  Tracking: 7302 1188 4471 9920\nEstimated delivery: Thu, Nov 26 – Fri, Nov 27\nNo signature required.",
+  "items": []
+ },
+ {
+  "id": "none-marketing",
+  "type": "marketing email",
+  "text": "🔥 CYBER WEEK — UP TO 60% OFF 🔥\nSale ends Sunday at midnight! Shop boots, parkas and more.\nFree shipping on orders over $75. Use code SNOW26.\nUnsubscribe | Privacy Policy | 123 Retail Way, Toronto",
+  "items": []
+ },
+ {
+  "id": "none-terms",
+  "type": "policy update",
+  "text": "We're updating our Terms of Service. The changes take effect on January 1, 2027. By continuing to use our service after that date, you agree to the updated terms. No action is required.",
+  "items": []
+ },
+ {
+  "id": "none-newsletter",
+  "type": "newsletter",
+  "text": "This week in neighbourhood news: the new bakery on Roncesvalles opened last Saturday, the bike lane on Bloor was completed in October, and residents shared memories of the 1998 ice storm.",
+  "items": []
+ },
+ {
+  "id": "none-bank-statement",
+  "type": "notification",
+  "text": "Your November e-statement is available. Statement period: Oct 23 – Nov 22, 2026. Minimum payment: $0.00. Log in to view.",
+  "items": []
+ },
+ {
+  "id": "none-quoted-only",
+  "type": "email reply",
+  "text": "Thanks, sorry I can't make it this time!\n\nOn Mon, Nov 23, 2026 at 8:30 AM Alex Park <alex.p@gmail.com> wrote:\n> Trivia night at the Duke, Thursday Dec 3 at 8pm — who's in?",
+  "items": []
+ },
+ {
+  "id": "none-flight-status",
+  "type": "notification",
+  "text": "Flight AC 101 on Nov 21, 2026 has landed. Thank you for flying with us. Rate your trip and earn bonus points.",
+  "items": []
+ }
+]

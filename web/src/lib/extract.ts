@@ -40,6 +40,10 @@ const HEADER = /^\s*(?:from|to|cc|bcc|sent|date|reply-to|received|message-id|imp
 const SIGNOFF = /^\s*(?:best|best regards|regards|kind regards|warm regards|thanks|thank you|many thanks|cheers|sincerely|yours|all the best|talk soon|-- ?)\s*[,!.]?\s*$/i;
 const QUOTED = /^\s*>|^\s*On .{5,120}wrote:\s*$|^-{2,}\s*(?:original message|forwarded message)\s*-{2,}/i;
 const FOOTER = /©|\bcopyright\b|\bunsubscribe\b|\ball rights reserved\b|\bprivacy policy\b|\bview (?:this|in) (?:email|browser)\b/i;
+// "Maya Chen  2:14 PM", "[10:42] Sam", a receipt's "11/22/2026 14:31": when a message was written, not a plan
+const CHAT_STAMP = /^\s*(?:[A-Z][\w.'-]*(?:\s[A-Z][\w.'-]*){0,3}\s+(?:\d{1,2}:\d{2}\s?(?:[ap]\.?m\.?)?|yesterday|today)\s*$|\[?\d{1,2}:\d{2}(?:\s?[ap]m)?\]\s*[A-Z][\w.'-]*(?:\s[A-Z][\w.'-]*)?\s*$)|\b\d{1,2}\/\d{1,2}\/\d{2,4}\s+\d{1,2}:\d{2}(?::\d{2})?\s*$|\btracking\s*(?:#|no\.?|number)?:?\s*[\d ]{10,}/i;
+// "Returns accepted within 30 days", "valid for 12 months", "allow 5–7 business days": a rule, not an appointment
+const POLICY = /\b(?:within|for up to|up to|allow|takes?|valid for|expires? in|after)\s+\d+(?:\s*[-–]\s*\d+)?\s+(?:business\s+|working\s+|calendar\s+)?(?:days?|weeks?|months?|hours?)\b(?!\s+(?:from now|before))|\b(?:returns?|refunds?|exchanges?)\s+(?:are\s+)?(?:accepted|available|policy)\b/i;
 const CANCELLED = /\b(?:cancel+ed|called off|postponed|no longer|won'?t be happening|is off\b|scrapped)\b/i;
 const PAST_REF = /\b(?:thank(?:s| you) (?:to )?(?:everyone|all) who|was held|took place|last (?:week|month|year)|came out to|attended)\b/i;
 
@@ -72,7 +76,7 @@ function rawLines(text: string) {
     if (quoted || signed) continue;
     if (SIGNOFF.test(s)) { signed = lines.length > 0; continue; }
     // (header lines only at the top of an email: "Date: December 2" further down is the appointment)
-    if ((inHeader && HEADER.test(s)) || FOOTER.test(s)) continue;
+    if ((inHeader && HEADER.test(s)) || FOOTER.test(s) || CHAT_STAMP.test(s)) continue;
     if (!s.trim()) inHeader = false;
     lines.push({ s, at: here });
   }
@@ -106,7 +110,10 @@ function icsRule(text: string) {
   if (!freq) return undefined;
   const codes = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
   const byDay = kv.BYDAY ? kv.BYDAY.split(',').map((d) => codes.indexOf(d.slice(-2))).filter((d) => d >= 0) : undefined;
-  return { freq, interval: Math.max(1, +(kv.INTERVAL ?? 1) || 1), ...(byDay?.length && (freq as string) === 'weekly' ? { byDay } : {}) };
+  // UNTIL kept (a series that ends, ends); COUNT is left to the occurrences the file lists
+  const u = /^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})(Z)?)?$/.exec(kv.UNTIL ?? '');
+  const until = u ? (u[7] ? Date.UTC(+u[1], +u[2] - 1, +u[3], +u[4], +u[5], +u[6]) : new Date(+u[1], +u[2] - 1, +u[3], u[4] ? +u[4] : 23, u[5] ? +u[5] : 59).getTime()) : undefined;
+  return { freq, interval: Math.max(1, +(kv.INTERVAL ?? 1) || 1), ...(byDay?.length && (freq as string) === 'weekly' ? { byDay } : {}), ...(until ? { until } : {}) };
 }
 
 /** Written dates made plain for the reader: a weekday in front of a full date goes ("Thursday, December 10", "Thu 17
@@ -129,6 +136,8 @@ function wordDates(t: string) {
 
 function plainDates(t: string) {
   t = wordDates(t);
+  // a rota's shorthand: "3p-11p", "7a–3p" → "3pm-11pm"
+  t = t.replace(/\b(\d{1,2}(?::\d\d)?)([ap])(?=\s*[-–]\s*\d{1,2}(?::\d\d)?[ap]\b)/gi, '$1$2m').replace(/(?<=[-–]\s*)(\d{1,2}(?::\d\d)?)([ap])\b/gi, '$1$2m');
   const WD = '(?:mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun)(?:day|nesday|sday|urday)?\\.?,?';
   const MON = '(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\\.?';
   return t
@@ -160,8 +169,8 @@ function units(text: string): Unit[] {
     const kv = KEY.exec(s);
     if (kv) {
       const k = kv[1].toLowerCase(), v = kv[2].trim();
-      block ??= { s: '', from: at, to: at + s.length, heading };
-      block.to = at + s.length;
+      block ??= { s: '', from: at, to: at + raw.length, heading };
+      block.to = at + raw.length;
       if (/^(where|location|venue|place|room)$/.test(k)) block.where = v;
       else if (/^(what|event|title)$/.test(k)) block.what = v;
       else block.s += (block.s ? ' ' : '') + (/^(deadline|due|rsvp)$/.test(k) ? `${k} ${v}` : v);
@@ -174,8 +183,9 @@ function units(text: string): Unit[] {
     if (s.trim().length <= 70 && !/\d{1,2}[:/]\d|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d/i.test(s) && !/[.!?]$/.test(s.trim())) heading = s.trim().replace(/[:\-–]\s*$/, '');
     // a line may hold several sentences; each is a unit (bullets and "Date: thing" newsletter lines too)
     const re = /[^.!?\n—]+?(?:[.!?]+(?=\s|$)|\s+—\s+|\s+-{1,2}\s+(?=[a-z])|$)/gi;
-    for (const m of s.matchAll(re)) {
-      const t = m[0].trim();
+    // (split the line as written, so a unit's span is where it really sits; then make each piece plain)
+    for (const m of raw.matchAll(re)) {
+      const t = plainDates(m[0]).trim();
       if (t.length < 4) continue;
       out.push({ s: t.replace(/^(?:[-•*·–]+\s*|\d{1,2}[.)]\s+)/, ''), from: at + m.index!, to: at + m.index! + m[0].length, heading });
     }
@@ -185,7 +195,7 @@ function units(text: string): Unit[] {
 }
 
 const hasWhen = (s: string, now: Date) => chrono.parse(s, now, { forwardDate: true }).some((r) => r.start.isCertain('day') || r.start.isCertain('weekday') || r.start.isCertain('hour'));
-const GENERIC = /^(?:it|this|that|we|let'?s|meet|the meeting|meeting|event|new event|untitled|please|reminder|note)$/i;
+const GENERIC = /^(?:it|this|that|we|let'?s|meet|the meeting|meeting|event|new event|untitled|please|reminder|note|join(?: the)? meeting|join (?:on|with) (?:zoom|teams)|alternatively|add to calendar)$|\|.*\|/i;
 
 /** A short, natural title for what a sentence describes, when the reader's own is a whole clause. */
 function tidyTitle(title: string, unit: Unit, subject?: string, preferSubject = false) {
@@ -206,21 +216,45 @@ function tidyTitle(title: string, unit: Unit, subject?: string, preferSubject = 
   return t ? t[0].toUpperCase() + t.slice(1) : 'New event';
 }
 
+/** Pasted HTML source or Markdown, as plain text with every character where it was (the highlights still line up):
+ *  tags and ** markers become spaces, a closing block tag a line break, an entity its character. */
+const blank = (m: string) => m.replace(/[^\n]/g, ' ');
+const ENTITY: Record<string, string> = { nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", ndash: '–', mdash: '—', rsquo: '’', lsquo: '‘', hellip: '…' };
+export function unmark(text: string) {
+  let t = text;
+  if ((t.match(/<\/?(?:p|br|div|li|ul|td|tr|table|b|strong|span|h\d|a)\b[^>]*>/gi)?.length ?? 0) >= 3) {
+    t = t.replace(/<(script|style|head)\b[\s\S]*?<\/\1>/gi, blank)
+      .replace(/<(?:br|\/p|\/div|\/li|\/tr|\/h\d|\/table)\b[^>]*>/gi, (m) => '\n' + ' '.repeat(m.length - 1))
+      .replace(/<[^>\n]*>/g, blank)
+      .replace(/&(#\d+|[a-z]+);/gi, (m, n: string) => {
+        const c = n[0] === '#' ? String.fromCharCode(+n.slice(1)) : ENTITY[n.toLowerCase()];
+        return c === undefined ? m : c + ' '.repeat(m.length - 1);
+      });
+  }
+  return t.replace(/\*\*|__(?=\w)|(?<=\w)__/g, blank);
+}
+
 // ---------------------------------------------------------------- the reading
 export function extract(input: string, calendars: CalendarSource[], now = new Date()): Extraction {
-  const text = input.length > MAX_TEXT ? input.slice(0, MAX_TEXT) : input;
+  const text = unmark(input.length > MAX_TEXT ? input.slice(0, MAX_TEXT) : input);
   const skipped: Extraction['skipped'] = [];
 
   // 1. whole formats
   if (/BEGIN:VEVENT/i.test(text)) {
     const cal = parseIcs(text, 'drop', now.getTime() - 30 * DAY, now.getTime() + 800 * DAY);
     // (a repeating event comes back as its occurrences: one proposal per series, the first one, with its rule)
-    const rule = icsRule(text);
+    // (each VEVENT's own rule: a weekly class beside a one-off party leaves the party one-off)
+    const rules = new Map<string, ReturnType<typeof icsRule>>();
+    for (const block of text.split(/BEGIN:VEVENT/i).slice(1)) {
+      const title = /^SUMMARY[^:\r\n]*:(.*)$/im.exec(block)?.[1].trim().replace(/\\([,;\\])/g, '$1').replace(/\\n/gi, ' ');
+      if (title !== undefined) rules.set(title, icsRule(block.split(/END:VEVENT/i)[0]));
+    }
+    const ruleOf = (title: string) => rules.get(title.trim());
     const seen = new Set<string>();
-    const firsts = cal.events.sort((a, b) => a.start - b.start).filter((e) => { const k = e.title + '|' + (rule ? '' : e.start); if (seen.has(k)) return false; seen.add(k); return true; });
+    const firsts = cal.events.sort((a, b) => a.start - b.start).filter((e) => { const k = e.title + '|' + (ruleOf(e.title) ? '' : e.start); if (seen.has(k)) return false; seen.add(k); return true; });
     const proposals: Proposal[] = firsts.map((raw) => {
       const e = decodeEvent(raw);
-      const parsed: Parsed = { title: e.title, start: e.start, end: e.end, allDay: e.allDay, location: e.location, hasDate: true, hasDay: true, hasTime: !e.allDay, timeFromWords: false, hasEnd: true, recurrence: rule ?? e.recurrence };
+      const parsed: Parsed = { title: e.title, start: e.start, end: e.end, allDay: e.allDay, location: e.location, hasDate: true, hasDay: true, hasTime: !e.allDay, timeFromWords: false, hasEnd: true, recurrence: ruleOf(e.title) ?? e.recurrence };
       return { kind: 'event', parsed, from: 0, to: text.length, confidence: 1, why: 'calendar file (.ics)' };
     });
     return { proposals, skipped };
@@ -228,7 +262,16 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
   if (/\b(?:automatic reply|auto-?reply|out of (?:the )?office)\b/i.test(text.slice(0, 600)) || /\bterms (?:of service|and conditions)\b/i.test(text.slice(0, 800)))
     return { proposals: [], skipped: [{ text: text.slice(0, 80), why: 'an automatic reply or terms — nothing to add' }] };
   const flights = parseItinerary(text, now);
-  const docNow = documentDate(text, now);
+  let docNow = documentDate(text, now);
+  // a shift schedule: three or more lines that are just a day and hours ("Wed 3p-11p", "12/6 D 07:00-19:30")
+  const ROTA_LINE = /^\s*(?:(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*\.?|\d{1,2}\/\d{1,2})\s+(?:[DNE]\s+|day\s+|night\s+|eve\s+)?(?:\d{1,2}(?::?\d\d)?\s*[ap]?m?\s*[-–]\s*\d{1,2}(?::?\d\d)?\s*[ap]?m?|off|rest|—)\s*$/gim;
+  const rota = (text.match(ROTA_LINE)?.length ?? 0) >= 3;
+  if (rota) {
+    // "Rota wk of Nov 30": its weekdays are that week's
+    const wk = /\b(?:wk|week)\s+(?:of|starting|beginning|commencing)\s+([^\n—,(]+)/i.exec(text);
+    const p = wk && parseQuick(wk[1], calendars, docNow);
+    if (p?.hasDay) docNow = new Date(startOfDay(p.start).getTime() - DAY / 2);
+  }
   const thread = /^\s*(?:\[[^\]]+\]\s*)?[A-Z][\w .'-]{0,20}:\s+\S/m.test(text) && (text.match(/^\s*(?:\[[^\]]+\]\s*)?[A-Z][\w .'-]{0,20}:\s+\S/gm)?.length ?? 0) >= 2 || /^\s*(?:re|fwd?):/im.test(text) || /\bwrote:\s*$/im.test(text);
   const appt = appointmentTitle(text);
   const subject = appt ?? subjectOf(text);
@@ -278,9 +321,12 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
       skipped.push({ text: s, why: 'cancelled' });
       continue;
     }
+    if (rota && /^\s*\S+\s+(?:off|rest|—)\s*$/i.test(s)) { skipped.push({ text: s, why: 'a day off' }); continue; }
+    if (POLICY.test(s)) { skipped.push({ text: s, why: 'a policy, not a date' }); continue; }
     if (PAST_REF.test(s)) { skipped.push({ text: s, why: 'already happened' }); continue; }
     // a sentence with two things ("dentist tue 9am and haircut thu 4"): each on its own
-    const parts = splitTwo(s, docNow);
+    if (rota && /\b(?:wk|week)\s+(?:of|starting|beginning|commencing)\b/i.test(s) && s.length < 60) continue; // (the schedule's own title)
+    const parts = rota && new RegExp(ROTA_LINE.source, 'i').test(s) ? [s.replace(/^(\s*\S+\s+)(?:[DNE]|day|night|eve)\s+/i, '$1')] : splitTwo(s, docNow);
     for (const part of parts) {
       const p = parseQuick(part.slice(0, 300), calendars, docNow);
       if (!p.hasDate) continue;
@@ -307,7 +353,11 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
       const deadlineWords = /\b(?:due|deadline|by|before|no later than|rsvp|register|registration|submit|submission|closes?|cut-?off|apply|send)\b/i.test(part);
       let kind: ExtractKind = guessKind(part, p) === 'task' ? 'task' : p.deadline ? 'deadline' : 'event';
       if (kind === 'event' && deadlineWords && !p.hasEnd && /\b(?:due|deadline|rsvp|registration|submission|closes?|cut-?off|by)\b/i.test(part)) kind = 'deadline';
-      const title = tidyTitle(p.title, u, subject, !!appt);
+      let title = tidyTitle(p.title, u, subject, !!appt);
+      if (rota && new RegExp(ROTA_LINE.source, 'i').test(u.s)) {
+        const code = /^\s*\S+\s+([DNE]|day|night|eve)\b/i.exec(u.s)?.[1].toLowerCase()[0];
+        title = code === 'n' ? 'Night shift' : code === 'd' ? 'Day shift' : code === 'e' ? 'Evening shift' : 'Shift';
+      }
       const parsed: Parsed = { ...p, title, location: u.where ?? p.location };
       const confidence = (p.hasTime || p.allDay ? 0.6 : 0.4) + (p.hasDay ? 0.3 : 0) + (u.what || u.where ? 0.1 : 0);
       const prop: Proposal = { kind, parsed, from: u.from, to: u.to, confidence: Math.min(1, confidence) };

@@ -7,7 +7,13 @@ export async function readDocument(file: File): Promise<{ text: string; kind: 'p
   if (file.size > MAX_BYTES) throw new Error('That file is too large to read (over 25 MB).');
   const name = file.name.toLowerCase();
   if (name.endsWith('.pdf') || file.type === 'application/pdf') return { text: await pdfText(file), kind: 'pdf' };
+  if (/^(?:image|video|audio)\//.test(file.type) || /\.(?:png|jpe?g|gif|heic|webp|tiff?|bmp|mp[34]|mov|zip|gz|dmg|exe|docx?|xlsx?|pptx?|pages|key|numbers)$/.test(name))
+    throw new Error('That kind of file can’t be read here — paste its text, or drop a PDF, email, .ics or text file.');
   const raw = await file.text();
+  // (bytes that aren't text: many replacement characters or control codes in the first few KB)
+  const head = raw.slice(0, 4000);
+  if (head && ((head.match(/\uFFFD|[\x00-\x08\x0E-\x1F]/g)?.length ?? 0) / head.length > 0.05)) throw new Error('That file isn’t text — nothing to read in it.');
+  if (!raw.trim()) throw new Error('That file is empty.');
   if (name.endsWith('.ics') || /BEGIN:VCALENDAR/i.test(raw.slice(0, 2000))) return { text: raw, kind: 'ics' };
   if (name.endsWith('.eml') || /^(?:received|from|return-path|mime-version):/im.test(raw.slice(0, 500))) return { text: emailText(raw), kind: 'email' };
   return { text: raw, kind: 'text' };
@@ -84,6 +90,11 @@ function decodeWords(s: string) {
 }
 /** An HTML email's words, line by line (no markup runs: it's parsed inert and only its text is kept). */
 export function htmlText(html: string) {
+  if (typeof DOMParser === 'undefined') {
+    // (no DOM here: tags dropped as text — nothing is ever rendered or run)
+    return html.replace(/<(script|style|head)[\s\S]*?<\/\1>/gi, ' ').replace(/<(?:br|\/p|\/div|\/li|\/tr|\/h\d)\b[^>]*>/gi, '\n').replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+  }
   const doc = new DOMParser().parseFromString(html, 'text/html');
   doc.querySelectorAll('script, style, head').forEach((n) => n.remove());
   doc.querySelectorAll('br, p, div, li, tr, h1, h2, h3, h4, td').forEach((n) => n.append('\n'));

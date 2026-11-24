@@ -400,6 +400,12 @@ function normalize(input: string, now: Date) {
     const ok = (x: string) => x.includes(':') || +x <= 12;
     if (!ok(a) || !ok(b)) return m;
     const hm = (x: string) => (x.includes(':') ? x : `${x}:00`);
+    // a 24-hour clock ("07:00-19:30", "19:00-07:30"): both ends are exactly what they say
+    const h24 = (x: string) => /^(?:0\d|1[3-9]|2[0-3]):\d\d$/.test(x);
+    if (!ap && !bp && (h24(a) || h24(b)) && a.includes(':') && b.includes(':')) {
+      const twelve = (x: string) => { const [h, mm] = x.split(':').map(Number); return `${h % 12 || 12}:${String(mm).padStart(2, '0')}${h < 12 ? 'am' : 'pm'}`; };
+      return ` from ${twelve(a)} to ${twelve(b)} `;
+    }
     return ` from ${hm(a)}${ap} to ${hm(b)}${bp} `;
   });
 
