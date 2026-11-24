@@ -14,7 +14,7 @@ use objc2_event_kit::{
   EKAuthorizationStatus, EKCalendar, EKEntityType, EKEvent, EKEventStore, EKRecurrenceDayOfWeek, EKRecurrenceEnd,
   EKRecurrenceFrequency, EKRecurrenceRule, EKSpan, EKWeekday,
 };
-use objc2_foundation::{NSArray, NSDate, NSError, NSString, NSURL};
+use objc2_foundation::{NSArray, NSDate, NSError, NSNumber, NSString, NSURL};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
@@ -49,6 +49,10 @@ pub struct EkRule {
   until: Option<f64>,
   #[serde(default)]
   nth: Option<i64>, // monthly on the nth (1–4, -1 last) of its one weekday: "first Monday of the month"
+  #[serde(default)]
+  nths: Vec<i64>, // several of them: "2nd and 4th Monday"
+  #[serde(default)]
+  by_month_day: Vec<i64>, // monthly on these days of the month (-1: the last)
 }
 
 #[derive(Deserialize)]
@@ -215,18 +219,33 @@ fn rule(r: &EkRule) -> Retained<EKRecurrenceRule> {
     };
     let end = r.until.map(|u| EKRecurrenceEnd::recurrenceEndWithEndDate(&date(u)));
     // (weekdays 0–6 only: anything else from synced data is dropped, never handed to EventKit)
-    let nth = r.nth.filter(|n| matches!(n, 1..=4 | -1) && r.freq == "monthly" && r.by_day.len() == 1);
+    let monthly_one_day = r.freq == "monthly" && r.by_day.len() == 1;
+    let mut nths: Vec<i64> = r.nths.iter().copied().filter(|n| matches!(n, 1..=4 | -1)).collect();
+    if nths.is_empty() {
+      nths.extend(r.nth.filter(|n| matches!(n, 1..=4 | -1)));
+    }
     let days: Vec<Retained<EKRecurrenceDayOfWeek>> = r
       .by_day
       .iter()
       .filter(|d| (0..7).contains(*d))
-      .map(|d| match nth {
-        Some(n) => EKRecurrenceDayOfWeek::dayOfWeek_weekNumber(EKWeekday((d + 1) as isize), n as isize),
-        None => EKRecurrenceDayOfWeek::dayOfWeek(EKWeekday((d + 1) as isize)),
+      .flat_map(|d| {
+        let wd = EKWeekday((d + 1) as isize);
+        if monthly_one_day && !nths.is_empty() {
+          nths.iter().map(|n| EKRecurrenceDayOfWeek::dayOfWeek_weekNumber(wd, *n as isize)).collect::<Vec<_>>()
+        } else {
+          vec![EKRecurrenceDayOfWeek::dayOfWeek(wd)]
+        }
       })
       .collect();
+    // (days of the month 1–31, or -1 for the last: anything else from synced data is dropped)
+    let month_days: Vec<Retained<NSNumber>> =
+      if r.freq == "monthly" { r.by_month_day.iter().filter(|d| (1..=31).contains(*d) || **d == -1).map(|d| NSNumber::new_isize(*d as isize)).collect() } else { vec![] };
     let alloc = EKRecurrenceRule::alloc();
-    if days.is_empty() {
+    if !month_days.is_empty() {
+      EKRecurrenceRule::initRecurrenceWithFrequency_interval_daysOfTheWeek_daysOfTheMonth_monthsOfTheYear_weeksOfTheYear_daysOfTheYear_setPositions_end(
+        alloc, freq, r.interval.max(1) as _, None, Some(&NSArray::from_retained_slice(&month_days)), None, None, None, None, end.as_deref(),
+      )
+    } else if days.is_empty() {
       EKRecurrenceRule::initRecurrenceWithFrequency_interval_end(alloc, freq, r.interval.max(1) as _, end.as_deref())
     } else {
       EKRecurrenceRule::initRecurrenceWithFrequency_interval_daysOfTheWeek_daysOfTheMonth_monthsOfTheYear_weeksOfTheYear_daysOfTheYear_setPositions_end(
@@ -324,9 +343,9 @@ mod tests {
     assert!(check(&ev(f64::INFINITY, 1.7e12)).is_err());
     assert!(check(&ev(1e16, 1e16)).is_err());
     let mut r = ev(1.7e12, 1.7e12 + 1.0);
-    r.rule = Some(EkRule { freq: "weekly".into(), interval: 0, by_day: vec![9], until: None, nth: None });
+    r.rule = Some(EkRule { freq: "weekly".into(), interval: 0, by_day: vec![9], until: None, nth: None, nths: vec![], by_month_day: vec![] });
     assert!(check(&r).is_err());
-    r.rule = Some(EkRule { freq: "weekly".into(), interval: 2, by_day: vec![1, 9], until: Some(1.8e12), nth: None });
+    r.rule = Some(EkRule { freq: "weekly".into(), interval: 2, by_day: vec![1, 9], until: Some(1.8e12), nth: None, nths: vec![], by_month_day: vec![] });
     assert!(check(&r).is_ok());
     let mut big = ev(1.7e12, 1.7e12);
     big.title = "x".repeat(20_000);

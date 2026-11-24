@@ -34,7 +34,9 @@ export function ruleString(r: Recurrence | undefined, allDay: boolean): string |
   if (!r) return null;
   const parts = [`FREQ=${r.freq.toUpperCase()}`];
   if (r.interval > 1) parts.push(`INTERVAL=${r.interval}`);
-  if (r.byDay?.length && (r.freq === 'weekly' || r.nth)) parts.push(`BYDAY=${r.byDay.map((d) => (r.nth ? r.nth : '') + DAYS[d]).join(',')}`);
+  if (r.byDay?.length && (r.freq === 'weekly' || r.nth || r.nths?.length))
+    parts.push(`BYDAY=${r.byDay.flatMap((d) => (r.nths?.length ? r.nths : [r.nth ?? '']).map((n) => `${n}${DAYS[d]}`)).join(',')}`);
+  if (r.byMonthDay?.length) parts.push(`BYMONTHDAY=${r.byMonthDay.join(',')}`);
   if (r.until !== undefined) parts.push(`UNTIL=${format(allDay ? r.until : r.until, 'yyyy-MM-dd')}`);
   return parts.join(';');
 }
@@ -79,9 +81,15 @@ const norm = (f: (typeof FIELDS)[number], v: unknown) =>
   v === undefined || v === null || v === '' ? null : f === 'title' || f === 'loc' || f === 'cal' ? String(v).trim().replace(/[.!?,;:]+$/, '').toLowerCase().replace(/\s+/g, ' ') : String(v);
 
 // (the order weekdays are listed in doesn't matter: SA,SU = SU,SA)
-// (and "monthly on the 15th" may name its day: the app keeps that in the start date)
 const byDaySorted = (r: string | null | undefined) =>
-  r == null ? null : r.replace(/BYDAY=([^;]+)/, (_, d: string) => `BYDAY=${d.split(',').sort().join(',')}`).replace(/;BYMONTHDAY=[^;]+/, '');
+  r == null ? null : r.replace(/BYDAY=([^;]+)/, (_, d: string) => `BYDAY=${d.split(',').sort().join(',')}`).replace(/BYMONTHDAY=([^;]+)/, (_, d: string) => `BYMONTHDAY=${d.split(',').sort().join(',')}`);
+// ("monthly on the 15th" may name its day or not — a single day of the month is kept in the start date either way)
+const sameRepeat = (a: string | null, b: string | null) => {
+  const [x, y] = [byDaySorted(a), byDaySorted(b)];
+  if (x === y) return true;
+  const one = (r: string | null) => r?.replace(/;BYMONTHDAY=\d+(?=;|$)/, '') ?? null;
+  return one(x) === one(y);
+};
 
 /** Every answer that counts as right for a case. */
 export const accepted = (c: Case): Answer[] => [c, ...(c.alts ?? []).map((a) => ({ ...c, ...a }))];
@@ -99,7 +107,7 @@ export function wrongFields(c: Case, got: Answer): string[] {
         const base = (x: string | null) => (x ?? '').split(';').filter((p) => !/^(COUNT|UNTIL)=/.test(p)).join(';');
         return base(a.repeat) !== base(got.repeat) || !/UNTIL=/.test(got.repeat ?? '');
       }
-      if (f === 'repeat') return byDaySorted(a.repeat) !== byDaySorted(got.repeat);
+      if (f === 'repeat') return !sameRepeat(a.repeat, got.repeat);
       return norm(f, a[f]) !== norm(f, got[f]);
     });
     if (!best || bad.length < best.length) best = bad;

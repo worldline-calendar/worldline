@@ -44,7 +44,7 @@ export function toIcs(name: string, events: CalEvent[], color?: string): string 
       const r = e.recurrence;
       // (an all-day series ends on a date: UNTIL=YYYYMMDD, as RFC 5545 requires with a DATE start)
       const until = r.until === undefined ? [] : [`UNTIL=${e.allDay ? date(r.until) : utc(r.until)}`];
-      const parts = [`FREQ=${r.freq.toUpperCase()}`, ...(r.interval > 1 ? [`INTERVAL=${r.interval}`] : []), ...(r.byDay?.length ? [`BYDAY=${r.byDay.map((d) => (r.nth ? r.nth : '') + DAY_CODES[d]).join(',')}`] : []), ...until];
+      const parts = [`FREQ=${r.freq.toUpperCase()}`, ...(r.interval > 1 ? [`INTERVAL=${r.interval}`] : []), ...(r.byDay?.length ? [`BYDAY=${r.byDay.flatMap((d) => (r.nths?.length ? r.nths : [r.nth ?? '']).map((n) => `${n}${DAY_CODES[d]}`)).join(',')}`] : []), ...(r.byMonthDay?.length ? [`BYMONTHDAY=${r.byMonthDay.join(',')}`] : []), ...until];
       out.push(`RRULE:${parts.join(';')}`);
       // A moved occurrence is its own RECURRENCE-ID event below; listing it as skipped too would hide it on reading back.
       const key = (x: number) => (e.allDay ? encodeDay(decodeDay(x)) : x);

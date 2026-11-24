@@ -66,3 +66,16 @@ describe('another place\'s clock', () => {
     expect(p('family time saturday 4pm').title).toBe('Family time');
   });
 });
+
+describe('more monthly patterns', () => {
+  it('several days of the month, the last day, several weeks of the month', () => {
+    expect(rep('invoice clients 1st and 15th of each month')).toBe('Monthly on the 1st and 15th');
+    expect(rep('payroll the 15th and last day of each month')).toBe('Monthly on the 15th and last day');
+    expect(format(p('submit timesheet last day of every month').start, 'MMM d')).toBe('Nov 30');
+    expect(rep('council 2nd and 4th monday 6pm')).toBe('Monthly on the second and fourth Monday');
+    expect(format(p('council 2nd and 4th monday 6pm').start, 'MMM d h a')).toBe('Nov 23 6 PM'); // (today is the 4th Monday)
+    expect(rep('book club 1st & 3rd thursdays 7pm')).toBe('Monthly on the first and third Thursday');
+    expect(format(p('credit card every 10th of the month').start, 'MMM d')).toBe('Dec 10');
+    expect(rep('newsletter bi-monthly')).toBe('Every 2 months on the 23rd');
+  });
+});

@@ -76,11 +76,14 @@ function occursOn(r: Recurrence, b: ReturnType<typeof basis>, e: number) {
     case 'monthly': {
       const x = fromEpochDay(e);
       if (((x.y - b.first.y) * 12 + x.m - b.first.m) % r.interval !== 0) return false;
-      if (r.nth && r.byDay?.length === 1) {
-        // the nth (or last) such weekday of the month
+      const dim = new Date(Date.UTC(x.y, x.m + 1, 0)).getUTCDate();
+      const nths = r.nths?.length ? r.nths : r.nth ? [r.nth] : null;
+      if (nths && r.byDay?.length === 1) {
+        // the nth (or last) such weekday of the month — one or several of them
         if (weekdayOf(e) !== r.byDay[0]) return false;
-        return r.nth > 0 ? Math.ceil(x.d / 7) === r.nth : x.d + 7 > new Date(Date.UTC(x.y, x.m + 1, 0)).getUTCDate();
+        return nths.some((n) => (n > 0 ? Math.ceil(x.d / 7) === n : x.d + 7 > dim));
       }
+      if (r.byMonthDay?.length) return r.byMonthDay.some((d) => (d > 0 ? x.d === d : x.d === dim + d + 1)); // (-1: the last day)
       return x.d === b.first.d;
     }
     case 'yearly': {
@@ -230,7 +233,13 @@ export function describeRecurrence(r: Recurrence, start: number) {
     const list = listDays(days);
     s = list === 'weekdays' && n === 1 ? 'Every weekday' : `${every} on ${list}`;
   }
-  if (r.freq === 'monthly') s += r.nth && r.byDay?.length === 1 ? ` on the ${NTH_WORD[r.nth] ?? `${r.nth}th`} ${WEEKDAY[r.byDay[0]]}` : ` on the ${format(start, 'do')}`;
+  const nths = r.nths?.length ? r.nths : r.nth ? [r.nth] : null;
+  const and = (xs: string[]) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
+  const ord = (d: number) => (d === -1 ? 'last day' : format(new Date(2000, 0, d), 'do'));
+  if (r.freq === 'monthly')
+    s += nths && r.byDay?.length === 1 ? ` on the ${and(nths.map((n) => NTH_WORD[n] ?? `${n}th`))} ${WEEKDAY[r.byDay[0]]}`
+      : r.byMonthDay?.length ? ` on the ${and(r.byMonthDay.map(ord))}`
+      : ` on the ${format(start, 'do')}`;
   if (r.freq === 'yearly') s += ` on ${format(start, 'MMM d')}`;
   if (r.until !== undefined) s += ` · until ${format(untilInstant(r)!, 'MMM d')}`;
   return s;

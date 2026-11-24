@@ -97,6 +97,37 @@ function takeRepeat(input: string): RepeatInfo {
   // "repeating / recurring" say only that it repeats (how is said elsewhere, or it's weekly)
   let wantsRepeat = false;
   take(/\b(?:repeating|repeats?|recurring|recurrent)\b/i, () => (wantsRepeat = true));
+  const ORD = '(first|1st|second|2nd|third|3rd|fourth|4th|last)';
+  const ordN = (w: string) => (/last/i.test(w) ? -1 : /^(first|1)/i.test(w) ? 1 : /^(second|2)/i.test(w) ? 2 : /^(third|3)/i.test(w) ? 3 : 4);
+  const DAYNUM = '(?:the\\s+)?(\\d{1,2})(?:st|nd|rd|th)?';
+  const EACH_MONTH = '(?:of\\s+)?(?:each|every|the|a)\\s+month|monthly|a\\s+month';
+  // "2nd and 4th monday(s)", "1st & 3rd thursdays of the month": several weeks of the month
+  t = t.replace(new RegExp(`\\b(?:every\\s+|on\\s+)?(?:the\\s+)?${ORD}\\s*(?:,|and|&)\\s*(?:the\\s+)?${ORD}\\s+(${WD})s?(?:\\s+(?:${EACH_MONTH}))?\\b`, 'i'), (_, a: string, b: string, wd: string) => {
+    rule = { freq: 'monthly', interval: 1, byDay: [wdOf(wd)!], nths: [...new Set([ordN(a), ordN(b)])].sort((x, y) => (x < 0 ? 9 : x) - (y < 0 ? 9 : y)) };
+    byDayGiven = true;
+    return ' ';
+  });
+  // "1st and 15th of each month", "the 15th and last day of the month", "last day of every month", "every 10th of the month",
+  // "on the 20th monthly", "monthly on the 20th"
+  if (!rule)
+    t = t.replace(new RegExp(`\\b(?:on\\s+)?${DAYNUM}\\s*(?:,|and|&)\\s*(?:the\\s+)?(?:(\\d{1,2})(?:st|nd|rd|th)?|(last)(?:\\s+day)?)\\s+(?:${EACH_MONTH})\\b`, 'i'), (_, a: string, b?: string, last?: string) => {
+      rule = { freq: 'monthly', interval: 1, byMonthDay: [+a, last ? -1 : +b!] };
+      return ' ';
+    });
+  if (!rule)
+    t = t.replace(new RegExp(`\\b(?:on\\s+)?(?:the\\s+)?last\\s+day\\s+(?:${EACH_MONTH})\\b|\\bend\\s+of\\s+(?:each|every)\\s+month\\b`, 'i'), () => {
+      rule = { freq: 'monthly', interval: 1, byMonthDay: [-1] };
+      return ' ';
+    });
+  if (!rule)
+    t = t.replace(new RegExp(`\\b(?:every\\s+|on\\s+)?${DAYNUM}\\s+(?:${EACH_MONTH})\\b|\\bmonthly\\s+on\\s+${DAYNUM}\\b`, 'i'), (m: string, a?: string, b?: string) => {
+      const d = +(a ?? b!);
+      if (!(d >= 1 && d <= 31) || (!/\d(?:st|nd|rd|th)|\bthe\b|\bevery\b|\bon\b/i.test(m))) return m;
+      rule = { freq: 'monthly', interval: 1, byMonthDay: [d] };
+      return ' ';
+    });
+  if (!rule) take(/\bbi-?monthly\b|\bevery\s+(?:other|two|2)\s+months?\b/i, () => set('monthly', 2));
+
   // "first Monday of the month", "every last friday", "the 2nd tuesday of each month", "third thursday monthly"
   t = t.replace(
     new RegExp(`\\b(?:(?:every|each|on)\\s+(?:the\\s+)?|the\\s+)?(first|1st|second|2nd|third|3rd|fourth|4th|last)\\s+(${WD})s?(\\s+of\\s+(?:(?:every|each|the|a)\\s+)?month|\\s+(?:of\\s+)?(?:every|each)\\s+month|\\s+monthly|\\s+a\\s+month)?\\b`, 'i'),
@@ -731,7 +762,20 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
       start = startOfDay(start);
       end = addDays(start, 1);
     }
-    if (recurrence.nth && recurrence.byDay?.length === 1) {
+    if (recurrence.freq === 'monthly' && (recurrence.byMonthDay?.length || recurrence.nths?.length)) {
+      // "1st and 15th", "last day", "2nd and 4th monday": the first such day from the given date (or from today)
+      const len = end.getTime() - start.getTime();
+      let d = dateRes ? new Date(start) : at(now, timed ? start.getHours() * 60 + start.getMinutes() : 0);
+      if (allDay) d = startOfDay(d);
+      const ok = (x: Date) => {
+        const dim = new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate();
+        if (recurrence!.byMonthDay?.length) return recurrence!.byMonthDay.some((n) => (n > 0 ? x.getDate() === n : x.getDate() === dim + n + 1));
+        return x.getDay() === recurrence!.byDay![0] && recurrence!.nths!.some((n) => (n > 0 ? Math.ceil(x.getDate() / 7) === n : x.getDate() + 7 > dim));
+      };
+      for (let k = 0; k < 400 && (!ok(d) || (!dateRes && timed && d <= now)); k++) d = addDays(d, 1);
+      start = d;
+      end = new Date(d.getTime() + len);
+    } else if (recurrence.nth && recurrence.byDay?.length === 1) {
       // "first Monday of the month": the first such day from the given date (or from today)
       const len = end.getTime() - start.getTime();
       let d = dateRes ? new Date(start) : at(now, timed ? start.getHours() * 60 + start.getMinutes() : 0);

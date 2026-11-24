@@ -68,7 +68,7 @@ function choiceOf(r?: Recurrence): RepeatChoice {
   if (r.freq === 'daily' && r.interval === 1) return 'daily';
   if (r.freq === 'weekly' && r.byDay?.join() === '1,2,3,4,5' && r.interval === 1) return 'weekdays';
   if (r.freq === 'weekly' && (r.byDay?.length ?? 1) <= 1) return r.interval === 1 ? 'weekly' : r.interval === 2 ? 'biweekly' : 'custom';
-  if (r.freq === 'monthly' && r.interval === 1) return 'monthly';
+  if (r.freq === 'monthly' && r.interval === 1 && !r.nth && !r.nths?.length && !r.byMonthDay?.length) return 'monthly'; // ("first Monday", "1st and 15th": custom)
   if (r.freq === 'yearly' && r.interval === 1) return 'yearly';
   return 'custom';
 }

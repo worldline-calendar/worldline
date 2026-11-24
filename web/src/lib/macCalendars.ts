@@ -43,7 +43,7 @@ export interface MacSave {
   location?: string;
   notes?: string;
   url?: string;
-  rule?: { freq: Recurrence['freq']; interval: number; by_day: number[]; until?: number; nth?: number };
+  rule?: { freq: Recurrence['freq']; interval: number; by_day: number[]; until?: number; nth?: number; nths?: number[]; by_month_day?: number[] };
 }
 
 export type Push =
@@ -101,7 +101,7 @@ export function toSave(e: CalEvent, macCalendar: string, decode: (e: CalEvent) =
   if (d.location) s.location = d.location;
   if (d.notes || d.flight) s.notes = [d.notes, d.flight && flightLine(d.flight)].filter(Boolean).join('\n\n');
   if (d.url) s.url = d.url;
-  if (d.recurrence) s.rule = { freq: d.recurrence.freq, interval: d.recurrence.interval, by_day: d.recurrence.byDay ?? [], ...(d.recurrence.until ? { until: d.recurrence.until } : {}), ...(d.recurrence.nth ? { nth: d.recurrence.nth } : {}) };
+  if (d.recurrence) s.rule = { freq: d.recurrence.freq, interval: d.recurrence.interval, by_day: d.recurrence.byDay ?? [], ...(d.recurrence.until ? { until: d.recurrence.until } : {}), ...(d.recurrence.nth ? { nth: d.recurrence.nth } : {}), ...(d.recurrence.nths?.length ? { nths: d.recurrence.nths } : {}), ...(d.recurrence.byMonthDay?.length ? { by_month_day: d.recurrence.byMonthDay } : {}) };
   return s;
 }
 
