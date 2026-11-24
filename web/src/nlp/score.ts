@@ -119,13 +119,18 @@ export interface Report {
   n: number;
   top1: number;
   top3: number;
+  /** Sentences a person could mean more than one way: of all the readings they could mean, how many are on show. */
+  ambN: number; // such sentences
+  ambReadings: number; // their acceptable readings, in all
+  ambShown: number; // of those, shown (first or as a suggestion)
+  ambAll: number; // sentences where every acceptable reading is on show
   byCat: Record<string, { n: number; top1: number; top3: number }>;
   byField: Record<string, number>; // how often each field is wrong in the first reading
   misses: { input: string; cat: string; wrong: string[]; got: Answer; want: Answer }[];
 }
 
 export function score(cases: Case[], now: Date): Report {
-  const r: Report = { n: 0, top1: 0, top3: 0, byCat: {}, byField: {}, misses: [] };
+  const r: Report = { n: 0, top1: 0, top3: 0, ambN: 0, ambReadings: 0, ambShown: 0, ambAll: 0, byCat: {}, byField: {}, misses: [] };
   for (const c of cases) {
     const got = interpret(c.input, now);
     const wrong1 = wrongFields(c, got[0]);
@@ -139,6 +144,14 @@ export function score(cases: Case[], now: Date): Report {
     if (ok1) b.top1++;
     if (ok3) b.top3++;
     for (const f of wrong1) r.byField[f] = (r.byField[f] ?? 0) + 1;
+    if (c.alts?.length) {
+      const all = accepted(c);
+      const shown = all.filter((a) => got.some((g) => wrongFields({ ...a, input: c.input, cat: c.cat, alts: [] } as Case, g).length === 0)).length;
+      r.ambN++;
+      r.ambReadings += all.length;
+      r.ambShown += shown;
+      if (shown === all.length) r.ambAll++;
+    }
     if (!ok3) r.misses.push({ input: c.input, cat: c.cat, wrong: wrong1, got: got[0], want: c });
   }
   return r;
@@ -147,7 +160,7 @@ export function score(cases: Case[], now: Date): Report {
 export function printReport(name: string, r: Report) {
   const pct = (a: number, n: number) => `${((100 * a) / Math.max(1, n)).toFixed(1)}%`;
   const lines = [
-    `== ${name}: ${r.n} sentences · first reading right ${pct(r.top1, r.n)} · right among those shown ${pct(r.top3, r.n)}`,
+    `== ${name}: ${r.n} sentences · first reading right ${pct(r.top1, r.n)} · right among those shown ${pct(r.top3, r.n)} · ambiguous ${r.ambN}: readings on show ${pct(r.ambShown, r.ambReadings)}, all of them ${pct(r.ambAll, r.ambN)}`,
     ...Object.entries(r.byCat).sort().map(([k, b]) => `   ${k.padEnd(20)} ${String(b.n).padStart(4)}  top-1 ${pct(b.top1, b.n).padStart(6)}  top-3 ${pct(b.top3, b.n).padStart(6)}`),
     `   wrong fields (first reading): ${Object.entries(r.byField).sort((a, b) => b[1] - a[1]).map(([f, n]) => `${f} ${n}`).join(' · ')}`,
   ];

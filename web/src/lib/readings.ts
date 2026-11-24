@@ -36,13 +36,25 @@ const repeatOr = (p: Parsed, s: string) => (p.recurrence ? describeRecurrence(p.
 export function readings(text: string, calendars: CalendarSource[], now = new Date(), max = 3, kind: Kind = 'event'): Reading[] {
   const base = parseQuick(text, calendars, now);
   if (!text.trim()) return [];
-  const out: Reading[] = [];
+  // Every reading that could be meant is collected with how likely it is, then the likeliest few are offered (the same
+  // reading reached two ways counts once, at its likelier weight).
+  const all: (Reading & { w: number; order: number })[] = [];
   const add = (id: string, label: string, parsed: Parsed, as?: Kind) => {
-    if (out.length >= max || out.some((r) => r.id === id)) return;
-    if (!as && parsed.start === base.start && parsed.end === base.end && parsed.allDay === base.allDay && JSON.stringify(parsed.recurrence) === JSON.stringify(base.recurrence) && parsed.timeZone === base.timeZone) return;
-    out.push({ id, label, parsed, ...(as ? { kind: as } : {}) });
+    if (all.some((r) => r.id === id)) return;
+    const k = as ?? kind;
+    if (k === kind && parsed.start === base.start && parsed.end === base.end && parsed.allDay === base.allDay && parsed.title === base.title &&
+      JSON.stringify(parsed.recurrence) === JSON.stringify(base.recurrence) && parsed.timeZone === base.timeZone && parsed.location === base.location) return;
+    const same = all.find((r) => (r.kind ?? kind) === k && r.parsed.start === parsed.start && r.parsed.end === parsed.end && r.parsed.title === parsed.title &&
+      r.parsed.allDay === parsed.allDay && JSON.stringify(r.parsed.recurrence) === JSON.stringify(parsed.recurrence));
+    const w = WEIGHT[id.replace(/-\d+$/, '')] ?? 0.3;
+    if (same) { same.w = Math.max(same.w, w); return; }
+    all.push({ id, label, parsed, ...(as ? { kind: as } : {}), w, order: all.length });
   };
+  const finish = () => all.sort((a, b) => b.w - a.w || a.order - b.order).slice(0, max).map(({ w: _w, order: _o, ...r }) => r);
+  const out = { get length() { return all.length; } };
+  void out;
   const day = (t: number) => format(t, 'EEE MMM d');
+  moreReadings(text, base, kind, calendars, now, add);
 
   if (kind !== 'event') {
     // a deadline or a to-do: the other weekday reading, and the other kind of thing
@@ -58,7 +70,7 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
       add('as-event', `An event · ${base.hasTime ? when(base) : `${day(base.start)} · all day`}`, base.hasTime ? base : allDay, 'event');
     } else if (kind === 'task' && (base.hasTime || base.timeFromWords)) add('as-event', `An event · ${when(base)}`, base, 'event');
     titleVariants(text, base, kind, add);
-    return out;
+    return finish();
   }
 
   // a bare hour read as PM ("at 7" → 7 PM): or the morning — and 8–11 read as AM: or the evening
@@ -145,7 +157,7 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
     const p = { ...base, start: base.start - 86_400_000, end: base.end - 86_400_000 };
     if (startOfDay(p.start).getTime() === startOfDay(now).getTime()) add('today', `Today · ${when(p).replace(/^\w+ \w+ \d+ · /, '')}`, p);
   }
-  return out;
+  return finish();
 }
 
 /** The same thing under another name, when a word the reader took out may belong in it: the place ("Soccer at Trinity
@@ -200,5 +212,84 @@ function titleVariants(text: string, base: Parsed, kind: Kind, add: (id: string,
       const d0 = startOfDay(base.start).getTime();
       add('title-wd-allday', `${titled(t)} · all day`, { ...base, title: t, allDay: true, start: d0, end: d0 + 86_400_000 }, kind);
     }
+  }
+}
+
+/** How likely each kind of other reading is (higher first) — set from what people meant in the test sentences. */
+const WEIGHT: Record<string, number> = {
+  ampm: 0.8, 'tail-hour': 0.75, this: 0.72, local: 0.65, today: 0.65, 'as-task': 0.62, 'as-event': 0.6, sunday: 0.6, part: 0.58,
+  'all-day': 0.56, timed: 0.55, second: 0.55, 'as-deadline': 0.52, once: 0.5, 'monthly-date': 0.5, 'title-expand': 0.5, span: 0.48,
+  'repeat-weekly': 0.46, 'title-typed': 0.45, 'midnight-next': 0.42, evening: 0.4, 'title-loc': 0.38, 'title-dl': 0.36, 'title-part': 0.36,
+  'title-freq': 0.36, 'title-wd': 0.36, 'title-wd-allday': 0.34, 'title-tidy': 0.34, 'title-emoji': 0.33,
+};
+
+const PART_TIMES: [RegExp, number[]][] = [
+  [/\bmorning\b|\bfirst thing\b/i, [8 * 60, 10 * 60, 7 * 60]],
+  [/\bafternoon\b/i, [13 * 60, 15 * 60, 16 * 60]],
+  [/\bevening\b/i, [19 * 60, 17 * 60, 20 * 60]],
+  [/\btonight\b|\bnight\b/i, [20 * 60, 21 * 60, 18 * 60]],
+  [/\blunch\b/i, [12 * 60 + 30, 13 * 60, 11 * 60 + 30]],
+  [/\bdinner\b|\bsupper\b/i, [19 * 60, 18 * 60, 20 * 60]],
+  [/\bbreakfast\b/i, [8 * 60, 9 * 60, 7 * 60]],
+  [/\bbrunch\b/i, [10 * 60, 12 * 60, 10 * 60 + 30]],
+];
+const ABBREV: [RegExp, string][] = [
+  [/\bw\/\s*/gi, 'with '], [/\bw\s+(?=[A-Z]|[a-z]+\b)/g, 'with '], [/\bappt\b/gi, 'appointment'], [/\bmtg\b/gi, 'meeting'], [/\bmtng\b/gi, 'meeting'],
+  [/\bb-?day\b/gi, 'birthday'], [/\bconf\b/gi, 'conference'], [/\bpres\b/gi, 'presentation'], [/\bprof\b/gi, 'professor'], [/\bhr\b/g, 'HR'],
+  [/\bdept\b/gi, 'department'], [/\bmgr\b/gi, 'manager'], [/\bdoc\b/gi, 'doctor'], [/\bdr\s+appt\b/gi, 'doctor appointment'], [/\bre:\s*/gi, 're: '],
+];
+const MEETINGISH = /\b(?:standup|stand-up|sync|meeting|mtg|class|lecture|practice|lesson|club|service|seminar|tutorial|lab|office hours|1:1|check-?in|huddle|rehearsal|training)\b/i;
+
+/** The readings that come from the shape of the sentence: other times for a part of the day, a whole weekend or week,
+ *  an expanded title, a weekly meeting, a deadline at the very start of the next day, the same time here. */
+function moreReadings(text: string, base: Parsed, kind: Kind, calendars: CalendarSource[], now: Date, add: (id: string, label: string, p: Parsed, as?: Kind) => void) {
+  const len = base.end - base.start;
+  const at = (t: number, minutes: number) => { const d = new Date(t); d.setHours(0, minutes, 0, 0); return d.getTime(); };
+  // a part of the day or a meal, with no clock time: its other likely hours
+  if (base.timeFromWords && !base.hasTime && !base.allDay) {
+    const pt = PART_TIMES.find(([re]) => re.test(text));
+    for (const m of pt?.[1] ?? []) {
+      const s0 = at(base.start, m);
+      if (s0 === base.start) continue;
+      const p = { ...base, start: s0, end: s0 + Math.max(len, kind === 'deadline' ? 0 : 3_600_000) };
+      add(`part-${m}`, `${format(p.start, 'EEE MMM d')} · ${fmtTime(p.start)}`, p);
+    }
+  }
+  // "this weekend" / "next weekend": the whole weekend; "next week" / "this week": the working week, the whole week
+  const d0 = startOfDay(base.start).getTime();
+  if (/\bweekend\b/i.test(text) && new Date(base.start).getDay() === 6) {
+    const p = { ...base, allDay: true, start: d0, end: d0 + 2 * 86_400_000 };
+    add('span-weekend', `${format(d0, 'EEE MMM d')} – Sun · all weekend`, p);
+  }
+  if (/\b(?:this|next)\s+week\b(?!end)/i.test(text) && kind === 'event') {
+    const mon = d0 - ((new Date(d0).getDay() + 6) % 7) * 86_400_000;
+    add('span-workweek', `${format(mon, 'MMM d')} – Fri · all week`, { ...base, allDay: true, start: mon, end: mon + 5 * 86_400_000 });
+    add('span-week', `${format(mon, 'MMM d')} – Sun · the whole week`, { ...base, allDay: true, start: mon, end: mon + 7 * 86_400_000 });
+  }
+  // an abbreviated title written out ("coffee w/ priya" → "Coffee with priya", "vet appt" → "Vet appointment")
+  let ex = base.title;
+  for (const [re, to] of ABBREV) ex = ex.replace(re, to);
+  ex = ex.replace(/\s+/g, ' ').trim();
+  if (ex !== base.title) add('title-expand', `Titled “${ex}”`, { ...base, title: ex });
+  // a meeting-ish thing said with its weekday ("monday standup") or "daily": every week
+  if (!base.recurrence && kind === 'event' && MEETINGISH.test(base.title)) {
+    const daily = /\bdaily\b/i.test(text);
+    const wd = /\b(mon|tue|wed|thu|fri|sat|sun)[a-z]*\b/i.test(text);
+    if (daily || wd) {
+      const rule = daily ? { freq: 'weekly' as const, interval: 1, byDay: [1, 2, 3, 4, 5] } : { freq: 'weekly' as const, interval: 1, byDay: [new Date(base.start).getDay()] };
+      add('repeat-weekly', describeRecurrence(rule, base.start), { ...base, recurrence: rule });
+    }
+  }
+  // a deadline at 11:59 PM: or the first minute of the next day (how some forms count "midnight")
+  if (kind === 'deadline' && new Date(base.start).getHours() === 23 && new Date(base.start).getMinutes() === 59)
+    add('midnight-next', `Due ${format(base.start + 60_000, 'EEE MMM d')} at 12 AM`, { ...base, start: base.start + 60_000, end: base.end + 60_000 });
+  // "end of week": or Sunday
+  if (kind === 'deadline' && /\bend of (?:the |this |next )?week\b/i.test(text) && new Date(base.start).getDay() === 5)
+    add('span', `Due Sunday ${format(base.start + 2 * 86_400_000, 'MMM d')}`, { ...base, start: base.start + 2 * 86_400_000, end: base.end + 2 * 86_400_000 });
+  // another zone written as an abbreviation ("3pm PST"): or this device's clock
+  if (base.timeZone && !/\btime\b/i.test(text)) {
+    const plain = text.replace(/\b(?:[A-Z]{2,5}T|UTC|GMT|pacific|eastern|central|mountain|atlantic)\b/g, ' ');
+    const p = parseQuick(plain, calendars, now);
+    if (!p.timeZone) add('local', `${fmtTime(p.start)} ${zoneCity(localZone())} time`, { ...p, title: base.title });
   }
 }
