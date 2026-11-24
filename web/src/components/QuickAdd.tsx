@@ -143,8 +143,8 @@ export function QuickAdd() {
   const habitMode = !!habitPlan && !habitOff && !(cmd && n > 0); // a command that finds something still wins
   // Other ways to read it (lib/readings.ts), a tap each: "all day" or an evening slot, 7 PM or 7 AM, next or this Friday
   const alts = useMemo(
-    () => (typing && kind === 'event' && !flightPlan && itinerary.length < 2 && !(cmd && n > 0) && !habitMode && text.length <= QUICK_MAX ? readings(stripTaskPrefix(text), calendars) : []),
-    [typing, kind, flightPlan, itinerary.length, cmd, n, habitMode, text, calendars],
+    () => (typing && !kindOverride && !flightPlan && itinerary.length < 2 && !(cmd && n > 0) && !habitMode && text.length <= QUICK_MAX ? readings(stripTaskPrefix(text), calendars, new Date(), 3, kind) : []),
+    [typing, kind, kindOverride, flightPlan, itinerary.length, cmd, n, habitMode, text, calendars],
   );
   const habitNow = useMemo(() => {
     if (!habitPlan) return null;
@@ -175,8 +175,10 @@ export function QuickAdd() {
   const cycleKind = () => setKindOverride(KINDS[(KINDS.findIndex((k) => k.id === kind) + 1) % KINDS.length].id);
 
   const parsedNow = parsed;
-  const create = (alt?: Parsed) => {
+  const kindNow = kind;
+  const create = (alt?: Parsed, as?: ItemKind) => {
     const parsed = alt ?? parsedNow;
+    const kind = as ?? kindNow;
     if (!parsed) return;
     if (kind === 'task') {
       const t = taskFromParsed(parsed);
@@ -571,7 +573,7 @@ export function QuickAdd() {
           <div className="qa-alts" role="group" aria-label="Or did you mean">
             <span className="qa-alts-or">Or</span>
             {alts.map((a) => (
-              <button key={a.id} className="qa-alt" onClick={() => create(a.parsed)} title="Add it this way">
+              <button key={a.id} className="qa-alt" onClick={() => create(a.parsed, a.kind)} title="Add it this way">
                 {a.label}
               </button>
             ))}

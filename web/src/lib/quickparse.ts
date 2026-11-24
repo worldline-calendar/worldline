@@ -378,7 +378,10 @@ function cleanTitle(title: string, input: string) {
   t = t.replace(/\s(?:a\.?m\.?|p\.?m\.?)(?=\s)/gi, ' ');
   t = t.replace(/\b(?:this|next|that)\s+(?:week|weekend)\b|\b(?:after|before)\s+(?:school|work|class|lunch|dinner)\b|\bfirst thing\b/gi, ' ');
   t = t.replace(/\b(?:evenings|mornings|afternoons|nights)\b/gi, ' ');
-  for (const m of input.matchAll(new RegExp(`\\b${WD_WORD}\\s+(night|evening|morning|afternoon)\\b`, 'gi'))) t = t.replace(new RegExp(`\\b${m[1]}\\b`, 'i'), ' ');
+  for (const m of input.matchAll(new RegExp(`\\b${WD_WORD}\\s+(night|evening|morning|afternoon)s?\\b`, 'gi'))) t = t.replace(new RegExp(`\\b${m[1]}s?\\b`, 'i'), ' ');
+  // a part of the day said as *when* ("this evening call dad", "tomorrow morning run") — but "evening run" keeps it
+  for (const m of input.matchAll(/\b(?:this|today|tomorrow|tmrw|tonight)\s+(morning|afternoon|evening)\b/gi)) t = t.replace(new RegExp(`\\b${m[1]}\\b`, 'i'), ' ');
+  if (/\bmonthly\s+on\s+the\b/i.test(input)) t = t.replace(/\bmonthly\b/i, ' ');
   return t.replace(/\s+/g, ' ').trim();
 }
 
@@ -438,9 +441,15 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
   let forceAllDay = false;
   text = text.replace(/\ball[- ]day\b/i, () => ((forceAllDay = true), ' '));
 
+  // A bare hour at the very end, with nothing else saying when: a time ("budget review 11") — not a number that
+  // belongs to the thing ("chapter 3", "room 1325", "ps 4")
+  if (!/\d\s*(?:am|pm)\b|\d:\d|\bnoon\b|\bmidnight\b/i.test(text))
+    text = text.replace(/(^|\s)(?<!\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december|the|on|chapter|ch|room|rm|section|sec|part|week|wk|day|lecture|lab|hw|ps|problem|question|q|episode|ep|season|vol|v|no|number|#|level|grade|period|step|phase|round|game|team|table|bus|route|gate|floor|unit|apt|suite|psalm|act|scene|book|year|class)\s)(1[0-2]|[1-9])\s*$/i, (_, sp: string, h: string) => `${sp}at ${h}`);
+
   // ---- 3. dates & times ---------------------------------------------------------------
   const results = chrono.parse(text, now, { forwardDate: true }).filter(isSpecific);
-  const dateRes = results.find((r) => r.start.isCertain('day') || r.start.isCertain('weekday'));
+  const relative = (r: chrono.ParsedResult) => /^(?:in|within)\s+\S+\s+(?:days?|weeks?|months?|years?)$/i.test(r.text.trim());
+  const dateRes = results.find((r) => r.start.isCertain('day') || r.start.isCertain('weekday') || relative(r));
   const timeRes = results.find((r) => r.start.isCertain('hour'));
   // "finish slides by thursday": "by" right before the date makes it a deadline
   const first = [dateRes, timeRes].filter(Boolean).sort((a, b) => a!.index - b!.index)[0];
@@ -463,6 +472,12 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
     let h = c.get('hour')!;
     const m = c.get('minute') ?? 0;
     if (!c.isCertain('meridiem') && h >= 1 && h <= 7 && !morning) h += 12; // "at 7" → 7 PM
+    // "from 10:30 until 12pm": the end's PM doesn't make the start 10:30 PM
+    const e0 = timeRes.end;
+    if (!c.isCertain('meridiem') && e0?.isCertain('meridiem') && c.get('hour')! >= 12) {
+      const eh = e0.get('hour')!;
+      if ((h - 12) * 60 + m < eh * 60 + (e0.get('minute') ?? 0) && eh - (h - 12) <= 8) h -= 12;
+    }
     if (dateRes && dateRes !== timeRes) start = at(dateRes.start.date(), h * 60 + m);
     else if (dateRes) start = c.isCertain('meridiem') ? c.date() : at(c.date(), h * 60 + m);
     else {
@@ -488,7 +503,7 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
       timeFromWords = true;
       start = at(day, minutes);
       if (!dateRes && start < now) start = addDays(start, 1); // "lunch with Sam" after noon → tomorrow
-      if (!dateRes && part) text = text.replace(part[0], ' ');
+
       end = new Date(start.getTime() + (durMin ?? prefs.defaultEventMin) * MIN);
     } else {
       allDay = true;
@@ -642,6 +657,7 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
   for (const re of locRes) {
     const m = text.match(re);
     if (m && re === locRes[3] && !isPlace(m[1])) continue;
+    if (m && /^\d+\s*(?:min|mins|minutes?|hours?|hrs?|days?|weeks?|months?|years?)\b/i.test(m[1].trim())) continue; // ("in 2 hours": when)
     if (m) {
       location = unshield(m[1].trim());
       text = text.replace(m[0], ' ');
@@ -662,6 +678,10 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
   }
   let title = unshield(text).replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
   title = cleanTitle(title.replace(/Nyght/g, 'night'), input);
+  if (repeat.rule && title && !/\s/.test(title)) {
+    const adj = new RegExp(`\\b(quarterly|annual|yearly)\\s+${title}\\b`, 'i').exec(input);
+    if (adj) title = `${adj[1]} ${title}`;
+  }
   for (let prev = ''; prev !== title; ) {
     prev = title;
     title = title.replace(DANGLING, '').replace(/^[,:;\-–\s]+|[,:;\-–\s]+$/g, '').trim();

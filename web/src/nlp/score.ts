@@ -71,12 +71,16 @@ export function interpret(input: string, now: Date, max = 3): Answer[] {
   const text = hasTaskPrefix(input) ? stripTaskPrefix(input) : input;
   const p = parseQuick(text, DEFAULT_CALENDARS, now);
   const first = answerOf(input, p);
-  const rest = first.kind === 'event' ? readings(text, DEFAULT_CALENDARS, now, max - 1).map((r) => answerOf(input, r.parsed, r.kind ?? 'event')) : [];
+  const rest = readings(text, DEFAULT_CALENDARS, now, max - 1, first.kind).map((r) => answerOf(input, r.parsed, r.kind ?? first.kind));
   return [first, ...rest].slice(0, max);
 }
 
 const norm = (f: (typeof FIELDS)[number], v: unknown) =>
   v === undefined || v === null || v === '' ? null : f === 'title' || f === 'loc' ? String(v).trim().replace(/[.!?,;:]+$/, '').toLowerCase().replace(/\s+/g, ' ') : String(v);
+
+// (the order weekdays are listed in doesn't matter: SA,SU = SU,SA)
+const byDaySorted = (r: string | null | undefined) =>
+  r == null ? null : r.replace(/BYDAY=([^;]+)/, (_, d: string) => `BYDAY=${d.split(',').sort().join(',')}`);
 
 /** Every answer that counts as right for a case. */
 export const accepted = (c: Case): Answer[] => [c, ...(c.alts ?? []).map((a) => ({ ...c, ...a }))];
@@ -94,6 +98,7 @@ export function wrongFields(c: Case, got: Answer): string[] {
         const base = (x: string | null) => (x ?? '').split(';').filter((p) => !/^(COUNT|UNTIL)=/.test(p)).join(';');
         return base(a.repeat) !== base(got.repeat) || !/UNTIL=/.test(got.repeat ?? '');
       }
+      if (f === 'repeat') return byDaySorted(a.repeat) !== byDaySorted(got.repeat);
       return norm(f, a[f]) !== norm(f, got[f]);
     });
     if (!best || bad.length < best.length) best = bad;
