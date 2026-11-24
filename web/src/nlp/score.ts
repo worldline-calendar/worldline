@@ -108,6 +108,7 @@ export function wrongFields(c: Case, got: Answer): string[] {
         return base(a.repeat) !== base(got.repeat) || !/UNTIL=/.test(got.repeat ?? '');
       }
       if (f === 'repeat') return !sameRepeat(a.repeat, got.repeat);
+      if (f === 'start' && a.kind === 'task' && got.kind === 'task') return (a.start ?? '').slice(0, 10) !== (got.start ?? '').slice(0, 10); // (a to-do has a day, not an hour)
       return norm(f, a[f]) !== norm(f, got[f]);
     });
     if (!best || bad.length < best.length) best = bad;

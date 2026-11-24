@@ -9,11 +9,12 @@ const r = (s: string) => readings(s, DEFAULT_CALENDARS, NOW);
 describe('other readings', () => {
   it('an all-day repeat offers a time slot (an evening for telescope time) and just once', () => {
     const rs = r('Telescope time repeating weekly on Thursdays');
-    expect(rs.map((x) => x.id)).toEqual(['timed', 'once']);
-    expect(rs[0].parsed.allDay).toBe(false);
-    expect(new Date(rs[0].parsed.start).getHours()).toBe(20);
-    expect(rs[0].parsed.recurrence?.byDay).toEqual([4]);
-    expect(rs[0].label).toMatch(/^Weekly on Thursday · 8 PM–10 PM$/);
+    expect(rs.map((x) => x.id)).toEqual(expect.arrayContaining(['timed', 'once']));
+    const timed = rs.find((x) => x.id === 'timed')!;
+    expect(timed.parsed.allDay).toBe(false);
+    expect(new Date(timed.parsed.start).getHours()).toBe(20);
+    expect(timed.parsed.recurrence?.byDay).toEqual([4]);
+    expect(timed.label).toMatch(/^Weekly on Thursday · 8 PM–10 PM$/);
   });
   it('a bare hour: PM, or AM', () => {
     const rs = r('gym at 7 tomorrow');

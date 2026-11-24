@@ -77,7 +77,12 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
   if (base.hasTime && !/\b\d{1,2}(:\d{2})?\s*(a|p)\.?m?\b|\bnoon\b|\bmidnight\b|\b(?:1[3-9]|2[0-3]|0\d):\d{2}\b/i.test(text)) {
     const h = new Date(base.start).getHours();
     const flip = h >= 12 ? -12 : 12;
-    const p = { ...base, start: base.start + flip * 60 * MIN, end: base.end + flip * 60 * MIN };
+    let p = { ...base, start: base.start + flip * 60 * MIN, end: base.end + flip * 60 * MIN };
+    // (no day said: the next time it's that hour — today if still ahead, else tomorrow)
+    if (!base.hasDay) {
+      while (p.start - 86_400_000 > now.getTime()) p = { ...p, start: p.start - 86_400_000, end: p.end - 86_400_000 };
+      if (p.start <= now.getTime()) p = { ...p, start: p.start + 86_400_000, end: p.end + 86_400_000 };
+    }
     add('ampm', `${repeatOr(p, format(p.start, 'EEE MMM d'))} · ${fmtTime(p.start)}`, p);
   }
 
@@ -147,8 +152,10 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
 
   // an event that reads like a to-do ("clean the garage saturday", "pay nanny every 2 weeks", "charge batteries tonight"):
   // or a to-do for that day
-  if ((base.allDay || base.recurrence || (base.timeFromWords && !base.hasTime)) && (ACTION.test(text.trim()) || /^(?:photocopy|copy|transfer|invoice|backup|back up|change|replace|refill|pay|check|update)\b/i.test(text.trim())))
-    add('as-task', `A to-do · due ${day(base.start)}`, { ...base, recurrence: undefined }, 'task');
+  if (base.allDay || base.recurrence || (base.timeFromWords && !base.hasTime)) {
+    const verb = ACTION.test(text.trim()) || /^(?:photocopy|copy|transfer|invoice|backup|back up|change|replace|refill|pay|check|update|rake|laundry|grocer|clean|pack|mow|shovel|wash|vacuum)\b/i.test(text.trim());
+    add(verb ? 'as-task' : 'as-task-weak', `A to-do · due ${day(base.start)}`, { ...base, recurrence: undefined }, 'task');
+  }
 
   titleVariants(text, base, kind, add);
 
@@ -215,12 +222,15 @@ function titleVariants(text: string, base: Parsed, kind: Kind, add: (id: string,
   }
 }
 
-/** How likely each kind of other reading is (higher first) — set from what people meant in the test sentences. */
+/** How likely each kind of other reading is, highest first: how often it was what someone meant, when offered, in the
+ *  practice sentences (src/nlp — measured, not guessed; re-measure when readings change). */
 const WEIGHT: Record<string, number> = {
-  ampm: 0.8, 'tail-hour': 0.75, this: 0.72, local: 0.65, today: 0.65, 'as-task': 0.62, 'as-event': 0.6, sunday: 0.6, part: 0.58,
-  'all-day': 0.56, timed: 0.55, second: 0.55, 'as-deadline': 0.52, once: 0.5, 'monthly-date': 0.5, 'title-expand': 0.5, span: 0.48,
-  'repeat-weekly': 0.46, 'title-typed': 0.45, 'midnight-next': 0.42, evening: 0.4, 'title-loc': 0.38, 'title-dl': 0.36, 'title-part': 0.36,
-  'title-freq': 0.36, 'title-wd': 0.36, 'title-wd-allday': 0.34, 'title-tidy': 0.34, 'title-emoji': 0.33,
+  this: 0.7, 'title-typed': 0.64, 'title-expand': 0.62, 'title-wd-allday': 0.62, 'zone-city': 0.59, 'as-event': 0.55, len: 0.43,
+  span: 0.42, ampm: 0.41, 'as-task': 0.38, second: 0.37, local: 0.36, 'title-emoji': 0.36, 'all-day': 0.35, today: 0.3,
+  'midnight-next': 0.25, once: 0.24, 'title-tidy': 0.23, 'span-workweek': 0.19, 'span-week': 0.19, 'as-event-today': 0.19,
+  'title-freq': 0.17, 'title-loc': 0.14, 'repeat-daily': 0.13, sunday: 0.13, 'repeat-weekly': 0.13, 'title-wd': 0.12,
+  'len-block': 0.11, part: 0.1, 'span-weekend': 0.1, 'as-deadline': 0.1, 'monthly-date': 0.07, 'title-dl': 0.06,
+  'as-task-weak': 0.05, 'tail-hour': 0.04, 'title-part': 0.03, timed: 0.03, evening: 0.003,
 };
 
 const PART_TIMES: [RegExp, number[]][] = [
@@ -238,7 +248,7 @@ const ABBREV: [RegExp, string][] = [
   [/\bb-?day\b/gi, 'birthday'], [/\bconf\b/gi, 'conference'], [/\bpres\b/gi, 'presentation'], [/\bprof\b/gi, 'professor'], [/\bhr\b/g, 'HR'],
   [/\bdept\b/gi, 'department'], [/\bmgr\b/gi, 'manager'], [/\bdoc\b/gi, 'doctor'], [/\bdr\s+appt\b/gi, 'doctor appointment'], [/\bre:\s*/gi, 're: '],
 ];
-const MEETINGISH = /\b(?:standup|stand-up|sync|meeting|mtg|class|lecture|practice|lesson|club|service|seminar|tutorial|lab|office hours|1:1|check-?in|huddle|rehearsal|training)\b/i;
+const MEETINGISH = /\b(?:standup|stand-up|sync|meeting|mtg|class|lecture|practice|lessons?|club|service|seminar|tutorial|lab|office hours|1:1|check-?in|huddle|rehearsal|training|tutoring|choir|yoga|gym)\b/i;
 
 /** The readings that come from the shape of the sentence: other times for a part of the day, a whole weekend or week,
  *  an expanded title, a weekly meeting, a deadline at the very start of the next day, the same time here. */
@@ -254,6 +264,46 @@ function moreReadings(text: string, base: Parsed, kind: Kind, calendars: Calenda
       const p = { ...base, start: s0, end: s0 + Math.max(len, kind === 'deadline' ? 0 : 3_600_000) };
       add(`part-${m}`, `${format(p.start, 'EEE MMM d')} · ${fmtTime(p.start)}`, p);
     }
+  }
+  // how long: "quick call" → 15 or 30 minutes; "long lunch" → 2 hours; "workshop afternoon" → the afternoon
+  if (!base.allDay && kind === 'event' && !base.hasEnd) {
+    if (/\b(?:quick|short|brief|break)\b/i.test(text)) {
+      add('len-15', `${fmtTime(base.start)}–${fmtTime(base.start + 15 * MIN)} · 15 min`, { ...base, end: base.start + 15 * MIN });
+      add('len-30', `${fmtTime(base.start)}–${fmtTime(base.start + 30 * MIN)} · 30 min`, { ...base, end: base.start + 30 * MIN });
+    }
+    if (/\b(?:movie|film|concert|show|game|play|match|opera|musical)\b/i.test(text)) {
+      add('len-120', `${fmtTime(base.start)}–${fmtTime(base.start + 120 * MIN)} · 2 hours`, { ...base, end: base.start + 120 * MIN });
+      add('len-180', `${fmtTime(base.start)}–${fmtTime(base.start + 180 * MIN)} · 3 hours`, { ...base, end: base.start + 180 * MIN });
+    }
+    if (/\blong\b/i.test(text)) add('len-120', `${fmtTime(base.start)}–${fmtTime(base.start + 120 * MIN)} · 2 hours`, { ...base, end: base.start + 120 * MIN });
+    const block = /\bafternoon\b/i.test(text) ? [14, 17] : /\bmorning\b/i.test(text) ? [9, 12] : null;
+    if (block && base.timeFromWords && !base.hasTime) {
+      const s0 = at(base.start, block[0] * 60);
+      add('len-block', `${format(s0, 'EEE MMM d')} · ${fmtTime(s0)}–${fmtTime(at(base.start, block[1] * 60))}`, { ...base, start: s0, end: at(base.start, block[1] * 60) });
+    }
+  }
+  // a to-do with no day ("email Bart"): or something to do today; a timed chore ("call insurance at 2"): or a to-do
+  if (kind === 'task' && !base.hasDay && !base.hasTime) {
+    const d1 = startOfDay(now).getTime();
+    add('as-event-today', `An event · today · all day`, { ...base, allDay: true, start: d1, end: d1 + 86_400_000 }, 'event');
+  }
+  if (kind === 'event' && base.hasTime && !base.recurrence && ACTION.test(text.trim())) add('as-task', `A to-do · due ${format(base.start, 'EEE MMM d')}`, base, 'task');
+  // routines said with a time ("take meds at 8", "morning run 6:30", "standup at 9"): every day
+  if (kind === 'event' && !base.recurrence && base.hasTime && /\b(?:meds|medication|pills?|vitamins?|insulin|run|walk|jog|meditat\w*|journal\w*|gym|workout|standup|stand-up|stretch\w*|dog walk)\b/i.test(text)) {
+    const rule = { freq: 'daily' as const, interval: 1 };
+    add('repeat-daily', describeRecurrence(rule, base.start), { ...base, recurrence: rule });
+  }
+  // a city in the title of a timed thing ("call Tokyo team 9am"): or that hour there
+  if (!base.allDay && !base.timeZone && base.hasTime) {
+    for (const w of base.title.match(/\b[A-Z][a-z]{3,}\b/g) ?? []) {
+      const p = parseQuick(`${text} ${w} time`, calendars, now);
+      if (p.timeZone) { add('zone-city', `${fmtTime(p.start)} here · ${w} time`, { ...p, title: base.title }); break; }
+    }
+  }
+  // a standup or class with no repeat said: every weekday / every week
+  if (!base.recurrence && kind === 'event' && /\b(?:standup|stand-up|scrum|huddle)\b/i.test(base.title) && !/\b(mon|tue|wed|thu|fri|sat|sun)/i.test(text)) {
+    const rule = { freq: 'weekly' as const, interval: 1, byDay: [1, 2, 3, 4, 5] };
+    add('repeat-weekly', describeRecurrence(rule, base.start), { ...base, recurrence: rule });
   }
   // "this weekend" / "next weekend": the whole weekend; "next week" / "this week": the working week, the whole week
   const d0 = startOfDay(base.start).getTime();

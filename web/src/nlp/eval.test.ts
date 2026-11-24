@@ -13,13 +13,15 @@ const heldout = load(resolve(__dirname, '../../test-heldout/corpus.heldout.json'
 const heldout2 = load(resolve(__dirname, '../../test-heldout/corpus.heldout2.json'));
 const heldout3 = load(resolve(__dirname, '../../test-heldout/corpus.heldout3.json'));
 const dev5 = load(resolve(__dirname, 'corpus.dev5.json'));
+const dev6 = load(resolve(__dirname, 'corpus.dev6.json'));
+const heldout4 = load(resolve(__dirname, '../../test-heldout/corpus.heldout4.json'));
 const dev3 = load(resolve(__dirname, 'corpus.dev3.json'));
 const dev4 = load(resolve(__dirname, 'corpus.dev4.json'));
-const FLOOR = { dev: { top1: 0.94, top3: 0.96 }, dev2: { top1: 0.93, top3: 0.95 }, dev3: { top1: 0.85, top3: 0.88 }, dev4: { top1: 0.78, top3: 0.80 }, dev5: { top1: 0.84, top3: 0.87 }, heldout: { top1: 0.89, top3: 0.90 }, heldout2: { top1: 0.81, top3: 0.83 }, heldout3: { top1: 0.85, top3: 0.86 } }; // raised as the reader improves
+const FLOOR = { dev: { top1: 0.94, top3: 0.96 }, dev2: { top1: 0.93, top3: 0.95 }, dev3: { top1: 0.85, top3: 0.88 }, dev4: { top1: 0.78, top3: 0.81 }, dev5: { top1: 0.84, top3: 0.88 }, dev6: { top1: 0.70, top3: 0.83 }, heldout: { top1: 0.89, top3: 0.91 }, heldout2: { top1: 0.81, top3: 0.84 }, heldout3: { top1: 0.85, top3: 0.86 }, heldout4: { top1: 0.81, top3: 0.86 } }; // raised as the reader improves
 const zoneOk = Intl.DateTimeFormat().resolvedOptions().timeZone === 'America/Toronto';
 
 describe.runIf(zoneOk)('reading what people type (corpora; run with TZ=America/Toronto)', () => {
-  for (const [name, cases] of [['dev', dev], ['dev2', dev2], ['dev3', dev3], ['dev4', dev4], ['dev5', dev5], ['heldout', heldout], ['heldout2', heldout2], ['heldout3', heldout3]] as const) {
+  for (const [name, cases] of [['dev', dev], ['dev2', dev2], ['dev3', dev3], ['dev4', dev4], ['dev5', dev5], ['dev6', dev6], ['heldout', heldout], ['heldout2', heldout2], ['heldout3', heldout3], ['heldout4', heldout4]] as const) {
     it.runIf(!!cases)(name, () => {
       const r = score(cases!, NOW);
       if (process.env.NLP_EVAL) {

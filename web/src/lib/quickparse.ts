@@ -345,7 +345,7 @@ function normalize(input: string, now: Date) {
   });
   t = t.replace(/[,;]?\s*\b(?:checklist|to-?dos?|steps)\s*:.*$/i, ' ');
   t = t.replace(new RegExp(`\\b((?:${WEEKDAY_ALT})(?:day)?s?|today|tomorrow|tonight|monthly|weekly|daily|fortnight|week|weekend)\\s+(1[0-2]|[1-9])(?=\\s+[a-z])(?!\\s+(?:am|pm|a\\.m|p\\.m|o'?clock|hours?|hrs?|mins?|minutes?|days?|weeks?|months?|times?|people|kids)\\b)`, 'gi'), '$1 at $2');
-  t = t.replace(/^(\s*)(1[0-2]|[1-9])(?=\s+(?:tomorrow|today|tonight|this|next|(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*)\b)/i, '$1at $2');
+  t = t.replace(/(^|\s)(?<!\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|the|on|room|rm|unit|no|to|and|past|between|from|till|until|til|quarter|half|at|by|in|for|of)[a-z]*\s|[-–:#]\s?)(1[0-2]|[1-9])(?=\s+(?:tomorrow|today|tonight|this|next|(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*)\b)/gi, '$1at $2');
   t = t.replace(/\b2moro+w?\b|\b2morrow\b/gi, 'tomorrow').replace(/\bteh\b/gi, 'the').replace(/~\s*/g, '');
   t = t.replace(/\btues\b/gi, 'tuesday').replace(/\bthurs?\b/gi, 'thursday').replace(/\bweds\b/gi, 'wednesday');
   t = t.replace(/\b(tmrw|tmrrw|tmr|tmw|tomoz)\b/gi, 'tomorrow').replace(/\btonite\b/gi, 'tonight');
@@ -707,7 +707,9 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
     const m = c.get('minute') ?? 0;
     // "at 7" → 7 PM; but "carpool 7:45", "yoga 6:30" (minutes, nothing evening-ish about it) → the morning
     const earlyWithMinutes = (h === 6 || h === 7) && m > 0 && /\b(?:carpool|commute|bus|train|drop[- ]?off|school|gym|run|jog|yoga|workout|swim|standup|stand-up|rounds|shift|breakfast|class|lecture|meds|alarm|wake)\b/i.test(input);
-    if (!c.isCertain('meridiem') && h >= 1 && h <= 7 && !morning && !earlyWithMinutes) h += 12;
+    if (!c.isCertain('meridiem') && h >= 1 && h <= 7 && !morning && !earlyWithMinutes && !/\bbreakfast\b/i.test(input)) h += 12;
+    // "dinner at 8", "movie 9", "drinks at 10": evening things at 8–11 are in the evening
+    if (!c.isCertain('meridiem') && h >= 8 && h <= 11 && !morning && /\b(?:dinner|supper|drinks|party|movie|film|show|concert|game night|date night|bar|pub|trivia|karaoke|gig|club)\b/i.test(input)) h += 12;
     // "from 10:30 until 12pm": the end's PM doesn't make the start 10:30 PM
     const e0 = timeRes.end;
     if (!c.isCertain('meridiem') && e0?.isCertain('meridiem') && c.get('hour')! >= 12) {
