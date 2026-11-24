@@ -48,6 +48,7 @@
     "katex": "0.18.11",
     "lowlight": "3.3.0",
     "nostr-tools": "2.25.2",
+    "pdfjs-dist": "6.4.299",
     "qrcode": "1.5.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

@@ -126,6 +126,10 @@ export function Toolbar() {
       )}
       <div className="toolbar-right" hidden={!calendar}>
         {away && <ZonePill />}
+        <button className="drop-btn" onClick={() => useStore.getState().openDrop()} aria-label="Drop or paste a document" title={`Find the events, deadlines and to-dos in an email, letter, PDF or text thread — drop a file anywhere, or ${MAC ? '⌘⇧V' : 'Ctrl+Shift+V'} to paste one`}>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M2.5 11v2.5h11V11" /></svg>
+          <span className="drop-label">Drop</span>
+        </button>
         <button className="icon-btn" onClick={() => useStore.getState().setSearch(true)} aria-label="Find" title={`Find events, deadlines and tasks (${MAC ? '⌘F' : 'Ctrl+F'} or /)`}>
           <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
             <circle cx="7" cy="7" r="4.5" /><path d="m10.5 10.5 3 3" />

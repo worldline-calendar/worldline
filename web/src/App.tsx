@@ -8,6 +8,7 @@ import { TaskPanel } from './components/TaskPanel';
 import { DragGhost } from './components/BlockDrag';
 import { QuickAdd } from './components/QuickAdd';
 import { Search } from './components/Search';
+import { DropExtract } from './components/DropExtract';
 import { HabitsPage } from './components/Habits';
 import { Toast } from './components/Toast';
 import { ConfirmHost } from './components/Confirm';
@@ -140,6 +141,12 @@ export default function App() {
         e.preventDefault();
         return st.openSettings(st.settingsOpen ? null : 'general');
       }
+      // ⌘⇧V: paste a whole email, letter or thread and find what's in it
+      if (mod && e.shiftKey && e.key.toLowerCase() === 'v' && !inField(e.target)) {
+        e.preventDefault();
+        void navigator.clipboard?.readText().then((text) => st.openDrop(text ? { text } : {}), () => st.openDrop());
+        return;
+      }
       if (mod && e.key.toLowerCase() === 'f' && !st.settingsOpen && st.page !== 'projects') {
         e.preventDefault();
         return st.setSearch(true);
@@ -209,6 +216,7 @@ export default function App() {
       {phone && <Fab />}
       {quickAddOpen && <QuickAdd />}
       {searchOpen && <Search />}
+      <DropExtract />
       <Toast />
       <Settings />
       <ConfirmHost />

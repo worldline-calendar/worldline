@@ -208,6 +208,12 @@ interface State {
   defaultCalendarId: string; // where new events go (★ in the sidebar)
   quickAddOpen: boolean;
   searchOpen: boolean; // Find (⌘F)
+  /** Drop anything (components/DropExtract.tsx): open, with what was pasted or dropped. */
+  drop: { open: boolean; text?: string; file?: File } ;
+  openDrop: (what?: { text?: string; file?: File }) => void;
+  closeDrop: () => void;
+  /** Several adds as one undo step ("Add 4" from a dropped email: one ⌘Z takes them all back). */
+  addMany: (fn: () => void) => void;
   hourH: number; // time-grid zoom: pixels per hour
   toast: Toast | null;
   flashId: string | null; // briefly highlighted event (e.g. just added)
@@ -456,6 +462,7 @@ export const useStore = create<State>()(
         defaultCalendarId: 'personal',
         quickAddOpen: false,
         searchOpen: false,
+        drop: { open: false },
         hourH: 52,
         toast: null,
         flashId: null,
@@ -504,6 +511,13 @@ export const useStore = create<State>()(
         setPhoneMonth: (phoneMonth) => set({ phoneMonth }),
         setQuickAdd: (quickAddOpen) => set({ quickAddOpen }),
         setSearch: (searchOpen) => set({ searchOpen }),
+        openDrop: (what) => set({ drop: { open: true, ...what }, quickAddOpen: false, searchOpen: false }),
+        closeDrop: () => set({ drop: { open: false } }),
+        addMany: (fn) => {
+          const before = get().past.length;
+          fn();
+          set((s) => ({ past: s.past.slice(0, Math.min(s.past.length, before + 1)) }));
+        },
         setHourH: (h) => set({ hourH: Math.min(HOUR_H_RANGE[1], Math.max(HOUR_H_RANGE[0], h)) }),
         addCalendar: (name, color) => {
           record();

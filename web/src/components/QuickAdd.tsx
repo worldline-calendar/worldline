@@ -358,6 +358,11 @@ export function QuickAdd() {
               const t = e.clipboardData.getData('text');
               if (!/\n/.test(t)) return;
               e.preventDefault();
+              // a whole email or letter (and not a flight booking, which reads here): the drop screen finds what's in it
+              if ((t.length > 200 || t.split('\n').length >= 4) && parseItinerary(t.replace(/\s*\n\s*/g, ' ')).length === 0) {
+                st().openDrop({ text: t });
+                return;
+              }
               setText((x) => (x + ' ' + t.replace(/\s*\n\s*/g, ' ')).trim());
               setMatchIdx(0);
               setHi(-1);

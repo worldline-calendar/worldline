@@ -45,6 +45,22 @@ const PAST_REF = /\b(?:thank(?:s| you) (?:to )?(?:everyone|all) who|was held|too
 
 /** The lines that carry the message, with their offsets: headers, quoted replies, signatures and footers are left out. */
 function messageLines(text: string) {
+  return joinWrapped(rawLines(text));
+}
+/** Lines that are one sentence wrapped across two (a PDF's, a narrow email's) joined back: a line that doesn't end a
+ *  sentence, followed by one that continues it in lowercase or with the rest of a date/time. */
+function joinWrapped(lines: { s: string; at: number }[]) {
+  const out: { s: string; at: number }[] = [];
+  for (const l of lines) {
+    const prev = out[out.length - 1];
+    const cont = prev && prev.s.trim() && l.s.trim() && !/[.!?:;]\s*$/.test(prev.s) && !KEY.test(l.s) && !/^\s*[-•*·–]|^\s*\d{1,2}[.)]\s/.test(l.s) &&
+      (/^\s*[a-z(]/.test(l.s) || /^\s*(?:from|at|until|to|and|in|on)\b/i.test(l.s) || (prev.s.length > 45 && /^\s*\d/.test(l.s)));
+    if (cont) prev.s = `${prev.s.replace(/\s+$/, '')} ${l.s.trim()}`;
+    else out.push({ ...l });
+  }
+  return out;
+}
+function rawLines(text: string) {
   const lines: { s: string; at: number }[] = [];
   let at = 0, signed = false, quoted = false;
   for (const raw of text.split('\n')) {
@@ -155,7 +171,10 @@ function tidyTitle(title: string, unit: Unit, subject?: string, preferSubject = 
   let t = (unit.what ?? title).trim();
   t = t.replace(/^(?:please\s+)?(?:note|reminder|fyi|just a reminder)\s*(?:that|:)?\s*/i, '')
     .replace(/^(?:we(?:'re| are| will| ?'ll)?|i(?:'m| am| will| ?'ll)?|you(?:'re| are)?|let'?s|can we|could we|shall we|our)\s+(?:have\s+(?:a|an|the|our)\s+|be\s+having\s+(?:a|an|the|our)\s+|meet(?:ing)?\s*(?:for|to)?\s*|do\s+|hold\s+(?:a|an|the|our)\s+)?/i, '')
+    .replace(/^(?:(?:you(?:'re| are)\s+)?(?:cordially\s+)?invited\s+to|join us (?:for|at)|please join us (?:for|at)|we invite you to|welcome to)\s+/i, '')
     .replace(/^(?:the|a|an|our|your)\s+/i, '')
+    .replace(/\s*,?\s*\b(?:room|rm)\s+[\w-]+\s*$/i, '')
+    .replace(/(?:\s+(?:on|at|in|from|by))+\s*[,;]?\s*$/i, '')
     .replace(/\s+(?:is|are|will be|has been|have been|was)\s*(?:on|scheduled|set|planned|booked)?\s*(?:for)?\s*$/i, '')
     .replace(/\s+(?:is|are)\s+(?:scheduled|set|planned|booked)(?:\s+for)?\b.*$/i, '')
     .replace(/[,;:]\s*$/, '')

@@ -1,0 +1,82 @@
+// A dropped file as text, read on this device: a PDF (pdf.js, loaded only when one is dropped), an email (.eml: its
+// readable part, decoded), a calendar file (.ics) or anything plain. Nothing is uploaded.
+const MAX_BYTES = 25 * 1024 * 1024; // (a bigger file isn't an invitation)
+const MAX_PAGES = 30;
+
+export async function readDocument(file: File): Promise<{ text: string; kind: 'pdf' | 'email' | 'ics' | 'text' }> {
+  if (file.size > MAX_BYTES) throw new Error('That file is too large to read (over 25 MB).');
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.pdf') || file.type === 'application/pdf') return { text: await pdfText(file), kind: 'pdf' };
+  const raw = await file.text();
+  if (name.endsWith('.ics') || /BEGIN:VCALENDAR/i.test(raw.slice(0, 2000))) return { text: raw, kind: 'ics' };
+  if (name.endsWith('.eml') || /^(?:received|from|return-path|mime-version):/im.test(raw.slice(0, 500))) return { text: emailText(raw), kind: 'email' };
+  return { text: raw, kind: 'text' };
+}
+
+async function pdfText(file: File) {
+  const pdfjs = await import('pdfjs-dist');
+  const worker = (await import('pdfjs-dist/build/pdf.worker.min.mjs?url')).default;
+  pdfjs.GlobalWorkerOptions.workerSrc = worker;
+  const task = pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) });
+  const doc = await task.promise;
+  const pages: string[] = [];
+  for (let i = 1; i <= Math.min(doc.numPages, MAX_PAGES); i++) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    // lines from the text's positions: a new line wherever the baseline moves
+    let line = '', lastY: number | null = null;
+    const lines: string[] = [];
+    for (const it of content.items as { str: string; transform: number[]; hasEOL?: boolean }[]) {
+      const y = Math.round(it.transform[5]);
+      if (lastY !== null && Math.abs(y - lastY) > 2 && line) { lines.push(line); line = ''; }
+      line += (line && !line.endsWith(' ') && it.str && !it.str.startsWith(' ') ? ' ' : '') + it.str;
+      if (it.hasEOL && line) { lines.push(line); line = ''; }
+      lastY = y;
+    }
+    if (line) lines.push(line);
+    pages.push(lines.map((l) => l.replace(/\s+/g, ' ').trim()).join('\n'));
+  }
+  await task.destroy();
+  return pages.join('\n\n');
+}
+
+/** An email's readable text: its headers (From, Sent/Date, Subject) and its text/plain part, decoded. */
+export function emailText(raw: string) {
+  const [head, ...rest] = raw.split(/\r?\n\r?\n/);
+  const body = rest.join('\n\n');
+  const header = (k: string) => new RegExp(`^${k}:\\s*(.+(?:\\r?\\n[ \\t].+)*)`, 'im').exec(head)?.[1].replace(/\r?\n[ \t]+/g, ' ').trim();
+  const keep = ['From', 'Date', 'Subject'].map((k) => (header(k) ? `${k === 'Date' ? 'Sent' : k}: ${decodeWords(header(k)!)}` : '')).filter(Boolean);
+  const boundary = /boundary="?([^";\r\n]+)"?/i.exec(head)?.[1];
+  let text = body;
+  let encoding = header('Content-Transfer-Encoding') ?? '';
+  if (boundary) {
+    const parts = body.split(`--${boundary}`);
+    const plain = parts.find((p) => /content-type:\s*text\/plain/i.test(p)) ?? parts.find((p) => /content-type:\s*text\/html/i.test(p)) ?? '';
+    const [ph, ...pb] = plain.split(/\r?\n\r?\n/);
+    text = pb.join('\n\n');
+    encoding = /content-transfer-encoding:\s*(\S+)/i.exec(ph)?.[1] ?? '';
+    if (/text\/html/i.test(ph)) text = htmlText(decode(text, encoding)), encoding = '';
+  }
+  return [...keep, '', decode(text, encoding)].join('\n');
+}
+function decode(s: string, encoding: string) {
+  if (/base64/i.test(encoding)) {
+    try { return new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s+/g, '')), (c) => c.charCodeAt(0))); } catch { return s; }
+  }
+  if (/quoted-printable/i.test(encoding)) {
+    const bytes = s.replace(/=\r?\n/g, '').replace(/=([0-9A-F]{2})/gi, (_, h: string) => String.fromCharCode(parseInt(h, 16)));
+    try { return new TextDecoder().decode(Uint8Array.from(bytes, (c) => c.charCodeAt(0))); } catch { return bytes; }
+  }
+  return s;
+}
+/** "=?UTF-8?Q?Caf=C3=A9?=" in a header, readable. */
+function decodeWords(s: string) {
+  return s.replace(/=\?([^?]+)\?([BQ])\?([^?]*)\?=/gi, (_, _cs: string, enc: string, t: string) => decode(enc.toUpperCase() === 'B' ? t : t.replace(/_/g, ' '), enc.toUpperCase() === 'B' ? 'base64' : 'quoted-printable'));
+}
+/** An HTML email's words, line by line (no markup runs: it's parsed inert and only its text is kept). */
+export function htmlText(html: string) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('script, style, head').forEach((n) => n.remove());
+  doc.querySelectorAll('br, p, div, li, tr, h1, h2, h3, h4, td').forEach((n) => n.append('\n'));
+  return (doc.body.textContent ?? '').replace(/\n{3,}/g, '\n\n').trim();
+}
