@@ -1,6 +1,6 @@
 // Scoring quick add like a model: each typed sentence has a known right answer (or several, when a person would be
 // unsure too); quick add's first reading and the other readings it offers are compared with it, field by field.
-//   top-1: the first reading is right          top-3: one of the readings shown is right
+//   top-1: the first reading is right          top-n: one of the readings shown is right (the first + up to 3 others)
 // Corpora: src/nlp/corpus.dev.json (tuned against) and test-heldout/corpus.heldout.json (only measured).
 import { format } from 'date-fns';
 import { parseQuick, type Parsed } from '../lib/quickparse';
@@ -67,7 +67,7 @@ export function answerOf(input: string, p: Parsed, kind = guessKind(input, p)): 
 }
 
 /** What quick add would show for `input`: its first reading, then the others it offers (as many as the UI shows). */
-export function interpret(input: string, now: Date, max = 3): Answer[] {
+export function interpret(input: string, now: Date, max = 4): Answer[] {
   const text = hasTaskPrefix(input) ? stripTaskPrefix(input) : input;
   const p = parseQuick(text, DEFAULT_CALENDARS, now);
   const first = answerOf(input, p);

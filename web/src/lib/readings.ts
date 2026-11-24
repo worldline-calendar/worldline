@@ -55,6 +55,7 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
       const allDay = { ...base, allDay: true, start: startOfDay(base.start).getTime(), end: startOfDay(base.start).getTime() + 86_400_000 };
       add('as-event', `An event · ${base.hasTime ? when(base) : `${day(base.start)} · all day`}`, base.hasTime ? base : allDay, 'event');
     } else if (kind === 'task' && (base.hasTime || base.timeFromWords)) add('as-event', `An event · ${when(base)}`, base, 'event');
+    titleVariants(text, base, kind, add);
     return out;
   }
 
@@ -102,6 +103,18 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
     if (p.recurrence) add('second', describeRecurrence(p.recurrence, p.start), { ...p, title: base.title });
   }
 
+  // a time guessed from a word ("christmas dinner" → 6:30, "brunch" → 11): or the whole day
+  if (!base.allDay && base.timeFromWords && !base.hasTime && !base.recurrence) {
+    const d0 = startOfDay(base.start).getTime();
+    add('all-day', `${day(base.start)} · all day`, { ...base, allDay: true, start: d0, end: d0 + 86_400_000, timeFromWords: false });
+  }
+  // a number at the end that might be an hour ("lab 2"): or a time
+  const tail = /\b([1-9]|1[0-2])\s*$/.exec(text.trim());
+  if (tail && !base.hasTime) {
+    const p = parseQuick(`${text.trim().slice(0, -tail[0].length)} at ${tail[1]}`, calendars, now);
+    if (p.hasTime) add('tail-hour', `${when(p)}`, { ...p }, undefined);
+  }
+
   // a repeat: or just once (the first one)
   if (base.recurrence) add('once', `Just once · ${when(base)}`, { ...base, recurrence: undefined, repeatDays: undefined });
   // monthly on a weekday ("first Monday") vs on that date
@@ -122,10 +135,41 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
   if (!base.recurrence && base.allDay && /^(?:e-?mail|call|buy|get|order|pay|book|renew|cancel|submit|send|finish|write|clean|fix|pick up|drop off|return|prep|prepare|grade|review|read|print|file|sign)\b/i.test(text.trim()))
     add('as-task', `A to-do · due ${day(base.start)}`, base, 'task');
 
+  titleVariants(text, base, kind, add);
+
   // "tomorrow" said late at night usually means the day that starts after sleeping — today, if it's past midnight
   if (now.getHours() < 4 && /\btomorrow\b|\btmrw?\b/i.test(text)) {
     const p = { ...base, start: base.start - 86_400_000, end: base.end - 86_400_000 };
     if (startOfDay(p.start).getTime() === startOfDay(now).getTime()) add('today', `Today · ${when(p).replace(/^\w+ \w+ \d+ · /, '')}`, p);
   }
   return out;
+}
+
+/** The same thing under another name, when a word the reader took out may belong in it: the place ("Soccer at Trinity
+ *  Bellwoods"), the deadline word ("Arxiv submission cutoff"), the part of the day ("Evening run"), how often ("Weekly
+ *  sync"), the weekday ("Sunday brunch"). */
+function titleVariants(text: string, base: Parsed, kind: Kind, add: (id: string, label: string, p: Parsed, as?: Kind) => void) {
+  const titled = (t: string) => `Titled “${t}”`;
+  const has = (w: string) => new RegExp(`\\b${w}\\b`, 'i').test(base.title);
+  if (base.location && !/^\d|zqx/i.test(base.location)) {
+    const t = `${base.title} ${/^(?:the|room|rm)\b|'s\b/i.test(base.location) || /^[a-z]/.test(base.location) ? 'at' : 'in'} ${base.location}`;
+    add('title-loc', titled(t), { ...base, title: t, location: undefined }, kind);
+  }
+  const dl = /\b(deadline|cut-?off|closes|due)\b/i.exec(text);
+  if (kind === 'deadline' && dl && !has(dl[1])) add('title-dl', titled(`${base.title} ${dl[1].toLowerCase()}`), { ...base, title: `${base.title} ${dl[1].toLowerCase()}` }, kind);
+  const part = /\b(morning|afternoon|evening|night)\s+(\w+)/i.exec(text);
+  if (part && !has(part[1]) && base.title.toLowerCase().startsWith(part[2].toLowerCase())) {
+    const t = `${part[1][0].toUpperCase()}${part[1].slice(1).toLowerCase()} ${base.title[0].toLowerCase()}${base.title.slice(1)}`;
+    add('title-part', titled(t), { ...base, title: t }, kind);
+  }
+  const freq = /\b(daily|weekly|monthly|biweekly|annual|yearly)\s+(\w+)/i.exec(text);
+  if (freq && !has(freq[1]) && base.title.toLowerCase().startsWith(freq[2].toLowerCase())) {
+    const t = `${freq[1][0].toUpperCase()}${freq[1].slice(1).toLowerCase()} ${base.title[0].toLowerCase()}${base.title.slice(1)}`;
+    add('title-freq', titled(t), { ...base, title: t }, kind);
+  }
+  const wd = /^\s*(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\s+(\w+)/i.exec(text);
+  if (wd && !has(wd[1]) && base.title.toLowerCase().startsWith(wd[2].toLowerCase())) {
+    const t = `${wd[1][0].toUpperCase()}${wd[1].slice(1).toLowerCase()} ${base.title[0].toLowerCase()}${base.title.slice(1)}`;
+    add('title-wd', titled(t), { ...base, title: t }, kind);
+  }
 }

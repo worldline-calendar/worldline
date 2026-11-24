@@ -68,6 +68,7 @@ const WD_NAMES: [RegExp, number][] = [
 const wdOf = (w: string) => WD_NAMES.find(([re]) => re.test(w))?.[1];
 const WD = '(?:mon|tues?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?|sun)(?:day)?';
 const WD_LIST = `${WD}s?(?:(?:\\s*(?:,|and|&|\\+|/)\\s*|\\s+)${WD}s?)*`;
+const MONTH_RE = '(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*';
 const UNIT_FREQ: Record<string, Recurrence['freq']> = { day: 'daily', week: 'weekly', month: 'monthly', year: 'yearly' };
 
 interface RepeatInfo {
@@ -155,6 +156,11 @@ function takeRepeat(input: string): RepeatInfo {
       set('weekly', 1, [...new Set(list.split(/\s*(?:,|\/|&|\+|\band\b|\s)\s*/).map((w: string) => wdOf(w.trim())).filter((d: number | undefined): d is number => d !== undefined))].sort()),
     );
   if (!rule && wantsRepeat) set('weekly');
+  // "swim lessons sat 9am until feb 27": a weekday with an end date repeats on it
+  if (!rule && new RegExp(`\\b${WD}\\b[^]*\\b(?:until|till|thru|through)\\s+(?:${MONTH_RE}|\\d)`, 'i').test(t)) {
+    const m = new RegExp(`\\b(${WD})\\b`, 'i').exec(t)!;
+    set('weekly', 1, [wdOf(m[1])!]);
+  }
   if (!rule) return { text: input, byDayGiven: false };
 
   let untilText: string | undefined;
