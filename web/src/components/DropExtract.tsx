@@ -14,6 +14,7 @@ import { zoneCity } from '../lib/zone';
 import { cls } from '../lib/format';
 import { Portal } from './Portal';
 
+const hostLabel = (u: string) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return 'link'; } };
 interface Row extends Proposal { on: boolean; key: string; alts: { label: string; p: Proposal['parsed']; kind?: ExtractKind }[] }
 const KIND_LABEL: Record<ExtractKind, string> = { event: 'Event', deadline: 'Deadline', task: 'To-do' };
 
@@ -125,8 +126,8 @@ export function DropExtract() {
       for (const r of chosen) {
         const p = r.parsed;
         if (r.kind === 'task') st.addTask({ title: p.title, ...(p.hasDay ? { due: startOfDay(p.start).getTime() } : {}) });
-        else if (r.kind === 'deadline') st.createEvent({ calendarId: '', title: p.title, start: p.start, end: p.start, allDay: false, kind: 'deadline', leadDays: defaultLeadDays(), ...(p.location ? { location: p.location } : {}) });
-        else st.createEvent({ calendarId: calId, title: p.title, start: p.start, end: p.end, allDay: p.allDay, ...(p.location ? { location: p.location } : {}), ...(p.recurrence ? { recurrence: p.recurrence } : {}), ...(p.timeZone ? { timeZone: p.timeZone } : {}) });
+        else if (r.kind === 'deadline') st.createEvent({ calendarId: '', title: p.title, start: p.start, end: p.start, allDay: false, kind: 'deadline', leadDays: defaultLeadDays(), ...(p.location ? { location: p.location } : {}), ...(r.url ? { url: r.url } : {}), ...(r.notes ? { notes: r.notes } : {}) });
+        else st.createEvent({ calendarId: calId, title: p.title, start: p.start, end: p.end, allDay: p.allDay, ...(p.location ? { location: p.location } : {}), ...(p.recurrence ? { recurrence: p.recurrence } : {}), ...(p.timeZone ? { timeZone: p.timeZone } : {}), ...(r.url ? { url: r.url } : {}), ...(r.notes ? { notes: r.notes } : {}) });
       }
     });
     close();
@@ -192,6 +193,7 @@ export function DropExtract() {
                       <div className="dx-when">
                         {when(r)}
                         {r.parsed.location && <> · ⌖ {r.parsed.location}</>}
+                        {r.url && <> · 🔗 {hostLabel(r.url)}</>}
                         {r.parsed.timeZone && <span className="dx-z"> · {zoneCity(r.parsed.timeZone)} time</span>}
                         {r.parsed.recurrence && <span className="dx-z"> · ↻ {describeRecurrence(r.parsed.recurrence, r.parsed.start)}</span>}
                       </div>

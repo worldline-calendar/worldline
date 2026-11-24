@@ -561,7 +561,7 @@ function resolveChains(t: string, now: Date) {
   });
   t = t.replace(/\b((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\s+(\d{1,2})\s+(?:and|&)\s+(\d{1,2})\b(?!\s*(?:am|pm|:))/gi, '$1 $2 - $1 $3'); // "feb 4 and 5"
   t = t.replace(/\b((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\s+(\d{1,2})\s*(?:through|thru|to|till|-)\s*(\d{1,2})\b(?!\s*(?::|am|pm|[ap]\b))/gi, '$1 $2 - $1 $3'); // "jan 10 through 17"
-  t = t.replace(/\b((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\s+(\d{1,2})((?:\s*,\s*\d{1,2})+)(?:\s*,?\s*(?:and|&)\s*(\d{1,2}))?\b(?!\s*(?::|am|pm))/gi, (_, mo: string, a: string, more: string, last?: string) => {
+  t = t.replace(/\b((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\s+(\d{1,2})((?:\s*,\s*\d{1,2})+)(?:\s*,?\s*(?:and|&)\s*(\d{1,2}))?\b(?!\s*(?::|am|pm|[ap]\b|[-–—]\s*\d|(?:to|until|till)\s+\d))/gi, (_, mo: string, a: string, more: string, last?: string) => {
     const ds = [a, ...more.split(',').map((x) => x.trim()).filter(Boolean), ...(last ? [last] : [])].map(Number);
     return `${mo} ${a} - ${mo} ${ds[ds.length - 1]}`; // "dec 18, 19, 20"
   });

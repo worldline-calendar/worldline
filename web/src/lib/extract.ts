@@ -25,6 +25,9 @@ export interface Proposal {
   /** How sure: 1 = stated plainly, lower = worked out (a guessed time, a relative day). Low ones start unticked. */
   confidence: number;
   why?: string;
+  /** The meeting link (Zoom, Teams, Meet…) or the page it points to, and the details that go with it. */
+  url?: string;
+  notes?: string;
 }
 export interface Extraction {
   proposals: Proposal[];
@@ -136,6 +139,8 @@ function wordDates(t: string) {
 
 function plainDates(t: string) {
   t = wordDates(t);
+  // an itinerary's "07:30 → 13:10" is a range
+  t = t.replace(/(\d{1,2}:\d\d)\s*(?:→|->|⇒|➔)\s*(\d{1,2}:\d\d)/g, '$1-$2');
   // a rota's shorthand: "3p-11p", "7a–3p" → "3pm-11pm"
   t = t.replace(/\b(\d{1,2}(?::\d\d)?)([ap])(?=\s*[-–]\s*\d{1,2}(?::\d\d)?[ap]\b)/gi, '$1$2m').replace(/(?<=[-–]\s*)(\d{1,2}(?::\d\d)?)([ap])\b/gi, '$1$2m');
   const WD = '(?:mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun)(?:day|nesday|sday|urday)?\\.?,?';
@@ -164,7 +169,8 @@ function units(text: string): Unit[] {
   const flush = () => { if (block) out.push(block); block = null; };
   for (const { s: line, at } of lines) {
     // a chat line: "[11/23, 9:52 PM] Priya: dinner thursday" — the stamp is when it was sent, the name who said it
-    const raw = line.replace(/^\s*\[[^\]]{3,30}\]\s*/, (m) => ' '.repeat(m.length)).replace(/^(\s*)([A-Z][\w .'-]{0,20}?(?:\s*\p{Extended_Pictographic})?)\s*:\s+(?=\S)/u, (m, sp: string) => sp + ' '.repeat(m.length - sp.length));
+    // (links hidden from the reader — a Zoom ID is all digits — and kept for the event: attachLinks)
+    const raw = line.replace(URL_RE, (m) => ' '.repeat(m.length)).replace(/^\s*\[[^\]]{3,30}\]\s*/, (m) => ' '.repeat(m.length)).replace(/^(\s*)([A-Z][a-zA-Z .'-]{0,20}?(?:\s*\p{Extended_Pictographic})?)\s*:\s+(?=\S)/u, (m, sp: string, who: string) => (/\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|mon|tue|wed|thu|fri|sat|sun|today|tomorrow|tonight)[a-z]*\b/i.test(who) ? m : sp + ' '.repeat(m.length - sp.length)));
     const s = plainDates(raw);
     const kv = KEY.exec(s);
     if (kv) {
@@ -255,7 +261,8 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
     const proposals: Proposal[] = firsts.map((raw) => {
       const e = decodeEvent(raw);
       const parsed: Parsed = { title: e.title, start: e.start, end: e.end, allDay: e.allDay, location: e.location, hasDate: true, hasDay: true, hasTime: !e.allDay, timeFromWords: false, hasEnd: true, recurrence: ruleOf(e.title) ?? e.recurrence };
-      return { kind: 'event', parsed, from: 0, to: text.length, confidence: 1, why: 'calendar file (.ics)' };
+      const link = e.url ?? meetingLinks(e.notes ?? '')[0]?.url ?? e.location?.match(URL_RE)?.[0];
+      return { kind: 'event', parsed, from: 0, to: text.length, confidence: 1, why: 'calendar file (.ics)', ...(link ? { url: link } : {}), ...(e.notes?.trim() ? { notes: e.notes.trim().slice(0, 2000) } : {}) };
     });
     return { proposals, skipped };
   }
@@ -321,6 +328,8 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
       skipped.push({ text: s, why: 'cancelled' });
       continue;
     }
+    // a document's own title line ("CITA Seminar Series — Winter 2027", "Lab meeting notes — Mon Nov 23"): what it is, not an event in it
+    if (u.from < 200 && !/\d{1,2}(?::\d\d)?\s*(?:am|pm)\b|\d{1,2}:\d\d/i.test(s) && /\b(?:newsletter|digest|notes|minutes|schedule|calendar|series|agenda|update|bulletin|timetable|syllabus|key dates|important dates|upcoming dates)\b/i.test(s) && s.length < 90 && text.slice(0, u.from).split('\n').filter((l) => l.trim()).length <= 1) { skipped.push({ text: s, why: 'the document’s title' }); continue; }
     if (rota && /^\s*\S+\s+(?:off|rest|—)\s*$/i.test(s)) { skipped.push({ text: s, why: 'a day off' }); continue; }
     if (POLICY.test(s)) { skipped.push({ text: s, why: 'a policy, not a date' }); continue; }
     if (PAST_REF.test(s)) { skipped.push({ text: s, why: 'already happened' }); continue; }
@@ -353,6 +362,11 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
       const deadlineWords = /\b(?:due|deadline|by|before|no later than|rsvp|register|registration|submit|submission|closes?|cut-?off|apply|send)\b/i.test(part);
       let kind: ExtractKind = guessKind(part, p) === 'task' ? 'task' : p.deadline ? 'deadline' : 'event';
       if (kind === 'event' && deadlineWords && !p.hasEnd && /\b(?:due|deadline|rsvp|registration|submission|closes?|cut-?off|by)\b/i.test(part)) kind = 'deadline';
+      // a deadline with a day and no hour is due at the end of that working day
+      if (kind === 'deadline' && !p.hasTime) {
+        const d = startOfDay(p.start); d.setHours(17);
+        p.start = p.end = d.getTime(); p.allDay = false;
+      }
       let title = tidyTitle(p.title, u, subject, !!appt);
       if (rota && new RegExp(ROTA_LINE.source, 'i').test(u.s)) {
         const code = /^\s*\S+\s+([DNE]|day|night|eve)\b/i.exec(u.s)?.[1].toLowerCase()[0];
@@ -389,7 +403,45 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
     if (!dup) kept.push(p);
     else if ((p.parsed.location && !dup.parsed.location) || p.confidence > dup.confidence) Object.assign(dup, p);
   }
+  attachLinks(kept, text);
   return { proposals: kept.sort((a, b) => a.parsed.start - b.parsed.start), skipped };
+}
+
+// ---------------------------------------------------------------- links and dial-in details
+const URL_RE = /\bhttps?:\/\/[^\s<>"')\]]+[^\s<>"')\].,;:!?]/gi;
+const MEETING_HOST = /(?:^|\.)(?:zoom\.us|zoomgov\.com|teams\.microsoft\.com|teams\.live\.com|meet\.google\.com|webex\.com|whereby\.com|gotomeet(?:ing)?\.com|meet\.jit\.si|bluejeans\.com|chime\.aws|discord\.gg|skype\.com|ringcentral\.com)$/i;
+const DETAIL = /^\s*(?:meeting\s*id|webinar\s*id|conference\s*id|passcode|password|pin|access\s*code|dial[- ]?in|dial by your location|phone|one tap mobile|join by phone|call[- ]in|toll[- ]free|\+?\d[\d\s().-]{8,}\d)\b.*$/i;
+const hostOf = (u: string) => { try { return new URL(u).hostname; } catch { return ''; } };
+/** Every link in the text with where it sits; meeting links first. */
+export function meetingLinks(text: string) {
+  return [...text.matchAll(URL_RE)].map((m) => ({ url: m[0], at: m.index!, meeting: MEETING_HOST.test(hostOf(m[0])) }));
+}
+/** Each event gets the meeting link that belongs to it (in its sentence or just after it, or the document's only one)
+ *  and the lines that go with joining (meeting ID, passcode, dial-in). A deadline or to-do gets the link in its own
+ *  sentence (the form, the registration page). */
+function attachLinks(props: Proposal[], text: string) {
+  const links = meetingLinks(text);
+  if (!links.length) return;
+  const meetings = links.filter((l) => l.meeting);
+  const distinct = [...new Set(meetings.map((l) => l.url.split('?')[0]))];
+  const details = text.split('\n').filter((l) => DETAIL.test(l)).map((l) => l.trim()).filter((l, i, a) => a.indexOf(l) === i).slice(0, 8);
+  const order = [...props].sort((a, b) => a.from - b.from);
+  for (const p of order) {
+    const next = order.find((q) => q.from > p.from && q !== p)?.from ?? text.length;
+    const own = links.find((l) => l.at >= p.from && l.at < p.to);
+    let url = own?.url;
+    if (p.kind === 'event') {
+      const near = meetings.find((l) => l.at >= p.from && l.at < next);
+      url = (own?.meeting ? own.url : undefined) ?? near?.url ?? (distinct.length === 1 ? meetings[0].url : undefined) ?? url;
+      if (url && MEETING_HOST.test(hostOf(url))) {
+        const service = /zoom/i.test(url) ? 'Zoom' : /teams/i.test(url) ? 'Microsoft Teams' : /meet\.google/i.test(url) ? 'Google Meet' : /webex/i.test(url) ? 'Webex' : 'Video call';
+        const extra = details.length && distinct.length <= 1 ? details : [];
+        p.notes = [`${service}: ${url}`, ...extra].join('\n');
+        if (!p.parsed.location) p.parsed = { ...p.parsed, location: service };
+      }
+    }
+    if (url) p.url = url;
+  }
 }
 
 /** "dentist tue 9am and haircut thu 4", "call Bob at 2, then gym at 5": two things, each with its own when. */

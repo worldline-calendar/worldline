@@ -79,3 +79,20 @@ describe('drop: regressions from the UI pass', () => {
     expect(ps.map((p) => p.parsed.title).join()).not.toMatch(/[<>]|&nbsp/);
   });
 });
+
+describe('drop: meeting links', () => {
+  const NOW = new Date(2026, 10, 23, 10);
+  it('a Zoom invite puts the link and dial-in on the event', () => {
+    const t = `Hi all,\n\nProject sync is Wednesday Dec 2 at 10am.\n\nJoin Zoom Meeting\nhttps://utoronto.zoom.us/j/81234567890?pwd=abc123\n\nMeeting ID: 812 3456 7890\nPasscode: 445566\n\nThanks`;
+    const [p] = extract(t, DEFAULT_CALENDARS, NOW).proposals;
+    expect(p.url).toBe('https://utoronto.zoom.us/j/81234567890?pwd=abc123');
+    expect(p.notes).toContain('Passcode: 445566');
+    expect(p.parsed.location).toBe('Zoom');
+  });
+  it('a registration link stays with its deadline, not the meeting', () => {
+    const t = `Seminar Dec 9 at 2pm: https://meet.google.com/abc-defg-hij\nRegister by Dec 4 at https://forms.example.org/reg`;
+    const ps = extract(t, DEFAULT_CALENDARS, NOW).proposals;
+    expect(ps.find((p) => p.kind === 'event')?.url).toContain('meet.google.com');
+    expect(ps.find((p) => p.kind === 'deadline')?.url).toBe('https://forms.example.org/reg');
+  });
+});
