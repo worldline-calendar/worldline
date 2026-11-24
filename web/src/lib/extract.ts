@@ -87,7 +87,7 @@ function rawLines(text: string) {
 }
 
 /** The document's own date: "Sent: Monday, November 23, 2026 9:12 AM", "Date: 2026-11-20" — else now. */
-function documentDate(text: string, now: Date) {
+export function documentDate(text: string, now: Date) {
   // (only in an email's header — "Date: December 2" in a confirmation is the appointment, not when it was sent)
   const head = text.split('\n').slice(0, 15).join('\n');
   if (!/^\s*(?:from|to)\s*:/im.test(head)) return now;
@@ -419,7 +419,7 @@ export function meetingLinks(text: string) {
 /** Each event gets the meeting link that belongs to it (in its sentence or just after it, or the document's only one)
  *  and the lines that go with joining (meeting ID, passcode, dial-in). A deadline or to-do gets the link in its own
  *  sentence (the form, the registration page). */
-function attachLinks(props: Proposal[], text: string) {
+export function attachLinks(props: Proposal[], text: string) {
   const links = meetingLinks(text);
   if (!links.length) return;
   const meetings = links.filter((l) => l.meeting);
