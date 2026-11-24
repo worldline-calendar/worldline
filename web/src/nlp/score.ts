@@ -76,11 +76,12 @@ export function interpret(input: string, now: Date, max = 3): Answer[] {
 }
 
 const norm = (f: (typeof FIELDS)[number], v: unknown) =>
-  v === undefined || v === null || v === '' ? null : f === 'title' || f === 'loc' ? String(v).trim().replace(/[.!?,;:]+$/, '').toLowerCase().replace(/\s+/g, ' ') : String(v);
+  v === undefined || v === null || v === '' ? null : f === 'title' || f === 'loc' || f === 'cal' ? String(v).trim().replace(/[.!?,;:]+$/, '').toLowerCase().replace(/\s+/g, ' ') : String(v);
 
 // (the order weekdays are listed in doesn't matter: SA,SU = SU,SA)
+// (and "monthly on the 15th" may name its day: the app keeps that in the start date)
 const byDaySorted = (r: string | null | undefined) =>
-  r == null ? null : r.replace(/BYDAY=([^;]+)/, (_, d: string) => `BYDAY=${d.split(',').sort().join(',')}`);
+  r == null ? null : r.replace(/BYDAY=([^;]+)/, (_, d: string) => `BYDAY=${d.split(',').sort().join(',')}`).replace(/;BYMONTHDAY=[^;]+/, '');
 
 /** Every answer that counts as right for a case. */
 export const accepted = (c: Case): Answer[] => [c, ...(c.alts ?? []).map((a) => ({ ...c, ...a }))];

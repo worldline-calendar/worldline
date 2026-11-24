@@ -49,11 +49,11 @@ export const ZONE_ABBR: Record<string, string> = {
   EST: 'America/New_York', EDT: 'America/New_York', ET: 'America/New_York',
   AST: 'America/Halifax', ADT: 'America/Halifax', NST: 'America/St_Johns', NDT: 'America/St_Johns',
   AKST: 'America/Anchorage', AKDT: 'America/Anchorage', HST: 'Pacific/Honolulu',
-  UTC: 'UTC', GMT: 'UTC', Z: 'UTC', BST: 'Europe/London', WET: 'Europe/Lisbon', WEST: 'Europe/Lisbon',
+  UTC: 'UTC', GMT: 'Europe/London', Z: 'UTC', BST: 'Europe/London', WET: 'Europe/Lisbon', WEST: 'Europe/Lisbon',
   CET: 'Europe/Paris', CEST: 'Europe/Paris', EET: 'Europe/Athens', EEST: 'Europe/Athens', MSK: 'Europe/Moscow',
   IST: 'Asia/Kolkata', PKT: 'Asia/Karachi', SGT: 'Asia/Singapore', HKT: 'Asia/Hong_Kong', CST8: 'Asia/Shanghai',
   JST: 'Asia/Tokyo', KST: 'Asia/Seoul', AWST: 'Australia/Perth', ACST: 'Australia/Adelaide', ACDT: 'Australia/Adelaide',
-  AEST: 'Australia/Sydney', AEDT: 'Australia/Sydney', NZST: 'Pacific/Auckland', NZDT: 'Pacific/Auckland',
+  AEST: 'Australia/Brisbane', AEDT: 'Australia/Sydney', NZST: 'Pacific/Auckland', NZDT: 'Pacific/Auckland',
 };
 /** Region words that name a North American zone right after a time ("11am pacific", "2 eastern"). */
 export const ZONE_WORDS: Record<string, string> = {

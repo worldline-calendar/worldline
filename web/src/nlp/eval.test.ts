@@ -10,7 +10,7 @@ const load = (p: string): Case[] | null => (existsSync(p) ? (JSON.parse(readFile
 const dev = load(resolve(__dirname, 'corpus.dev.json'));
 const dev2 = load(resolve(__dirname, 'corpus.dev2.json'));
 const heldout = load(resolve(__dirname, '../../test-heldout/corpus.heldout.json'));
-const FLOOR = { dev: { top1: 0, top3: 0 }, dev2: { top1: 0, top3: 0 }, heldout: { top1: 0, top3: 0 } }; // raised as the reader improves
+const FLOOR = { dev: { top1: 0.94, top3: 0.95 }, dev2: { top1: 0.89, top3: 0.89 }, heldout: { top1: 0.84, top3: 0.84 } }; // raised as the reader improves
 const zoneOk = Intl.DateTimeFormat().resolvedOptions().timeZone === 'America/Toronto';
 
 describe.runIf(zoneOk)('reading what people type (corpora; run with TZ=America/Toronto)', () => {

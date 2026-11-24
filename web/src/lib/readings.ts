@@ -94,6 +94,14 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
     add('sunday', `Sunday · ${when(p).replace(/^\w+ /, '')}`, p);
   }
 
+  // "every second friday": every other week — or the second Friday of each month (and the other way round)
+  const r0 = base.recurrence;
+  if (r0 && r0.byDay?.length === 1 && ((r0.freq === 'weekly' && r0.interval === 2) || (r0.freq === 'monthly' && r0.nth === 2)) && /\b(?:second|2nd)\b/i.test(text)) {
+    const swapped = r0.freq === 'weekly' ? `${text} of the month` : text.replace(/\b(?:second|2nd)\b/i, 'other');
+    const p = parseQuick(swapped, calendars, now);
+    if (p.recurrence) add('second', describeRecurrence(p.recurrence, p.start), { ...p, title: base.title });
+  }
+
   // a repeat: or just once (the first one)
   if (base.recurrence) add('once', `Just once · ${when(base)}`, { ...base, recurrence: undefined, repeatDays: undefined });
   // monthly on a weekday ("first Monday") vs on that date
