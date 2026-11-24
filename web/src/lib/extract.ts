@@ -1,0 +1,275 @@
+// Drop anything, find what's in it: an email, a text thread, an invitation letter, a newsletter, a confirmation — the
+// events, deadlines and to-dos it describes, each with the words it came from, for you to tick and add. Nothing leaves
+// the device: the text is read here, by the same reader as quick add, one sentence (or "When: / Where:" block) at a time.
+//   1. whole formats first: an .ics file (lib/ics.ts), a flight booking (lib/flights.ts)
+//   2. what isn't the message is set aside: headers, quoted replies, signatures, footers, phone numbers, prices
+//   3. the document's own date ("Sent: …") is what "tomorrow" and "Friday" count from
+//   4. each sentence with a date or time becomes a proposal; a block of "When/Where/What" lines becomes one
+//   5. cancelled ones are dropped, a later "7:30 it is" replaces an earlier "7?", the same thing twice is kept once
+import { addDays, startOfDay } from 'date-fns';
+import * as chrono from 'chrono-node';
+import type { CalendarSource } from '../data/types';
+import { parseQuick, type Parsed } from './quickparse';
+import { guessKind } from './tasks';
+import { parseIcs } from './ics';
+import { parseItinerary } from './flights';
+import { decodeEvent } from './recurrence';
+
+export type ExtractKind = 'event' | 'deadline' | 'task';
+export interface Proposal {
+  kind: ExtractKind;
+  parsed: Parsed;
+  /** Where in the text it came from (character offsets), for highlighting. */
+  from: number;
+  to: number;
+  /** How sure: 1 = stated plainly, lower = worked out (a guessed time, a relative day). Low ones start unticked. */
+  confidence: number;
+  why?: string;
+}
+export interface Extraction {
+  proposals: Proposal[];
+  /** What was seen but left out, and why ("Sent: …" — when the email was sent). */
+  skipped: { text: string; why: string }[];
+}
+
+const MAX_TEXT = 200_000;
+const DAY = 86_400_000;
+
+// ---------------------------------------------------------------- what isn't the message
+const HEADER = /^\s*(?:from|to|cc|bcc|sent|date|reply-to|received|message-id|importance|attachments?)\s*:/i;
+const SIGNOFF = /^\s*(?:best|best regards|regards|kind regards|warm regards|thanks|thank you|many thanks|cheers|sincerely|yours|all the best|talk soon|-- ?)\s*[,!.]?\s*$/i;
+const QUOTED = /^\s*>|^\s*On .{5,120}wrote:\s*$|^-{2,}\s*(?:original message|forwarded message)\s*-{2,}/i;
+const FOOTER = /©|\bcopyright\b|\bunsubscribe\b|\ball rights reserved\b|\bprivacy policy\b|\bview (?:this|in) (?:email|browser)\b/i;
+const CANCELLED = /\b(?:cancel+ed|called off|postponed|no longer|won'?t be happening|is off\b|scrapped)\b/i;
+const PAST_REF = /\b(?:thank(?:s| you) (?:to )?(?:everyone|all) who|was held|took place|last (?:week|month|year)|came out to|attended)\b/i;
+
+/** The lines that carry the message, with their offsets: headers, quoted replies, signatures and footers are left out. */
+function messageLines(text: string) {
+  const lines: { s: string; at: number }[] = [];
+  let at = 0, signed = false, quoted = false;
+  for (const raw of text.split('\n')) {
+    const s = raw.replace(/\r$/, '');
+    const here = at;
+    at += raw.length + 1;
+    if (QUOTED.test(s)) quoted = true;
+    if (quoted || signed) continue;
+    if (SIGNOFF.test(s)) { signed = lines.length > 0; continue; }
+    if (HEADER.test(s) || FOOTER.test(s)) continue;
+    lines.push({ s, at: here });
+  }
+  return lines;
+}
+
+/** The document's own date: "Sent: Monday, November 23, 2026 9:12 AM", "Date: 2026-11-20" — else now. */
+function documentDate(text: string, now: Date) {
+  // (only in an email's header — "Date: December 2" in a confirmation is the appointment, not when it was sent)
+  const head = text.split('\n').slice(0, 15).join('\n');
+  if (!/^\s*(?:from|to)\s*:/im.test(head)) return now;
+  const m = /^\s*(?:sent|date)\s*:\s*(.+)$/im.exec(head);
+  const d = m ? chrono.parseDate(m[1], now) : null;
+  return d && Math.abs(d.getTime() - now.getTime()) < 400 * DAY ? d : now;
+}
+
+/** The subject or heading, as a fallback title: "Subject: Committee meeting + draft chapter" → "Committee meeting". */
+function subjectOf(text: string) {
+  const m = /^\s*subject\s*:\s*(?:(?:re|fwd?|fw)\s*:\s*)*(.+)$/im.exec(text);
+  if (m) return m[1].split(/\s*(?:\+|&|—|–|-|\|)\s*/)[0].trim();
+  const first = text.split('\n').map((s) => s.trim()).find((s) => s && s.length <= 70 && !HEADER.test(s));
+  return first && !/[.!?:]$/.test(first) && first.split(/\s+/).length <= 9 ? first : undefined;
+}
+
+/** RRULE of a dropped VEVENT, as the app's rule (the common parts: FREQ, INTERVAL, BYDAY, UNTIL). */
+function icsRule(text: string) {
+  const m = /^RRULE:(.+)$/im.exec(text);
+  if (!m) return undefined;
+  const kv = Object.fromEntries(m[1].trim().split(';').map((x) => x.split('=') as [string, string]));
+  const freq = ({ DAILY: 'daily', WEEKLY: 'weekly', MONTHLY: 'monthly', YEARLY: 'yearly' } as const)[kv.FREQ as 'DAILY'];
+  if (!freq) return undefined;
+  const codes = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+  const byDay = kv.BYDAY ? kv.BYDAY.split(',').map((d) => codes.indexOf(d.slice(-2))).filter((d) => d >= 0) : undefined;
+  return { freq, interval: Math.max(1, +(kv.INTERVAL ?? 1) || 1), ...(byDay?.length && (freq as string) === 'weekly' ? { byDay } : {}) };
+}
+
+/** Written dates made plain for the reader: a weekday in front of a full date goes ("Thursday, December 10", "Thu 17
+ *  Dec 2026" — the date says it), "Dep 10:00 Arr 14:24" is a range. */
+function plainDates(t: string) {
+  const WD = '(?:mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun)(?:day|nesday|sday|urday)?\\.?,?';
+  const MON = '(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\\.?';
+  return t
+    .replace(new RegExp(`\\b${WD}\\s+(?=(?:the\\s+)?\\d{1,2}(?:st|nd|rd|th)?\\s+${MON}|${MON}\\s+\\d{1,2}\\b|\\d{4}-\\d{2}-\\d{2}|\\d{1,2}\\/\\d{1,2})`, 'gi'), '')
+    .replace(/\bdep(?:art(?:s|ure)?)?\.?\s*:?\s*(\d{1,2}:\d\d(?:\s*[ap]m)?)\s+arr(?:ives?|ival)?\.?\s*:?\s*(\d{1,2}:\d\d(?:\s*[ap]m)?)/gi, '$1 - $2');
+}
+const LENGTH = /\b(?:plan for|allow|it(?:'ll| will) (?:take|last|run)|lasts?|runs?|about|approx(?:imately)?\.?)\s+(?:about\s+)?(\d+(?:\.\d+)?|an?|one|two|three)\s*(hours?|hrs?|minutes?|mins?)\b/i;
+/** "Dentist appointment" for a dental clinic's confirmation, and the like — when the document is about an appointment. */
+function appointmentTitle(text: string) {
+  if (!/\bappointment\b/i.test(text)) return undefined;
+  const kinds: [RegExp, string][] = [[/\bdent(?:al|ist)\b/i, 'Dentist appointment'], [/\bvet(?:erinary)?\b|\banimal hospital\b/i, 'Vet appointment'], [/\b(?:physio(?:therapy)?)\b/i, 'Physio appointment'], [/\b(?:optometr\w*|eye exam)\b/i, 'Eye exam'], [/\b(?:salon|barber|haircut)\b/i, 'Haircut'], [/\b(?:clinic|doctor|dr\.|physician|medical)\b/i, "Doctor's appointment"]];
+  return kinds.find(([re]) => re.test(text))?.[1] ?? 'Appointment';
+}
+
+// ---------------------------------------------------------------- units: sentences and When/Where blocks
+interface Unit { s: string; from: number; to: number; where?: string; what?: string; heading?: string }
+const KEY = /^\s*(when|date|time|where|location|venue|place|room|what|event|title|deadline|due|rsvp)\s*[:\-–]\s*(.+)$/i;
+
+function units(text: string): Unit[] {
+  const out: Unit[] = [];
+  const lines = messageLines(text);
+  let block: Unit | null = null;
+  let heading: string | undefined;
+  const flush = () => { if (block) out.push(block); block = null; };
+  for (const { s: line, at } of lines) {
+    // a chat line: "[11/23, 9:52 PM] Priya: dinner thursday" — the stamp is when it was sent, the name who said it
+    const raw = line.replace(/^\s*\[[^\]]{3,30}\]\s*/, (m) => ' '.repeat(m.length)).replace(/^(\s*)([A-Z][\w .'-]{0,20}?(?:\s*\p{Extended_Pictographic})?)\s*:\s+(?=\S)/u, (m, sp: string) => sp + ' '.repeat(m.length - sp.length));
+    const s = plainDates(raw);
+    const kv = KEY.exec(s);
+    if (kv) {
+      const k = kv[1].toLowerCase(), v = kv[2].trim();
+      block ??= { s: '', from: at, to: at + s.length, heading };
+      block.to = at + s.length;
+      if (/^(where|location|venue|place|room)$/.test(k)) block.where = v;
+      else if (/^(what|event|title)$/.test(k)) block.what = v;
+      else block.s += (block.s ? ' ' : '') + (/^(deadline|due|rsvp)$/.test(k) ? `${k} ${v}` : v);
+      continue;
+    }
+    flush();
+    if (!s.trim()) continue;
+    // a short line with no date of its own is a heading for what follows ("Train 45 Toronto → Ottawa")
+    if (s.trim().length <= 70 && !/\d{1,2}[:/]\d|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d/i.test(s) && !/[.!?]$/.test(s.trim())) heading = s.trim().replace(/[:\-–]\s*$/, '');
+    // a line may hold several sentences; each is a unit (bullets and "Date: thing" newsletter lines too)
+    const re = /[^.!?\n]+(?:[.!?]+(?=\s|$)|$)/g;
+    for (const m of s.matchAll(re)) {
+      const t = m[0].trim();
+      if (t.length < 4) continue;
+      out.push({ s: t.replace(/^(?:[-•*·–]+\s*|\d{1,2}[.)]\s+)/, ''), from: at + m.index!, to: at + m.index! + m[0].length, heading });
+    }
+  }
+  flush();
+  return out;
+}
+
+const hasWhen = (s: string, now: Date) => chrono.parse(s, now, { forwardDate: true }).some((r) => r.start.isCertain('day') || r.start.isCertain('weekday') || r.start.isCertain('hour'));
+const GENERIC = /^(?:it|this|that|we|let'?s|meet|the meeting|meeting|event|new event|untitled|please|reminder|note)$/i;
+
+/** A short, natural title for what a sentence describes, when the reader's own is a whole clause. */
+function tidyTitle(title: string, unit: Unit, subject?: string, preferSubject = false) {
+  let t = (unit.what ?? title).trim();
+  t = t.replace(/^(?:please\s+)?(?:note|reminder|fyi|just a reminder)\s*(?:that|:)?\s*/i, '')
+    .replace(/^(?:we(?:'re| are| will| ?'ll)?|i(?:'m| am| will| ?'ll)?|you(?:'re| are)?|let'?s|can we|could we|shall we|our)\s+(?:have\s+(?:a|an|the|our)\s+|be\s+having\s+(?:a|an|the|our)\s+|meet(?:ing)?\s*(?:for|to)?\s*|do\s+|hold\s+(?:a|an|the|our)\s+)?/i, '')
+    .replace(/^(?:the|a|an|our|your)\s+/i, '')
+    .replace(/\s+(?:is|are|will be|has been|have been|was)\s*(?:on|scheduled|set|planned|booked)?\s*(?:for)?\s*$/i, '')
+    .replace(/\s+(?:is|are)\s+(?:scheduled|set|planned|booked)(?:\s+for)?\b.*$/i, '')
+    .replace(/[,;:]\s*$/, '')
+    .trim();
+  const junk = !t || GENERIC.test(t) || t.split(/\s+/).length > 9 || t.length < 3 ||
+    /^[\d\s:,.\-–/]+$|^(?:dep|arr|coach|seat|gate|platform|time|date|dates|hours|runs|welcome|this confirms|confirm|want to|if not|arrive|all |unless|moves?|no )\b|^(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{4}$|\b(?:is|are|was|were|be)\s*$|[,(]\s*$/i.test(t);
+  if (junk) t = (preferSubject ? subject : undefined) ?? (unit.heading && unit.heading.split(/\s+/).length <= 9 && !/^this confirms|:$/i.test(unit.heading) ? unit.heading : subject ?? t);
+  return t ? t[0].toUpperCase() + t.slice(1) : 'New event';
+}
+
+// ---------------------------------------------------------------- the reading
+export function extract(input: string, calendars: CalendarSource[], now = new Date()): Extraction {
+  const text = input.length > MAX_TEXT ? input.slice(0, MAX_TEXT) : input;
+  const skipped: Extraction['skipped'] = [];
+
+  // 1. whole formats
+  if (/BEGIN:VEVENT/i.test(text)) {
+    const cal = parseIcs(text, 'drop', now.getTime() - 30 * DAY, now.getTime() + 800 * DAY);
+    // (a repeating event comes back as its occurrences: one proposal per series, the first one, with its rule)
+    const rule = icsRule(text);
+    const seen = new Set<string>();
+    const firsts = cal.events.sort((a, b) => a.start - b.start).filter((e) => { const k = e.title + '|' + (rule ? '' : e.start); if (seen.has(k)) return false; seen.add(k); return true; });
+    const proposals: Proposal[] = firsts.map((raw) => {
+      const e = decodeEvent(raw);
+      const parsed: Parsed = { title: e.title, start: e.start, end: e.end, allDay: e.allDay, location: e.location, hasDate: true, hasDay: true, hasTime: !e.allDay, timeFromWords: false, hasEnd: true, recurrence: rule ?? e.recurrence };
+      return { kind: 'event', parsed, from: 0, to: text.length, confidence: 1, why: 'calendar file (.ics)' };
+    });
+    return { proposals, skipped };
+  }
+  if (/\b(?:automatic reply|auto-?reply|out of (?:the )?office)\b/i.test(text.slice(0, 600)) || /\bterms (?:of service|and conditions)\b/i.test(text.slice(0, 800)))
+    return { proposals: [], skipped: [{ text: text.slice(0, 80), why: 'an automatic reply or terms — nothing to add' }] };
+  const flights = parseItinerary(text, now);
+  const docNow = documentDate(text, now);
+  const appt = appointmentTitle(text);
+  const subject = appt ?? subjectOf(text);
+
+  // 4. each unit with a date or time
+  let proposals: Proposal[] = flights.map((f) => ({
+    kind: 'event' as const,
+    parsed: { title: f.title, start: f.start, end: f.end, allDay: false, hasDate: true, hasDay: true, hasTime: true, timeFromWords: false, hasEnd: f.hasArrival, timeZone: undefined },
+    from: 0, to: 0, confidence: 1, why: 'flight booking',
+  }));
+  const cancelledDays = new Set<number>();
+  let lastEvent: Proposal | null = null;
+  for (const u of units(text)) {
+    const s = u.s;
+    const len = LENGTH.exec(s);
+    if (len && lastEvent && !lastEvent.parsed.allDay && !hasWhen(s.replace(len[0], ''), docNow)) {
+      const n = /^an?$|^one$/i.test(len[1]) ? 1 : len[1] === 'two' ? 2 : len[1] === 'three' ? 3 : +len[1];
+      lastEvent.parsed = { ...lastEvent.parsed, end: lastEvent.parsed.start + n * (/^h/i.test(len[2]) ? 3_600_000 : 60_000) };
+      continue;
+    }
+    if (!hasWhen(s, docNow)) {
+      // "7:30 it is", "can we do 7:30" with no day: a change to the last thing proposed
+      const t = /^(?:(?:ok(?:ay)?|sure|great|perfect|yes|yep|ya|let'?s (?:do|say|make it)|can we (?:do|make it)|how about|actually|make it|at|around)\s*[,!]?\s*)*(\d{1,2}(?::\d\d)?\s*(?:am|pm)?)\s*(?:it is|works|then|instead|\?|!|$)/i.exec(s.trim());
+      if (t && lastEvent) {
+        const p = parseQuick(`${lastEvent.parsed.title} ${new Date(lastEvent.parsed.start).toDateString()} at ${t[1]}`, calendars, docNow);
+        if (p.hasTime) {
+          const len = lastEvent.parsed.allDay ? p.end - p.start : lastEvent.parsed.end - lastEvent.parsed.start;
+          lastEvent.parsed = { ...lastEvent.parsed, allDay: false, hasTime: true, start: p.start, end: p.start + len };
+          lastEvent.to = u.to;
+          lastEvent.why = `time from a later message: ${t[1]}`;
+        }
+      }
+      continue;
+    }
+    if (CANCELLED.test(s)) {
+      const p = parseQuick(s, calendars, docNow);
+      cancelledDays.add(startOfDay(p.start).getTime());
+      skipped.push({ text: s, why: 'cancelled' });
+      continue;
+    }
+    if (PAST_REF.test(s)) { skipped.push({ text: s, why: 'already happened' }); continue; }
+    // a sentence with two things ("dentist tue 9am and haircut thu 4"): each on its own
+    const parts = splitTwo(s, docNow);
+    for (const part of parts) {
+      const p = parseQuick(part.slice(0, 300), calendars, docNow);
+      if (!p.hasDate) continue;
+      if (p.start < startOfDay(docNow).getTime() - DAY && !p.recurrence) { skipped.push({ text: part, why: 'already past' }); continue; }
+      const deadlineWords = /\b(?:due|deadline|by|before|no later than|rsvp|register|registration|submit|submission|closes?|cut-?off|apply|send)\b/i.test(part);
+      let kind: ExtractKind = guessKind(part, p) === 'task' ? 'task' : p.deadline ? 'deadline' : 'event';
+      if (kind === 'event' && deadlineWords && !p.hasEnd && /\b(?:due|deadline|rsvp|registration|submission|closes?|cut-?off|by)\b/i.test(part)) kind = 'deadline';
+      const title = tidyTitle(p.title, u, subject, !!appt);
+      const parsed: Parsed = { ...p, title, location: u.where ?? p.location };
+      const confidence = (p.hasTime || p.allDay ? 0.6 : 0.4) + (p.hasDay ? 0.3 : 0) + (u.what || u.where ? 0.1 : 0);
+      const prop: Proposal = { kind, parsed, from: u.from, to: u.to, confidence: Math.min(1, confidence) };
+      proposals.push(prop);
+      if (kind === 'event') lastEvent = prop;
+    }
+  }
+
+  // 5. cancelled days out; the same thing twice kept once (the one with more said about it)
+  proposals = proposals.filter((p) => !cancelledDays.has(startOfDay(p.parsed.start).getTime()) || p.why === 'flight booking');
+  const kept: Proposal[] = [];
+  for (const p of proposals) {
+    const dup = kept.find((k) => k.kind === p.kind && Math.abs(k.parsed.start - p.parsed.start) < 60_000 && (k.parsed.title === p.parsed.title || k.kind === 'event'));
+    if (!dup) kept.push(p);
+    else if ((p.parsed.location && !dup.parsed.location) || p.confidence > dup.confidence) Object.assign(dup, p);
+  }
+  return { proposals: kept.sort((a, b) => a.parsed.start - b.parsed.start), skipped };
+}
+
+/** "dentist tue 9am and haircut thu 4", "call Bob at 2, then gym at 5": two things, each with its own when. */
+export function splitTwo(s: string, now: Date): string[] {
+  const m = /^(.+?)(?:,?\s+(?:and then|then|and also|and|plus|also)\s+|;\s*)(.+)$/i.exec(s);
+  if (!m) return [s];
+  const [a, b] = [m[1], m[2]];
+  const whenA = chrono.parse(a, now).length > 0 || /\b\d{1,2}(?::\d\d)?\s*(?:am|pm)?\b/i.test(a);
+  const whenB = chrono.parse(b, now).length > 0 || /\b\d{1,2}(?::\d\d)?\s*(?:am|pm)?\b/i.test(b);
+  // both halves need a thing and a when ("lunch with Sam and Ana at noon" is one thing)
+  const thing = (x: string) => x.replace(/\b(?:at|on|by|from|to|\d{1,2}(?::\d\d)?\s*(?:am|pm)?|mon|tue|wed|thu|fri|sat|sun|today|tomorrow|tonight)[a-z]*\b/gi, '').trim().split(/\s+/).filter(Boolean).length >= 1;
+  return whenA && whenB && thing(a) && thing(b) ? [a, ...splitTwo(b, now)] : [s];
+}
+
+/** Days from now (start-of-day), for labels. */
+export const dayOffset = (t: number, now: Date) => Math.round((startOfDay(t).getTime() - startOfDay(now).getTime()) / DAY);
+void addDays;

@@ -108,6 +108,11 @@ export function wrongFields(c: Case, got: Answer): string[] {
         return base(a.repeat) !== base(got.repeat) || !/UNTIL=/.test(got.repeat ?? '');
       }
       if (f === 'repeat') return !sameRepeat(a.repeat, got.repeat);
+      // (an all-day end written as the next day — "up to" rather than "through" — is the same end)
+      if (f === 'end' && a.end && got.end && a.end.length === 10 && got.end.length === 10 && a.end !== got.end) {
+        const next = new Date(`${got.end}T12:00`); next.setDate(next.getDate() + 1);
+        return a.end !== `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}-${String(next.getDate()).padStart(2, '0')}`;
+      }
       if (f === 'start' && a.kind === 'task' && got.kind === 'task') return (a.start ?? '').slice(0, 10) !== (got.start ?? '').slice(0, 10); // (a to-do has a day, not an hour)
       return norm(f, a[f]) !== norm(f, got[f]);
     });

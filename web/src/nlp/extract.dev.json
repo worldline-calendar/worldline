@@ -1,0 +1,1114 @@
+[
+ {
+  "id": "email-committee",
+  "type": "email",
+  "text": "From: Norman Murray <murray@cita.utoronto.ca>\nTo: Braden Gail\nSent: Monday, November 23, 2026 8:41 AM\nSubject: Committee meeting + draft\n\nHi Braden,\n\nLet's hold your thesis committee meeting on Thursday, December 10 at 2:00 pm in MP 1318 (CITA lounge). Plan for 90 minutes.\n\nPlease send the full chapter draft to the committee by Friday, December 4 so they have a week to read it. Also book the projector with Ada beforehand.\n\nCheers,\nNorm\n\n--\nNorman Murray | CITA, 60 St. George St., Toronto ON M5S 3H8 | 416-978-6879",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Thesis committee meeting",
+    "start": "2026-12-10 14:00",
+    "end": "2026-12-10 15:30",
+    "loc": "MP 1318 (CITA lounge)"
+   },
+   {
+    "kind": "deadline",
+    "title": "Send chapter draft to committee",
+    "start": "2026-12-04 17:00",
+    "end": null
+   },
+   {
+    "kind": "task",
+    "title": "Book the projector with Ada",
+    "start": "2026-12-10",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "invite-when-where",
+  "type": "email",
+  "text": "Subject: Invitation: CITA Holiday Party\nFrom: events@cita.utoronto.ca\nDate: Fri, 20 Nov 2026 16:02:11 -0500\n\nYou're invited!\n\nWHAT: CITA Holiday Party\nWHEN: Friday, December 18, 2026, 5:00 PM – 9:00 PM\nWHERE: McLennan Physical Labs, 16th floor\n\nPlease RSVP by Friday, December 11 using the form below. Dietary restrictions? Let us know.\n\nUnsubscribe | © 2026 Canadian Institute for Theoretical Astrophysics",
+  "items": [
+   {
+    "kind": "event",
+    "title": "CITA Holiday Party",
+    "start": "2026-12-18 17:00",
+    "end": "2026-12-18 21:00",
+    "loc": "McLennan Physical Labs, 16th floor"
+   },
+   {
+    "kind": "deadline",
+    "title": "RSVP for CITA Holiday Party",
+    "start": "2026-12-11 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "thread-changed-time",
+  "type": "email",
+  "text": "From: Bart Ripperda\nSent: Mon 2026-11-23 9:15\nSubject: Re: Re: flux eruption sims\n\nActually 4 works better for me, same room.\n\n> On Mon 2026-11-23 9:02, Braden Gail wrote:\n> Tomorrow at 3 in my office (MP 1205)?\n>\n>> On Sun 2026-11-22 21:40, Bart Ripperda wrote:\n>> Can we meet this week to go over the a=0.94 runs?",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Meeting with Bart (flux eruption sims)",
+    "start": "2026-11-24 16:00",
+    "end": "2026-11-24 17:00",
+    "loc": "MP 1205"
+   }
+  ]
+ },
+ {
+  "id": "cancel-3pm",
+  "type": "email",
+  "text": "From: Group admin\nSent: Monday, November 23, 2026 9:30 AM\nSubject: Cancelled: Wednesday group meeting\n\nHi all, the 3pm group meeting this Wednesday is cancelled — half the group is at the AAS splinter. We'll resume next week as usual.\n\nThanks",
+  "items": []
+ },
+ {
+  "id": "dentist-confirm",
+  "type": "confirmation",
+  "text": "Bloor Smile Dental\nAppointment Confirmation\n\nDear Braden,\nThis confirms your appointment:\n  Date: Wednesday, December 2, 2026\n  Time: 8:30 AM\n  Provider: Dr. Lisa Chen – Cleaning & check-up\n  Location: 245 Bloor St W, Suite 300, Toronto\n\nPlease arrive 10 minutes early. 24 hours' notice is required for cancellations or a $75 fee applies.\nReply C to confirm. Call 416-555-0142.\nPatient ID 88213 | © 2026 Bloor Smile Dental",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Dentist appointment",
+    "start": "2026-12-02 08:30",
+    "end": "2026-12-02 09:30",
+    "loc": "245 Bloor St W, Suite 300, Toronto"
+   }
+  ]
+ },
+ {
+  "id": "doctor-sms",
+  "type": "sms",
+  "text": "UofT Health & Wellness: Reminder of your appt with Dr. Patel on Tue Dec 1 at 11:15am, Koffler Ctr 214 College St. Reply YES to confirm or call 416-978-8030 to reschedule. Msg&data rates may apply.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Doctor appointment (Dr. Patel)",
+    "start": "2026-12-01 11:15",
+    "end": "2026-12-01 12:15",
+    "loc": "Koffler Centre, 214 College St"
+   }
+  ]
+ },
+ {
+  "id": "hotel-checkin",
+  "type": "confirmation",
+  "text": "Booking confirmation #HX-449201\nFairmont Château Laurier, 1 Rideau St, Ottawa\n\nGuest: Braden Gail\nCheck-in: Thursday, December 17, 2026 (from 4:00 PM)\nCheck-out: Sunday, December 20, 2026 (until 12:00 PM)\nRoom: Deluxe King, 1 adult — 3 nights\nTotal: CAD 897.00 incl. taxes\n\nFree cancellation until December 15, 2026, 11:59 PM local time.\nQuestions? +1 613-241-1414",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Hotel check-in (Fairmont Château Laurier)",
+    "start": "2026-12-17 16:00",
+    "end": "2026-12-17 17:00",
+    "loc": "1 Rideau St, Ottawa"
+   },
+   {
+    "kind": "event",
+    "title": "Hotel check-out (Fairmont Château Laurier)",
+    "start": "2026-12-20 12:00",
+    "end": "2026-12-20 13:00",
+    "loc": "1 Rideau St, Ottawa"
+   },
+   {
+    "kind": "deadline",
+    "title": "Free cancellation ends (Fairmont)",
+    "start": "2026-12-15 23:59",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "via-train",
+  "type": "confirmation",
+  "text": "VIA Rail Canada — E-ticket\nBooking reference: 7QK2LM\n\nTrain 45   Toronto (Union) → Ottawa\nThu 17 Dec 2026   Dep 10:00   Arr 14:24\nCoach 3, Seat 12A   Economy Escape\n\nTrain 54   Ottawa → Toronto (Union)\nSun 20 Dec 2026   Dep 15:30   Arr 19:58\n\nFare: $142.18. Boarding closes 15 minutes before departure.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Train 45 Toronto → Ottawa",
+    "start": "2026-12-17 10:00",
+    "end": "2026-12-17 14:24",
+    "loc": "Toronto Union Station"
+   },
+   {
+    "kind": "event",
+    "title": "Train 54 Ottawa → Toronto",
+    "start": "2026-12-20 15:30",
+    "end": "2026-12-20 19:58",
+    "loc": "Ottawa Station"
+   }
+  ]
+ },
+ {
+  "id": "syllabus-ast",
+  "type": "syllabus",
+  "text": "AST 221H1 S — Stars and Planets (Winter 2027)\nInstructor: Prof. M. Kerr   Office hours by appointment\nLectures: Mondays and Wednesdays, 10:10–11:00, MP 102, January 11 – April 9\nTutorials: Fridays 1:10–2:00 (BA 1170), starting January 15\n\nAssessment\n Problem Set 1 — due Friday, January 29, 11:59 pm (Quercus)   10%\n Midterm — Wednesday, February 24, in class                  25%\n Term paper — due Friday, March 26, 5 pm                       20%\nReading week: Feb 15–19 (no classes).\nAccessibility Services: 416-978-8060. © 2027 University of Toronto",
+  "items": [
+   {
+    "kind": "event",
+    "title": "AST 221 lecture",
+    "start": "2027-01-11 10:10",
+    "end": "2027-01-11 11:00",
+    "loc": "MP 102",
+    "repeat": "FREQ=WEEKLY;BYDAY=MO,WE;UNTIL=20270409"
+   },
+   {
+    "kind": "event",
+    "title": "AST 221 tutorial",
+    "start": "2027-01-15 13:10",
+    "end": "2027-01-15 14:00",
+    "loc": "BA 1170",
+    "repeat": "FREQ=WEEKLY;BYDAY=FR;UNTIL=20270409"
+   },
+   {
+    "kind": "deadline",
+    "title": "AST 221 Problem Set 1",
+    "start": "2027-01-29 23:59",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "AST 221 midterm",
+    "start": "2027-02-24 10:10",
+    "end": "2027-02-24 11:00",
+    "loc": "MP 102"
+   },
+   {
+    "kind": "deadline",
+    "title": "AST 221 term paper",
+    "start": "2027-03-26 17:00",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "Reading week (no classes)",
+    "start": "2027-02-15",
+    "end": "2027-02-19",
+    "allDay": true
+   }
+  ]
+ },
+ {
+  "id": "ics-vevent",
+  "type": "ics",
+  "text": "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Zoom//EN\nBEGIN:VEVENT\nUID:8834-2211@zoom.us\nDTSTAMP:20261120T150000Z\nDTSTART:20261201T170000Z\nDTEND:20261201T180000Z\nSUMMARY:EHT Sgr A* working group\nLOCATION:https://zoom.us/j/9912003\nDESCRIPTION:Agenda: flare models. Passcode 4411\nEND:VEVENT\nEND:VCALENDAR",
+  "items": [
+   {
+    "kind": "event",
+    "title": "EHT Sgr A* working group",
+    "start": "2026-12-01 12:00",
+    "end": "2026-12-01 13:00",
+    "loc": "https://zoom.us/j/9912003"
+   }
+  ]
+ },
+ {
+  "id": "ics-weekly",
+  "type": "ics",
+  "text": "BEGIN:VEVENT\nDTSTART;TZID=America/Toronto:20261202T113000\nDTEND;TZID=America/Toronto:20261202T123000\nRRULE:FREQ=WEEKLY;BYDAY=WE\nSUMMARY:CITA Journal Club\nLOCATION:MP 1318\nEND:VEVENT",
+  "items": [
+   {
+    "kind": "event",
+    "title": "CITA Journal Club",
+    "start": "2026-12-02 11:30",
+    "end": "2026-12-02 12:30",
+    "loc": "MP 1318",
+    "repeat": "FREQ=WEEKLY;BYDAY=WE"
+   }
+  ]
+ },
+ {
+  "id": "chat-dinner",
+  "type": "chat",
+  "text": "[Mon 9:52] Priya: dinner thurs?? 🍜\n[Mon 9:53] Sam: ya down\n[Mon 9:53] Priya: kinka izakaya 7?\n[Mon 9:55] Sam: 7:30 tho, i have lab til 7 😩\n[Mon 9:55] Priya: ok 7:30 it is 👍 booking for 4\n[Mon 9:56] Braden: in",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Dinner at Kinka Izakaya",
+    "start": "2026-11-26 19:30",
+    "end": "2026-11-26 20:30",
+    "loc": "Kinka Izakaya"
+   }
+  ]
+ },
+ {
+  "id": "chat-movers",
+  "type": "chat",
+  "text": "Mom: honey reminder the movers come Sat at 9am sharp\nMom: and can u pick up the keys from the landlord before that, Friday?\nBraden: yep 👍\nDad: also grandma's bday dinner sunday 6pm at ours 🎂",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Movers arrive",
+    "start": "2026-11-28 09:00",
+    "end": "2026-11-28 10:00"
+   },
+   {
+    "kind": "task",
+    "title": "Pick up keys from the landlord",
+    "start": "2026-11-27",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "Grandma's birthday dinner",
+    "start": "2026-11-29 18:00",
+    "end": "2026-11-29 19:00",
+    "loc": "Mom and Dad's"
+   }
+  ]
+ },
+ {
+  "id": "newsletter-school",
+  "type": "newsletter",
+  "text": "Jesse Ketchum PS — Family Newsletter, November 2026\n\nPrincipal's message: Thank you to everyone who came out to our Fall Fair! We raised $3,412.\n\nUpcoming dates\n• Wed, Nov 25 — Picture retake day\n• Fri, Dec 4 — PA Day (no school)\n• Thu, Dec 10, 6:30 pm — Winter Concert, gymnasium\n• Dec 21 – Jan 1 — Winter Break; classes resume Mon, Jan 4\n• Hot lunch order forms due Monday, November 30\n\nRoom 204 is collecting mittens for the Mitten Tree. Call the office at 416-393-1530.\nTDSB © 2026",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Picture retake day",
+    "start": "2026-11-25",
+    "end": "2026-11-25",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "PA Day (no school)",
+    "start": "2026-12-04",
+    "end": "2026-12-04",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Winter Concert",
+    "start": "2026-12-10 18:30",
+    "end": "2026-12-10 19:30",
+    "loc": "Gymnasium"
+   },
+   {
+    "kind": "event",
+    "title": "Winter Break",
+    "start": "2026-12-21",
+    "end": "2027-01-01",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Classes resume",
+    "start": "2027-01-04",
+    "end": "2027-01-04",
+    "allDay": true
+   },
+   {
+    "kind": "deadline",
+    "title": "Hot lunch order forms",
+    "start": "2026-11-30 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "conference-multi",
+  "type": "email",
+  "text": "Subject: Registration confirmed — Plasma Astrophysics Workshop 2027\nSent: Nov 19, 2026\n\nDear participant,\nYour registration (#PA27-118, fee $350 paid) for the Plasma Astrophysics Workshop is confirmed.\n\nDates: January 18–22, 2027\nVenue: Flatiron Institute, 162 Fifth Ave, New York (all times Eastern)\n\nHighlights:\n Mon Jan 18, 9:00 — Opening & keynote (A. Philippov)\n Wed Jan 20, 18:30 — Conference dinner, Gramercy Tavern\n Thu Jan 21, 14:00 — Your contributed talk (15 min), Session 4\nPoster upload deadline: Friday, January 8, 2027 (PDF, max 10 MB)",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Plasma Astrophysics Workshop",
+    "start": "2027-01-18",
+    "end": "2027-01-22",
+    "allDay": true,
+    "loc": "Flatiron Institute, 162 Fifth Ave, New York"
+   },
+   {
+    "kind": "event",
+    "title": "Opening & keynote",
+    "start": "2027-01-18 09:00",
+    "end": "2027-01-18 10:00",
+    "loc": "Flatiron Institute"
+   },
+   {
+    "kind": "event",
+    "title": "Conference dinner",
+    "start": "2027-01-20 18:30",
+    "end": "2027-01-20 19:30",
+    "loc": "Gramercy Tavern"
+   },
+   {
+    "kind": "event",
+    "title": "Contributed talk (Session 4)",
+    "start": "2027-01-21 14:00",
+    "end": "2027-01-21 14:15",
+    "loc": "Flatiron Institute"
+   },
+   {
+    "kind": "deadline",
+    "title": "Poster upload",
+    "start": "2027-01-08 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "conf-zone",
+  "type": "email",
+  "text": "Subject: Your talk at the Leiden Lorentz Center\nFrom: workshop@lorentzcenter.nl\nDate: Mon, 23 Nov 2026 14:20 +0100\n\nDear Braden,\nYou are scheduled to speak on Tuesday 8 December at 11:00 CET (Leiden time) in room 1.17, 30 minutes including questions. The workshop runs 7–11 December.\nPlease send us your slides by Friday 4 December.\nKind regards, Lorentz Center Secretariat, Snellius building, Niels Bohrweg 1",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Talk at Lorentz Center",
+    "start": "2026-12-08 11:00",
+    "end": "2026-12-08 11:30",
+    "zone": "Europe/Amsterdam",
+    "loc": "Lorentz Center, room 1.17"
+   },
+   {
+    "kind": "event",
+    "title": "Lorentz Center workshop",
+    "start": "2026-12-07",
+    "end": "2026-12-11",
+    "allDay": true,
+    "loc": "Lorentz Center, Leiden"
+   },
+   {
+    "kind": "deadline",
+    "title": "Send slides to Lorentz Center",
+    "start": "2026-12-04 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "rsvp-wedding",
+  "type": "letter",
+  "text": "Together with their families\nEMMA ROSSI & DAVID OKAFOR\nrequest the pleasure of your company\nSaturday, the twelfth of June, two thousand twenty-seven\nat four o'clock in the afternoon\nCasa Loma, 1 Austin Terrace, Toronto\nReception to follow\n\nKindly reply by the first of April",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Emma & David's wedding",
+    "start": "2027-06-12 16:00",
+    "end": "2027-06-12 17:00",
+    "loc": "Casa Loma, 1 Austin Terrace, Toronto"
+   },
+   {
+    "kind": "deadline",
+    "title": "RSVP to Emma & David's wedding",
+    "start": "2027-04-01 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "minutes",
+  "type": "minutes",
+  "text": "Minutes — BHAC developers call, 19 Nov 2026\nPresent: BR, HO, BG, JD. Apologies: OP.\n\n1. Release 3.2: JD to tag release candidate by Fri 4 Dec.\n2. BG to write the radiative cooling docs page by Dec 11.\n3. Next call: Thursday December 3, 10:00 Toronto / 16:00 Amsterdam.\n4. AOB: the 2024 benchmark numbers are out of date (see slide 7).\nAction items: BG — docs page; HO — re-run benchmarks.",
+  "items": [
+   {
+    "kind": "task",
+    "title": "Write radiative cooling docs page",
+    "start": "2026-12-11",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "BHAC developers call",
+    "start": "2026-12-03 10:00",
+    "end": "2026-12-03 11:00"
+   }
+  ]
+ },
+ {
+  "id": "prof-deadline-multi",
+  "type": "email",
+  "text": "From: Graduate Office <grad.astro@utoronto.ca>\nSent: November 23, 2026\nSubject: Reminders: thesis submission timeline\n\nDear PhD candidates planning to defend in Winter 2027,\n• Intent-to-defend form: due Tuesday, December 15\n• Thesis to external examiner: no later than Friday, January 15, 2027\n• Final oral exams are being scheduled for the week of March 1.\n• Info session: Wednesday, December 2, 12–1 pm, AB 113 (pizza provided)\nGraduate Office, 50 St. George St. Room 101. Hours 9–4.",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Intent-to-defend form",
+    "start": "2026-12-15 17:00",
+    "end": null
+   },
+   {
+    "kind": "deadline",
+    "title": "Thesis to external examiner",
+    "start": "2027-01-15 17:00",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "Thesis timeline info session",
+    "start": "2026-12-02 12:00",
+    "end": "2026-12-02 13:00",
+    "loc": "AB 113"
+   }
+  ]
+ },
+ {
+  "id": "relative-sent",
+  "type": "email",
+  "text": "From: Alex Kim\nSent: Friday, November 20, 2026 4:12 PM\nSubject: coffee\n\nHey — want to grab coffee tomorrow at 10 at Sam James? If not, Monday at 2 works too.\n\nAlex",
+  "items": []
+ },
+ {
+  "id": "relative-sent2",
+  "type": "email",
+  "text": "From: Alex Kim\nSent: Saturday, November 21, 2026 11:30 AM\nSubject: Re: coffee\n\nOk missed you yesterday — let's lock in Monday next week at 2 then, Sam James on Harbord.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Coffee with Alex",
+    "start": "2026-11-30 14:00",
+    "end": "2026-11-30 15:00",
+    "loc": "Sam James, Harbord"
+   }
+  ]
+ },
+ {
+  "id": "no-items-receipt",
+  "type": "other",
+  "text": "Order #112-4482919 — Shipped\nThank you for your order placed November 18, 2026.\n1 × USB-C Hub ($39.99)\nShipping: Free. Tax: $5.20. Total: $45.19\nQuestions? 1-877-586-3230. © 1996–2026, Amazon.com, Inc.",
+  "items": []
+ },
+ {
+  "id": "no-items-newsletter",
+  "type": "newsletter",
+  "text": "arXiv astro-ph digest — Mon 23 Nov 26\n[1] Plasmoid-mediated reconnection in MAD discs (arXiv:2611.04412). Submitted 20 Nov 2026.\n[2] Variability of Sgr A* in 2019–2024 NIR data.\n[3] A 10^9 Msun quasar at z=7.6.\nUnsubscribe: send 'del' to listserv. Copyright 2026 Cornell University.",
+  "items": []
+ },
+ {
+  "id": "no-items-past",
+  "type": "email",
+  "text": "From: Hana\nSent: Sunday, November 22, 2026\nSubject: thanks!\n\nThanks so much for coming to the reading group last Thursday — it was really fun. The photos from November 12 are up on the drive too. Talk soon!",
+  "items": []
+ },
+ {
+  "id": "no-items-signature",
+  "type": "email",
+  "text": "Got it, thanks.\n\n--\nDr. Jane Doe | Office MP 1104 | Office hours Tue 2–3 | +1 416 555 0199\n\"The universe is under no obligation to make sense to you.\" — NdGT",
+  "items": []
+ },
+ {
+  "id": "no-items-cancelled",
+  "type": "sms",
+  "text": "Hi Braden, this is Pacific Physio. Your appointment on Thursday Nov 26 at 4pm has been cancelled as requested. Call 416-555-7781 to rebook.",
+  "items": []
+ },
+ {
+  "id": "no-items-promo",
+  "type": "newsletter",
+  "text": "BLACK FRIDAY ⚡ 40% off everything Nov 27 only! Use code BF2026. Free shipping over $50. Offer excludes gift cards. © 2026 MEC. 1-800-567-1749",
+  "items": []
+ },
+ {
+  "id": "no-items-chat-vague",
+  "type": "chat",
+  "text": "Leo: we should hang soon\nBraden: def, after my thesis lol\nLeo: 😂 so 2028\nBraden: ok rude",
+  "items": []
+ },
+ {
+  "id": "no-items-postponed",
+  "type": "email",
+  "text": "Subject: Seminar postponed\nSent: Mon 23 Nov 2026\n\nThe Tuesday December 1 colloquium by Dr. Narayan is postponed to a date in the new year, to be announced. Apologies for the inconvenience.",
+  "items": []
+ },
+ {
+  "id": "chat-hike",
+  "type": "chat",
+  "text": "Jen: hike sat? ☀️\nOmar: forecast says rain sat, sun is better\nJen: ok sunday then! meet at Union 8am, train to Hamilton 🚆\nOmar: bring snacks pls\nBraden: lol k",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Hike in Hamilton",
+    "start": "2026-11-29 08:00",
+    "end": "2026-11-29 09:00",
+    "loc": "Union Station"
+   },
+   {
+    "kind": "task",
+    "title": "Bring snacks for the hike",
+    "start": "2026-11-29",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "vet-confirm",
+  "type": "confirmation",
+  "text": "Annex Animal Hospital\nHi Braden! Miso's annual vaccines are booked for Saturday, December 5 at 10:40am with Dr. Wong (30 min).\nAddress: 1080 Bathurst St. Please bring her vaccine record.\nPayment due at time of service. Tel 416-555-3010",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Miso's vaccines (vet)",
+    "start": "2026-12-05 10:40",
+    "end": "2026-12-05 11:10",
+    "loc": "Annex Animal Hospital, 1080 Bathurst St"
+   },
+   {
+    "kind": "task",
+    "title": "Bring Miso's vaccine record",
+    "start": "2026-12-05",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "haircut-sms",
+  "type": "sms",
+  "text": "Reminder from Crow's Nest Barbershop: you're booked tomorrow (Tue) at 5:45pm with Marco. Reply STOP to opt out.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Haircut with Marco",
+    "start": "2026-11-24 17:45",
+    "end": "2026-11-24 18:45",
+    "loc": "Crow's Nest Barbershop"
+   }
+  ]
+ },
+ {
+  "id": "proposal-deadline",
+  "type": "email",
+  "text": "From: HST/JWST Proposal Help Desk\nSent: Mon, Nov 16, 2026\nSubject: JWST Cycle 6 Call — key dates\n\nPhase I proposal deadline: Thursday, January 28, 2027, 8:00 pm EST.\nPre-proposal webinar: Wednesday, December 9, 2026, 1:00 pm EST (1.5 h).\nPlease register for the webinar by December 7.\nSTScI is operated by AURA under NASA contract NAS5-03127.",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "JWST Cycle 6 Phase I proposal",
+    "start": "2027-01-28 20:00",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "JWST pre-proposal webinar",
+    "start": "2026-12-09 13:00",
+    "end": "2026-12-09 14:30"
+   },
+   {
+    "kind": "deadline",
+    "title": "Register for JWST webinar",
+    "start": "2026-12-07 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "ref-letter",
+  "type": "email",
+  "text": "From: Braden Gail\nTo: Prof. Ripperda\nSent: Mon 23 Nov 2026\n\nHi Bart, could you send your reference letter for the Hubble Fellowship? The portal closes Thursday, December 3 at 11:59 pm ET. Thanks a lot!\n\nBraden",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Hubble Fellowship reference letter",
+    "start": "2026-12-03 23:59",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "ta-schedule",
+  "type": "email",
+  "text": "Subject: TA assignments — AST 101 exam\nSent: 23 Nov 2026\n\nHi TAs,\nThe AST 101 final exam is Saturday, December 12, 9:00–12:00, in EX 100 (Exam Centre, 255 McCaul). Arrive at 8:30 for the briefing.\nMarking meeting: Monday December 14, 1 pm, MP 1318. Marks due in Quercus by Friday December 18.\nCourse room numbers 1314 and 1318 are being renovated.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "AST 101 final exam invigilation",
+    "start": "2026-12-12 08:30",
+    "end": "2026-12-12 12:00",
+    "loc": "EX 100, Exam Centre, 255 McCaul"
+   },
+   {
+    "kind": "event",
+    "title": "AST 101 marking meeting",
+    "start": "2026-12-14 13:00",
+    "end": "2026-12-14 14:00",
+    "loc": "MP 1318"
+   },
+   {
+    "kind": "deadline",
+    "title": "AST 101 marks",
+    "start": "2026-12-18 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "recurring-yoga",
+  "type": "email",
+  "text": "Welcome to Thursday Night Flow!\nYour 8-week series begins Thursday, December 3 and runs every Thursday at 7:00–8:15 pm at Hart House Studio (no class Dec 24 or Dec 31). Membership #22013.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Yoga (Thursday Night Flow)",
+    "start": "2026-12-03 19:00",
+    "end": "2026-12-03 20:15",
+    "loc": "Hart House Studio",
+    "repeat": "FREQ=WEEKLY;BYDAY=TH;COUNT=8"
+   }
+  ]
+ },
+ {
+  "id": "group-hpc",
+  "type": "chat",
+  "text": "#cita-hpc\nOps: ⚠️ Niagara maintenance window: Tue Dec 8, 7am–7pm. All jobs will be killed. Plan accordingly.\nSam: rip my runs\nBraden: lol need to checkpoint before then",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Niagara maintenance window",
+    "start": "2026-12-08 07:00",
+    "end": "2026-12-08 19:00"
+   },
+   {
+    "kind": "task",
+    "title": "Checkpoint runs before Niagara maintenance",
+    "start": "2026-12-08",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "landlord",
+  "type": "letter",
+  "text": "NOTICE OF ENTRY (Form N4 does not apply)\nDate: November 20, 2026\nTo: Tenant, Unit 1702, 88 Harbord St\n\nPlease be advised that the landlord will enter your unit on Wednesday, November 25, 2026 between 9:00 a.m. and 12:00 p.m. to inspect the smoke detectors, as permitted by the Residential Tenancies Act, 2006.\nProperty Management — 416-555-2200",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Landlord entry: smoke detector inspection",
+    "start": "2026-11-25 09:00",
+    "end": "2026-11-25 12:00",
+    "loc": "Unit 1702, 88 Harbord St"
+   }
+  ]
+ },
+ {
+  "id": "tax-reminder",
+  "type": "email",
+  "text": "From: Wealthsimple Tax\nSent: Nov 23, 2026\nLast chance: contribute to your RRSP by March 1, 2027 to deduct it on your 2026 return. Your 2025 return was filed on April 12, 2026. Learn more.",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "RRSP contribution",
+    "start": "2027-03-01 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "chat-correction",
+  "type": "chat",
+  "text": "Mei: study group wed 2pm robarts 4th floor?\nKai: can't do 2, 3?\nMei: ok 3\nKai: wait actually robarts is closed wed afternoon for the fire drill, gerstein instead\nMei: fine gerstein 3pm 📚",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Study group",
+    "start": "2026-11-25 15:00",
+    "end": "2026-11-25 16:00",
+    "loc": "Gerstein Library"
+   }
+  ]
+ },
+ {
+  "id": "chat-cancelled-then-new",
+  "type": "chat",
+  "text": "Coach: Practice tonight is CANCELLED ❄️ roads are bad\nCoach: makeup practice Thursday 8:30pm, Varsity Arena rink 2\nCoach: bring both jerseys",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Hockey practice (makeup)",
+    "start": "2026-11-26 20:30",
+    "end": "2026-11-26 21:30",
+    "loc": "Varsity Arena, rink 2"
+   },
+   {
+    "kind": "task",
+    "title": "Bring both jerseys",
+    "start": "2026-11-26",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "seminar-series",
+  "type": "newsletter",
+  "text": "CITA Seminar Series — Winter 2027\nAll seminars Tuesdays 11:00–12:00 in MP 1318, unless noted.\n Jan 12 — E. Quataert (Princeton): Feedback from black holes\n Jan 19 — S. Markoff (Amsterdam): Jets and flares in Sgr A*\n Jan 26 — no seminar (AAS)\n Feb 2 — F. Bacchini (KU Leuven): Kinetic reconnection\nCoffee and cookies at 10:45. Hosts: contact seminars@cita.utoronto.ca",
+  "items": [
+   {
+    "kind": "event",
+    "title": "CITA seminar: E. Quataert",
+    "start": "2027-01-12 11:00",
+    "end": "2027-01-12 12:00",
+    "loc": "MP 1318"
+   },
+   {
+    "kind": "event",
+    "title": "CITA seminar: S. Markoff",
+    "start": "2027-01-19 11:00",
+    "end": "2027-01-19 12:00",
+    "loc": "MP 1318"
+   },
+   {
+    "kind": "event",
+    "title": "CITA seminar: F. Bacchini",
+    "start": "2027-02-02 11:00",
+    "end": "2027-02-02 12:00",
+    "loc": "MP 1318"
+   }
+  ]
+ },
+ {
+  "id": "ad-hoc-tomorrow",
+  "type": "sms",
+  "text": "Hey it's Nora, still on for climbing tomorrow? 6pm at Basecamp 🧗",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Climbing with Nora",
+    "start": "2026-11-24 18:00",
+    "end": "2026-11-24 19:00",
+    "loc": "Basecamp"
+   }
+  ]
+ },
+ {
+  "id": "jury-duty",
+  "type": "letter",
+  "text": "ONTARIO SUPERIOR COURT OF JUSTICE — JUROR SUMMONS\nJuror No. 40-11872\nYou are required to attend on Monday, January 11, 2027 at 8:30 a.m.\nLocation: 361 University Avenue, Toronto, Jury Assembly Room, 2nd floor\nIf you wish to request a deferral, complete the attached form and return it within 10 days of receiving this summons. Failure to attend may result in a fine of up to $1,000.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Jury duty",
+    "start": "2027-01-11 08:30",
+    "end": "2027-01-11 09:30",
+    "loc": "361 University Ave, Jury Assembly Room, 2nd floor"
+   },
+   {
+    "kind": "deadline",
+    "title": "Return jury deferral form (if deferring)",
+    "start": "2026-12-03 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "passport",
+  "type": "confirmation",
+  "text": "Service Canada — Appointment confirmed\nPassport services, 25 St. Clair Ave E\nFriday, December 11, 2026 at 2:20 PM\nBring: completed form PPTC 153, two photos, proof of citizenship, $160 fee.\nConfirmation code: QX7-201",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Passport appointment (Service Canada)",
+    "start": "2026-12-11 14:20",
+    "end": "2026-12-11 15:20",
+    "loc": "25 St. Clair Ave E"
+   },
+   {
+    "kind": "task",
+    "title": "Bring passport form, photos, citizenship proof",
+    "start": "2026-12-11",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "referee-report",
+  "type": "email",
+  "text": "From: MNRAS Editorial Office\nDate: 9 Nov 2026\nSubject: Referee report request MN-26-3381-P\n\nThank you for agreeing to review. We would be grateful to receive your report within three weeks, i.e. by 30 November 2026.",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "MNRAS referee report (MN-26-3381-P)",
+    "start": "2026-11-30 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "potluck-thread",
+  "type": "email",
+  "text": "Subject: Re: Friendsgiving potluck!!\nFrom: Chloe\nSent: Mon 23 Nov 2026 9:05\n\nUpdated plan since half of you are travelling Thursday: we're moving Friendsgiving to SATURDAY at 5:30, still at mine (44 Major St, buzz 3). Braden you're on mashed potatoes 🥔. Please Venmo me $12 for the turkey by Wednesday.\n\n> Original: Thursday Nov 26 at 6pm at mine",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Friendsgiving potluck",
+    "start": "2026-11-28 17:30",
+    "end": "2026-11-28 18:30",
+    "loc": "44 Major St"
+   },
+   {
+    "kind": "task",
+    "title": "Make mashed potatoes",
+    "start": "2026-11-28",
+    "end": null
+   },
+   {
+    "kind": "task",
+    "title": "Send Chloe $12 for the turkey",
+    "start": "2026-11-25",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "library",
+  "type": "email",
+  "text": "Toronto Public Library: The following item is due on Dec 7, 2026: \"The Order of Time\" (Rovelli). Renew online at tpl.ca. Card ending 4471.",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Return library book (The Order of Time)",
+    "start": "2026-12-07 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "visa-biometrics",
+  "type": "email",
+  "text": "IRCC — Biometrics Instruction Letter\nDate of issue: 2026/11/18\nApplication No. W307412211\nYou must give your biometrics within 30 days, by 2026/12/18. Book an appointment at a Service Canada location.",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Give biometrics (IRCC)",
+    "start": "2026-12-18 17:00",
+    "end": null
+   },
+   {
+    "kind": "task",
+    "title": "Book biometrics appointment",
+    "start": null,
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "minutes-lab",
+  "type": "minutes",
+  "text": "Lab meeting notes — Mon Nov 23\n- Kai presented plasmoid statistics.\n- Group retreat confirmed: Fri Jan 15 – Sun Jan 17, 2027, Muskoka (cabins booked, $90 pp).\n- Everyone to send retreat talk titles to Bart by end of next week.\n- Next lab meeting moved to Tuesday Dec 1, 3pm, same room (MP 1404).",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Group retreat (Muskoka)",
+    "start": "2027-01-15",
+    "end": "2027-01-17",
+    "allDay": true,
+    "loc": "Muskoka"
+   },
+   {
+    "kind": "deadline",
+    "title": "Send retreat talk title to Bart",
+    "start": "2026-12-04 17:00",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "Lab meeting",
+    "start": "2026-12-01 15:00",
+    "end": "2026-12-01 16:00",
+    "loc": "MP 1404"
+   }
+  ]
+ },
+ {
+  "id": "bulk-dates-other",
+  "type": "other",
+  "text": "Garbage & recycling calendar — Ward 11, 2026–2027\nHoliday changes: Collection normally on Friday Dec 25 moves to Saturday Dec 26; Friday Jan 1 moves to Saturday Jan 2.\nChristmas tree pickup: first two weeks of January.\nInfo: 311",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Garbage collection (holiday shift)",
+    "start": "2026-12-26",
+    "end": "2026-12-26",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Garbage collection (holiday shift)",
+    "start": "2027-01-02",
+    "end": "2027-01-02",
+    "allDay": true
+   }
+  ]
+ },
+ {
+  "id": "parents-call",
+  "type": "sms",
+  "text": "Dad: Skype w/ grandpa sun 1pm our time (Vancouver) ok? 📞",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Video call with Grandpa",
+    "start": "2026-11-29 13:00",
+    "end": "2026-11-29 14:00",
+    "zone": "America/Vancouver"
+   }
+  ]
+ },
+ {
+  "id": "defence-practice",
+  "type": "email",
+  "text": "From: Ada Chen\nSent: Mon Nov 23 2026 10:02\nSubject: practice talk\n\nHey! I booked MP 1318 for your practice talk on Wednesday Dec 16 from 3–4:30. I'll bring snacks. Can you send me the title by tomorrow so I can advertise it?",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Practice talk",
+    "start": "2026-12-16 15:00",
+    "end": "2026-12-16 16:30",
+    "loc": "MP 1318"
+   },
+   {
+    "kind": "deadline",
+    "title": "Send practice talk title to Ada",
+    "start": "2026-11-24 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "course-registration",
+  "type": "email",
+  "text": "ACORN: Winter 2027 enrolment opens Thursday, December 3 at 6:00 am. Waitlists close Monday, January 18. Fees due January 31, 2027 ($1,845.32). Student #1004321987.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "ACORN winter enrolment opens",
+    "start": "2026-12-03 06:00",
+    "end": "2026-12-03 07:00"
+   },
+   {
+    "kind": "deadline",
+    "title": "ACORN waitlists close",
+    "start": "2027-01-18 17:00",
+    "end": null
+   },
+   {
+    "kind": "deadline",
+    "title": "Winter tuition fees",
+    "start": "2027-01-31 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "flight-free-bus",
+  "type": "confirmation",
+  "text": "FlixBus booking 3021944882\nToronto (Union Station Bus Terminal) → Montréal (Gare d'autocars)\nWed 23 Dec 2026, 07:30 → 13:10\nPassenger: 1 adult. Seat 14C. Price C$54.99",
+  "items": [
+   {
+    "kind": "event",
+    "title": "FlixBus Toronto → Montréal",
+    "start": "2026-12-23 07:30",
+    "end": "2026-12-23 13:10",
+    "loc": "Union Station Bus Terminal"
+   }
+  ]
+ },
+ {
+  "id": "airbnb",
+  "type": "confirmation",
+  "text": "Your reservation is confirmed — Montréal, Plateau loft\nCheck-in: Wed, Dec 23 · 3:00 PM\nCheckout: Sun, Dec 27 · 11:00 AM\nHost: Julien. 2 guests. Total C$612.40. Confirmation code HMQZ4Y9R2A",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Airbnb check-in (Plateau loft)",
+    "start": "2026-12-23 15:00",
+    "end": "2026-12-23 16:00",
+    "loc": "Plateau, Montréal"
+   },
+   {
+    "kind": "event",
+    "title": "Airbnb checkout (Plateau loft)",
+    "start": "2026-12-27 11:00",
+    "end": "2026-12-27 12:00",
+    "loc": "Plateau, Montréal"
+   }
+  ]
+ },
+ {
+  "id": "ics-allday",
+  "type": "ics",
+  "text": "BEGIN:VEVENT\nDTSTART;VALUE=DATE:20261224\nDTEND;VALUE=DATE:20261227\nSUMMARY:University closure\nEND:VEVENT",
+  "items": [
+   {
+    "kind": "event",
+    "title": "University closure",
+    "start": "2026-12-24",
+    "end": "2026-12-26",
+    "allDay": true
+   }
+  ]
+ },
+ {
+  "id": "no-items-oof",
+  "type": "email",
+  "text": "Automatic reply: I am out of the office until Monday, November 30, with limited access to email. For urgent matters contact admin@cita.utoronto.ca.",
+  "items": []
+ },
+ {
+  "id": "chat-gym",
+  "type": "chat",
+  "text": "Tom: gym tmrw 7am? 💪\nBraden: nah 7 is brutal, 8?\nTom: k 8 at athletic centre\nTom: and every tues/thurs after that ya?\nBraden: bet",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Gym with Tom",
+    "start": "2026-11-24 08:00",
+    "end": "2026-11-24 09:00",
+    "loc": "Athletic Centre",
+    "repeat": "FREQ=WEEKLY;BYDAY=TU,TH"
+   }
+  ]
+ },
+ {
+  "id": "observing",
+  "type": "email",
+  "text": "Subject: CFHT queue — your program 27AC12\nSent: 23 Nov 2026\nYour remote observing support shift is Saturday, January 9, 2027, 19:00–05:00 HST. Please complete the safety training module by December 31.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "CFHT remote observing shift",
+    "start": "2027-01-09 19:00",
+    "end": "2027-01-10 05:00",
+    "zone": "Pacific/Honolulu"
+   },
+   {
+    "kind": "deadline",
+    "title": "CFHT safety training module",
+    "start": "2026-12-31 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "syllabus-grad",
+  "type": "syllabus",
+  "text": "AST 2060 Radiative Processes — excerpt\nWeekly lectures: Thursdays 2:00–4:00 pm, AB 113, Jan 7 – Apr 1, 2027\nProblem sets due every second Thursday at the start of lecture, beginning Jan 21.\nFinal project presentations: Thursday April 8, 2–5 pm.\nTextbook: Rybicki & Lightman (1979).",
+  "items": [
+   {
+    "kind": "event",
+    "title": "AST 2060 lecture",
+    "start": "2027-01-07 14:00",
+    "end": "2027-01-07 16:00",
+    "loc": "AB 113",
+    "repeat": "FREQ=WEEKLY;BYDAY=TH;UNTIL=20270401"
+   },
+   {
+    "kind": "deadline",
+    "title": "AST 2060 problem set",
+    "start": "2027-01-21 14:00",
+    "end": null,
+    "repeat": "FREQ=WEEKLY;INTERVAL=2;BYDAY=TH"
+   },
+   {
+    "kind": "event",
+    "title": "AST 2060 final project presentations",
+    "start": "2027-04-08 14:00",
+    "end": "2027-04-08 17:00",
+    "loc": "AB 113"
+   }
+  ]
+ },
+ {
+  "id": "no-items-terms",
+  "type": "other",
+  "text": "Terms of Service — last updated September 1, 2026. By continuing to use the service after January 1, 2027 you agree to these terms. Section 4.2: fees are billed monthly.",
+  "items": []
+ }
+]

@@ -1,0 +1,6518 @@
+[
+ {
+  "input": "call Bob at 2, then haircut at 5",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Call Bob",
+    "start": "2026-11-23T14:00",
+    "end": "2026-11-23T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Haircut",
+    "start": "2026-11-23T17:00",
+    "end": "2026-11-23T18:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "gym tue 5 and oil change thu 1:30",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Gym",
+    "start": "2026-11-24T17:00",
+    "end": "2026-11-24T18:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Oil change",
+    "start": "2026-11-26T13:30",
+    "end": "2026-11-26T14:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow dentist 3:15 then grocery run 6pm",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Dentist",
+    "start": "2026-11-24T15:15",
+    "end": "2026-11-24T16:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Grocery run",
+    "start": "2026-11-24T18:00",
+    "end": "2026-11-24T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "haircut at 4; pick up kids at 2",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Haircut",
+    "start": "2026-11-23T16:00",
+    "end": "2026-11-23T17:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Pick up kids",
+    "start": "2026-11-23T14:00",
+    "end": "2026-11-23T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "pick up kids fri 1:30, also parent teacher meeting sun 4",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Pick up kids",
+    "start": "2026-11-27T13:30",
+    "end": "2026-11-27T14:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Parent teacher meeting",
+    "start": "2026-11-29T16:00",
+    "end": "2026-11-29T17:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow soccer 11am, then client call with Priya 9am",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Soccer",
+    "start": "2026-11-24T11:00",
+    "end": "2026-11-24T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Client call with Priya",
+    "start": "2026-11-24T09:00",
+    "end": "2026-11-24T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "vet at 9am and soccer at 7pm",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Vet",
+    "start": "2026-11-24T09:00",
+    "end": "2026-11-24T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Soccer",
+    "start": "2026-11-23T19:00",
+    "end": "2026-11-23T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "piano lesson mon 6pm then shift at the depot wed 3:15",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Piano lesson",
+    "start": "2026-11-30T18:00",
+    "end": "2026-11-30T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Shift at the depot",
+    "start": "2026-11-25T15:15",
+    "end": "2026-11-25T16:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow swim class 10:30; bingo at the legion 11am",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Swim class",
+    "start": "2026-11-24T10:30",
+    "end": "2026-11-24T11:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Bingo at the legion",
+    "start": "2026-11-24T11:00",
+    "end": "2026-11-24T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "plumber at 7pm, also vet at 10:30",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Plumber",
+    "start": "2026-11-23T19:00",
+    "end": "2026-11-23T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Vet",
+    "start": "2026-11-23T10:30",
+    "end": "2026-11-23T11:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "oil change thu 2, then tutoring sat 5",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Oil change",
+    "start": "2026-11-26T14:00",
+    "end": "2026-11-26T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Tutoring",
+    "start": "2026-11-28T17:00",
+    "end": "2026-11-28T18:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow parent teacher meeting 5 and call Bob 1:30",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Parent teacher meeting",
+    "start": "2026-11-24T17:00",
+    "end": "2026-11-24T18:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Call Bob",
+    "start": "2026-11-24T13:30",
+    "end": "2026-11-24T14:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "shift at the depot at 3:15 then piano lesson at 6pm",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Shift at the depot",
+    "start": "2026-11-23T15:15",
+    "end": "2026-11-23T16:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Piano lesson",
+    "start": "2026-11-23T18:00",
+    "end": "2026-11-23T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tutoring sun 4; physio tue 2",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Tutoring",
+    "start": "2026-11-29T16:00",
+    "end": "2026-11-29T17:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Physio",
+    "start": "2026-11-24T14:00",
+    "end": "2026-11-24T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow physio 1:30, also gym 4",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Physio",
+    "start": "2026-11-24T13:30",
+    "end": "2026-11-24T14:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Gym",
+    "start": "2026-11-24T16:00",
+    "end": "2026-11-24T17:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "band practice at 11am, then swim class at 9am",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Band practice",
+    "start": "2026-11-23T11:00",
+    "end": "2026-11-23T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Swim class",
+    "start": "2026-11-24T09:00",
+    "end": "2026-11-24T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "quote for the Hendersons wed 9am and band practice fri 7pm",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Quote for the Hendersons",
+    "start": "2026-11-25T09:00",
+    "end": "2026-11-25T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Band practice",
+    "start": "2026-11-27T19:00",
+    "end": "2026-11-27T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow grocery run 6pm then dentist 3:15",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Grocery run",
+    "start": "2026-11-24T18:00",
+    "end": "2026-11-24T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Dentist",
+    "start": "2026-11-24T15:15",
+    "end": "2026-11-24T16:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "client call with Priya at 10:30; plumber at 11am",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Client call with Priya",
+    "start": "2026-11-23T10:30",
+    "end": "2026-11-23T11:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Plumber",
+    "start": "2026-11-23T11:00",
+    "end": "2026-11-23T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "bingo at the legion sat 7pm, also quote for the Hendersons mon 10:30",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Bingo at the legion",
+    "start": "2026-11-28T19:00",
+    "end": "2026-11-28T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Quote for the Hendersons",
+    "start": "2026-11-30T10:30",
+    "end": "2026-11-30T11:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow call Bob 2, then haircut 5",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Call Bob",
+    "start": "2026-11-24T14:00",
+    "end": "2026-11-24T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Haircut",
+    "start": "2026-11-24T17:00",
+    "end": "2026-11-24T18:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "gym at 5 and oil change at 1:30",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Gym",
+    "start": "2026-11-23T17:00",
+    "end": "2026-11-23T18:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Oil change",
+    "start": "2026-11-23T13:30",
+    "end": "2026-11-23T14:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "dentist tue 3:15 then grocery run thu 6pm",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Dentist",
+    "start": "2026-11-24T15:15",
+    "end": "2026-11-24T16:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Grocery run",
+    "start": "2026-11-26T18:00",
+    "end": "2026-11-26T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow haircut 4; pick up kids 2",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Haircut",
+    "start": "2026-11-24T16:00",
+    "end": "2026-11-24T17:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Pick up kids",
+    "start": "2026-11-24T14:00",
+    "end": "2026-11-24T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "pick up kids at 1:30, also parent teacher meeting at 4",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Pick up kids",
+    "start": "2026-11-23T13:30",
+    "end": "2026-11-23T14:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Parent teacher meeting",
+    "start": "2026-11-23T16:00",
+    "end": "2026-11-23T17:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "soccer fri 11am, then client call with Priya sun 9am",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Soccer",
+    "start": "2026-11-27T11:00",
+    "end": "2026-11-27T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Client call with Priya",
+    "start": "2026-11-29T09:00",
+    "end": "2026-11-29T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow vet 9am and soccer 7pm",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Vet",
+    "start": "2026-11-24T09:00",
+    "end": "2026-11-24T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Soccer",
+    "start": "2026-11-24T19:00",
+    "end": "2026-11-24T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "piano lesson at 6pm then shift at the depot at 3:15",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Piano lesson",
+    "start": "2026-11-23T18:00",
+    "end": "2026-11-23T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Shift at the depot",
+    "start": "2026-11-23T15:15",
+    "end": "2026-11-23T16:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "swim class mon 10:30; bingo at the legion wed 11am",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Swim class",
+    "start": "2026-11-30T10:30",
+    "end": "2026-11-30T11:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Bingo at the legion",
+    "start": "2026-11-25T11:00",
+    "end": "2026-11-25T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow plumber 7pm, also vet 10:30",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Plumber",
+    "start": "2026-11-24T19:00",
+    "end": "2026-11-24T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Vet",
+    "start": "2026-11-24T10:30",
+    "end": "2026-11-24T11:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "oil change at 2, then tutoring at 5",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Oil change",
+    "start": "2026-11-23T14:00",
+    "end": "2026-11-23T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Tutoring",
+    "start": "2026-11-23T17:00",
+    "end": "2026-11-23T18:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "parent teacher meeting thu 5 and call Bob sat 1:30",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Parent teacher meeting",
+    "start": "2026-11-26T17:00",
+    "end": "2026-11-26T18:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Call Bob",
+    "start": "2026-11-28T13:30",
+    "end": "2026-11-28T14:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow shift at the depot 3:15 then piano lesson 6pm",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Shift at the depot",
+    "start": "2026-11-24T15:15",
+    "end": "2026-11-24T16:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Piano lesson",
+    "start": "2026-11-24T18:00",
+    "end": "2026-11-24T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tutoring at 4; physio at 2",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Tutoring",
+    "start": "2026-11-23T16:00",
+    "end": "2026-11-23T17:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Physio",
+    "start": "2026-11-23T14:00",
+    "end": "2026-11-23T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "physio sun 1:30, also gym tue 4",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Physio",
+    "start": "2026-11-29T13:30",
+    "end": "2026-11-29T14:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Gym",
+    "start": "2026-11-24T16:00",
+    "end": "2026-11-24T17:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow band practice 11am, then swim class 9am",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Band practice",
+    "start": "2026-11-24T11:00",
+    "end": "2026-11-24T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Swim class",
+    "start": "2026-11-24T09:00",
+    "end": "2026-11-24T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "quote for the Hendersons at 9am and band practice at 7pm",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Quote for the Hendersons",
+    "start": "2026-11-24T09:00",
+    "end": "2026-11-24T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Band practice",
+    "start": "2026-11-23T19:00",
+    "end": "2026-11-23T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "grocery run wed 6pm then dentist fri 3:15",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Grocery run",
+    "start": "2026-11-25T18:00",
+    "end": "2026-11-25T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Dentist",
+    "start": "2026-11-27T15:15",
+    "end": "2026-11-27T16:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow client call with Priya 10:30; plumber 11am",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Client call with Priya",
+    "start": "2026-11-24T10:30",
+    "end": "2026-11-24T11:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Plumber",
+    "start": "2026-11-24T11:00",
+    "end": "2026-11-24T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "bingo at the legion at 7pm, also quote for the Hendersons at 10:30",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Bingo at the legion",
+    "start": "2026-11-23T19:00",
+    "end": "2026-11-23T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Quote for the Hendersons",
+    "start": "2026-11-23T10:30",
+    "end": "2026-11-23T11:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "call Bob sat 2, then haircut mon 5",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Call Bob",
+    "start": "2026-11-28T14:00",
+    "end": "2026-11-28T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Haircut",
+    "start": "2026-11-30T17:00",
+    "end": "2026-11-30T18:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow gym 5 and oil change 1:30",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Gym",
+    "start": "2026-11-24T17:00",
+    "end": "2026-11-24T18:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Oil change",
+    "start": "2026-11-24T13:30",
+    "end": "2026-11-24T14:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "dentist at 3:15 then grocery run at 6pm",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Dentist",
+    "start": "2026-11-23T15:15",
+    "end": "2026-11-23T16:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Grocery run",
+    "start": "2026-11-23T18:00",
+    "end": "2026-11-23T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "haircut tue 4; pick up kids thu 2",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Haircut",
+    "start": "2026-11-24T16:00",
+    "end": "2026-11-24T17:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Pick up kids",
+    "start": "2026-11-26T14:00",
+    "end": "2026-11-26T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow pick up kids 1:30, also parent teacher meeting 4",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Pick up kids",
+    "start": "2026-11-24T13:30",
+    "end": "2026-11-24T14:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Parent teacher meeting",
+    "start": "2026-11-24T16:00",
+    "end": "2026-11-24T17:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "soccer at 11am, then client call with Priya at 9am",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Soccer",
+    "start": "2026-11-23T11:00",
+    "end": "2026-11-23T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Client call with Priya",
+    "start": "2026-11-24T09:00",
+    "end": "2026-11-24T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "vet fri 9am and soccer sun 7pm",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Vet",
+    "start": "2026-11-27T09:00",
+    "end": "2026-11-27T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Soccer",
+    "start": "2026-11-29T19:00",
+    "end": "2026-11-29T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tomorrow piano lesson 6pm then shift at the depot 3:15",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Piano lesson",
+    "start": "2026-11-24T18:00",
+    "end": "2026-11-24T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Shift at the depot",
+    "start": "2026-11-24T15:15",
+    "end": "2026-11-24T16:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "swim class at 10:30; bingo at the legion at 11am",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Swim class",
+    "start": "2026-11-23T10:30",
+    "end": "2026-11-23T11:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Bingo at the legion",
+    "start": "2026-11-23T11:00",
+    "end": "2026-11-23T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "plumber mon 7pm, also vet wed 10:30",
+  "cat": "two-things",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Plumber",
+    "start": "2026-11-30T19:00",
+    "end": "2026-11-30T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Vet",
+    "start": "2026-11-25T10:30",
+    "end": "2026-11-25T11:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "bowling league next friday 7pm",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Bowling league",
+  "start": "2026-12-04T19:00",
+  "end": "2026-12-04T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Bowling league",
+    "start": "2026-11-27T19:00",
+    "end": "2026-11-27T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "union meeting next monday 6pm",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Union meeting",
+  "start": "2026-12-07T18:00",
+  "end": "2026-12-07T19:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Union meeting",
+    "start": "2026-11-30T18:00",
+    "end": "2026-11-30T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "recycling pickup next tuesday 7am",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Recycling pickup",
+  "start": "2026-12-01T07:00",
+  "end": "2026-12-01T08:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Recycling pickup",
+    "start": "2026-11-24T07:00",
+    "end": "2026-11-24T08:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "book club next wednesday 7pm",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Book club",
+  "start": "2026-12-02T19:00",
+  "end": "2026-12-02T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Book club",
+    "start": "2026-11-25T19:00",
+    "end": "2026-11-25T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "choir next thursday 7pm",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Choir",
+  "start": "2026-12-03T19:00",
+  "end": "2026-12-03T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Choir",
+    "start": "2026-11-26T19:00",
+    "end": "2026-11-26T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "garage sale next saturday 9am",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Garage sale",
+  "start": "2026-12-05T09:00",
+  "end": "2026-12-05T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Garage sale",
+    "start": "2026-11-28T09:00",
+    "end": "2026-11-28T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "brunch with nana next sunday 11am",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Brunch with Nana",
+  "start": "2026-12-06T11:00",
+  "end": "2026-12-06T12:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Brunch with Nana",
+    "start": "2026-11-29T11:00",
+    "end": "2026-11-29T12:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "dinner with sam at 8",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Dinner with Sam",
+  "start": "2026-11-23T20:00",
+  "end": "2026-11-23T21:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Dinner with Sam",
+    "start": "2026-11-24T08:00",
+    "end": "2026-11-24T09:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "movie night 9",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Movie night",
+  "start": "2026-11-23T21:00",
+  "end": "2026-11-23T22:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Movie night",
+    "start": "2026-11-24T09:00",
+    "end": "2026-11-24T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "darts at 10",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Darts",
+  "start": "2026-11-23T22:00",
+  "end": "2026-11-23T23:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Darts",
+    "start": "2026-11-24T10:00",
+    "end": "2026-11-24T11:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "call mum at 8",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Call Mum",
+  "start": "2026-11-24T08:00",
+  "end": "2026-11-24T09:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Call Mum",
+    "start": "2026-11-23T20:00",
+    "end": "2026-11-23T21:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "coffee with jo at 11",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Coffee with Jo",
+  "start": "2026-11-23T11:00",
+  "end": "2026-11-23T12:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Coffee with Jo",
+    "start": "2026-11-23T23:00",
+    "end": "2026-11-24T00:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "drinks with raj at 9",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Drinks with Raj",
+  "start": "2026-11-23T21:00",
+  "end": "2026-11-23T22:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Drinks with Raj",
+    "start": "2026-11-24T09:00",
+    "end": "2026-11-24T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "concert at 8",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Concert",
+  "start": "2026-11-23T20:00",
+  "end": "2026-11-23T21:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Concert",
+    "start": "2026-11-24T08:00",
+    "end": "2026-11-24T09:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "pickup hockey at 10",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Pickup hockey",
+  "start": "2026-11-24T10:00",
+  "end": "2026-11-24T11:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Pickup hockey",
+    "start": "2026-11-23T22:00",
+    "end": "2026-11-23T23:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "kids bath time 7",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Kids bath time",
+  "start": "2026-11-23T19:00",
+  "end": "2026-11-23T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Kids bath time",
+    "start": "2026-11-24T07:00",
+    "end": "2026-11-24T08:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "feed the cat at 6",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Feed the cat",
+  "start": "2026-11-23T18:00",
+  "end": "2026-11-23T19:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Feed the cat",
+    "start": "2026-11-24T06:00",
+    "end": "2026-11-24T07:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "gym at 6",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Gym",
+  "start": "2026-11-24T06:00",
+  "end": "2026-11-24T07:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Gym",
+    "start": "2026-11-23T18:00",
+    "end": "2026-11-23T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "commute carpool 7:15",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Commute carpool",
+  "start": "2026-11-24T07:15",
+  "end": "2026-11-24T08:15",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Commute carpool",
+    "start": "2026-11-23T19:15",
+    "end": "2026-11-23T20:15",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "run with dana 6:30",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Run with Dana",
+  "start": "2026-11-24T06:30",
+  "end": "2026-11-24T07:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Run with Dana",
+    "start": "2026-11-23T18:30",
+    "end": "2026-11-23T19:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "yoga 7",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Yoga",
+  "start": "2026-11-24T07:00",
+  "end": "2026-11-24T08:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Yoga",
+    "start": "2026-11-23T19:00",
+    "end": "2026-11-23T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "recital 12/1",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Recital",
+  "start": "2026-12-01",
+  "end": "2026-12-02",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Recital",
+    "start": "2027-01-12",
+    "end": "2027-01-13",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "court date 3/4",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Court date",
+  "start": "2027-03-04",
+  "end": "2027-03-05",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Court date",
+    "start": "2027-04-03",
+    "end": "2027-04-04",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "flu shot 1/2",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Flu shot",
+  "start": "2027-01-02",
+  "end": "2027-01-03",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Flu shot",
+    "start": "2027-02-01",
+    "end": "2027-02-02",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "inspection 2/3 9am",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Inspection",
+  "start": "2027-02-03T09:00",
+  "end": "2027-02-03T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Inspection",
+    "start": "2027-03-02T09:00",
+    "end": "2027-03-02T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "roof job 5/6",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Roof job",
+  "start": "2027-05-06",
+  "end": "2027-05-07",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Roof job",
+    "start": "2027-06-05",
+    "end": "2027-06-06",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "family photos this weekend",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Family photos",
+  "start": "2026-11-28",
+  "end": "2026-11-30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Family photos",
+    "start": "2026-11-28",
+    "end": "2026-11-29",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Family photos",
+    "start": "2026-11-29",
+    "end": "2026-11-30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "yard cleanup weekend",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Yard cleanup",
+  "start": "2026-11-28",
+  "end": "2026-11-30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Yard cleanup",
+    "start": "2026-11-28",
+    "end": "2026-11-29",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "school play this friday",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "School play",
+  "start": "2026-11-27",
+  "end": "2026-11-28",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "School play",
+    "start": "2026-12-04",
+    "end": "2026-12-05",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "night shift monday",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Night shift",
+  "start": "2026-11-30",
+  "end": "2026-12-01",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Night shift",
+    "start": "2026-11-23",
+    "end": "2026-11-24",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "scout meeting monday 7",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Scout meeting",
+  "start": "2026-11-30T19:00",
+  "end": "2026-11-30T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Scout meeting",
+    "start": "2026-11-23T19:00",
+    "end": "2026-11-23T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   },
+   {
+    "kind": "event",
+    "title": "Scout meeting",
+    "start": "2026-11-30T07:00",
+    "end": "2026-11-30T08:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "pottery class in the morning",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Pottery class",
+  "start": "2026-11-24T09:00",
+  "end": "2026-11-24T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Pottery class",
+    "start": "2026-11-23T09:00",
+    "end": "2026-11-23T10:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "lunch with gran",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Lunch with gran",
+  "start": "2026-11-23T12:00",
+  "end": "2026-11-23T13:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Lunch with gran",
+    "start": "2026-11-24T12:00",
+    "end": "2026-11-24T13:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "call landlord this afternoon or tomorrow",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Call landlord",
+  "start": "2026-11-23T14:00",
+  "end": "2026-11-23T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Call landlord",
+    "start": "2026-11-24T14:00",
+    "end": "2026-11-24T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "shift 7 to 3",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Shift",
+  "start": "2026-11-24T07:00",
+  "end": "2026-11-24T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Shift",
+    "start": "2026-11-23T19:00",
+    "end": "2026-11-24T15:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "night shift 11 to 7",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Night shift",
+  "start": "2026-11-23T23:00",
+  "end": "2026-11-24T07:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Night shift",
+    "start": "2026-11-24T11:00",
+    "end": "2026-11-25T07:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "swim meet sat 8",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Swim meet",
+  "start": "2026-11-28T08:00",
+  "end": "2026-11-28T09:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Swim meet",
+    "start": "2026-11-28T20:00",
+    "end": "2026-11-28T21:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "date night fri 8",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Date night",
+  "start": "2026-11-27T20:00",
+  "end": "2026-11-27T21:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Date night",
+    "start": "2026-11-27T08:00",
+    "end": "2026-11-27T09:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "rent december",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Rent",
+  "start": "2026-12-01",
+  "end": "2026-12-02",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "task",
+    "title": "Rent",
+    "start": "2026-12-01",
+    "end": null,
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "pay rent on the 1st",
+  "cat": "ambiguous",
+  "kind": "task",
+  "title": "Pay rent",
+  "start": "2026-12-01",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Pay rent",
+    "start": "2026-12-01",
+    "end": "2026-12-02",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "mike birthday the 30th",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Mike birthday",
+  "start": "2026-11-30",
+  "end": "2026-12-01",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Mike birthday",
+    "start": "2026-11-30",
+    "end": "2026-12-01",
+    "repeat": "FREQ=YEARLY",
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "book club every other wed",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Book club",
+  "start": "2026-11-25T18:00",
+  "end": "2026-11-25T19:00",
+  "repeat": "FREQ=WEEKLY;INTERVAL=2;BYDAY=WE",
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Book club",
+    "start": "2026-11-25",
+    "end": "2026-11-26",
+    "repeat": "FREQ=WEEKLY;INTERVAL=2;BYDAY=WE",
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "tutoring at 12",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Tutoring",
+  "start": "2026-11-23T12:00",
+  "end": "2026-11-23T13:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Tutoring",
+    "start": "2026-11-24T00:00",
+    "end": "2026-11-24T01:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "end of month inventory",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Inventory",
+  "start": "2026-11-30",
+  "end": "2026-12-01",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "task",
+    "title": "Inventory",
+    "start": "2026-11-30",
+    "end": null,
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "the 5th furnace service",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Furnace service",
+  "start": "2026-12-05",
+  "end": "2026-12-06",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "in 2 weeks follow up with clinic",
+  "cat": "ambiguous",
+  "kind": "task",
+  "title": "Follow up with clinic",
+  "start": "2026-12-07",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Follow up with clinic",
+    "start": "2026-12-07",
+    "end": "2026-12-08",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "sunday 12",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "New event",
+  "start": "2026-11-29T12:00",
+  "end": "2026-11-29T13:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "New event",
+    "start": "2026-11-29T00:00",
+    "end": "2026-11-29T01:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "drop off truck at 7:30",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Drop off truck",
+  "start": "2026-11-24T07:30",
+  "end": "2026-11-24T08:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Drop off truck",
+    "start": "2026-11-23T19:30",
+    "end": "2026-11-23T20:30",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "half day friday",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Half day",
+  "start": "2026-11-27T12:00",
+  "end": "2026-11-27T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Half day",
+    "start": "2026-11-27",
+    "end": "2026-11-28",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "mass at 5",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Mass",
+  "start": "2026-11-23T17:00",
+  "end": "2026-11-23T18:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Mass",
+    "start": "2026-11-24T05:00",
+    "end": "2026-11-24T06:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "bake sale tue or wed",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Bake sale",
+  "start": "2026-11-24",
+  "end": "2026-11-25",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Bake sale",
+    "start": "2026-11-25",
+    "end": "2026-11-26",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "soccer the 12th at 10",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Soccer",
+  "start": "2026-12-12T10:00",
+  "end": "2026-12-12T11:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Soccer",
+    "start": "2026-12-12T22:00",
+    "end": "2026-12-12T23:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "sleepover friday night",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Sleepover",
+  "start": "2026-11-27T19:00",
+  "end": "2026-11-27T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Sleepover",
+    "start": "2026-11-27",
+    "end": "2026-11-29",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "xmas party xmas eve",
+  "cat": "ambiguous",
+  "kind": "event",
+  "title": "Xmas party",
+  "start": "2026-12-24",
+  "end": "2026-12-25",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Xmas party",
+    "start": "2026-12-24T18:00",
+    "end": "2026-12-24T19:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "dentist at 2",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Dentist",
+  "start": "2026-11-23T14:00",
+  "end": "2026-11-23T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "vet 3:30",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Vet",
+  "start": "2026-11-23T15:30",
+  "end": "2026-11-23T16:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "nap at 1",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Nap",
+  "start": "2026-11-23T13:00",
+  "end": "2026-11-23T14:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call the bank 11",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Call the bank",
+  "start": "2026-11-23T11:00",
+  "end": "2026-11-23T12:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pick up meds at 4:45",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Pick up meds",
+  "start": "2026-11-23T16:45",
+  "end": "2026-11-23T17:45",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "lunch 12:30",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Lunch",
+  "start": "2026-11-23T12:30",
+  "end": "2026-11-23T13:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "meet contractor 9am",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Meet contractor",
+  "start": "2026-11-24T09:00",
+  "end": "2026-11-24T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "school bus 8:10",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "School bus",
+  "start": "2026-11-24T08:10",
+  "end": "2026-11-24T09:10",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "band 7pm #Research",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Band",
+  "start": "2026-11-23T19:00",
+  "end": "2026-11-23T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": "Research"
+ },
+ {
+  "input": "walk the dog 5:15pm",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Walk the dog",
+  "start": "2026-11-23T17:15",
+  "end": "2026-11-23T18:15",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "nurse visit 10:30",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Nurse visit",
+  "start": "2026-11-23T10:30",
+  "end": "2026-11-23T11:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "quilting circle at 1:30",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Quilting circle",
+  "start": "2026-11-23T13:30",
+  "end": "2026-11-23T14:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "fitting at 3",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Fitting",
+  "start": "2026-11-23T15:00",
+  "end": "2026-11-23T16:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "school pickup 3:20",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "School pickup",
+  "start": "2026-11-23T15:20",
+  "end": "2026-11-23T16:20",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "rehearsal 6:45pm",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Rehearsal",
+  "start": "2026-11-23T18:45",
+  "end": "2026-11-23T19:45",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "tow truck at noon",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Tow truck",
+  "start": "2026-11-23T12:00",
+  "end": "2026-11-23T13:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "chess club at 4",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Chess club",
+  "start": "2026-11-23T16:00",
+  "end": "2026-11-23T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pharmacy 9:15 #social",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Pharmacy",
+  "start": "2026-11-24T09:15",
+  "end": "2026-11-24T10:15",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": "Social"
+ },
+ {
+  "input": "bridge game 2:30pm",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Bridge game",
+  "start": "2026-11-23T14:30",
+  "end": "2026-11-23T15:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "job interview 11:15",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Job interview",
+  "start": "2026-11-23T11:15",
+  "end": "2026-11-23T12:15",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "afternoon tea",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Afternoon tea",
+  "start": "2026-11-23T14:00",
+  "end": "2026-11-23T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "evening walk",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Evening walk",
+  "start": "2026-11-23T18:00",
+  "end": "2026-11-23T19:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "karaoke tonight",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Karaoke",
+  "start": "2026-11-23T19:00",
+  "end": "2026-11-23T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "meet electrician this morning",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Meet electrician",
+  "start": "2026-11-23T09:00",
+  "end": "2026-11-23T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "podcast recording 10am",
+  "cat": "simple-time",
+  "kind": "event",
+  "title": "Podcast recording",
+  "start": "2026-11-24T10:00",
+  "end": "2026-11-24T11:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "library book sale tomorrow",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Library book sale",
+  "start": "2026-11-24",
+  "end": "2026-11-25",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "day after tomorrow tire swap #Personal",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Tire swap",
+  "start": "2026-11-25",
+  "end": "2026-11-26",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": "Personal"
+ },
+ {
+  "input": "seed order arrives in 3 days",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Seed order arrives",
+  "start": "2026-11-26",
+  "end": "2026-11-27",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "in a week cast off",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Cast off",
+  "start": "2026-11-30",
+  "end": "2026-12-01",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "stitches out in two weeks",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Stitches out",
+  "start": "2026-12-07",
+  "end": "2026-12-08",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "next week kitchen reno starts",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Kitchen reno starts",
+  "start": "2026-11-30",
+  "end": "2026-12-01",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "grandkids visit in 10 days",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Grandkids visit",
+  "start": "2026-12-03",
+  "end": "2026-12-04",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "a month from now lease review",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Lease review",
+  "start": "2026-12-23",
+  "end": "2026-12-24",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "craft fair dec 3",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Craft fair",
+  "start": "2026-12-03",
+  "end": "2026-12-04",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "december 15 staff party",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Staff party",
+  "start": "2026-12-15",
+  "end": "2026-12-16",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "back to classes jan 2 #holidays",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Back to classes",
+  "start": "2027-01-02",
+  "end": "2027-01-03",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": "Holidays"
+ },
+ {
+  "input": "new years eve fireworks",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Fireworks",
+  "start": "2026-12-31",
+  "end": "2027-01-01",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "christmas dinner christmas day",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Christmas dinner",
+  "start": "2026-12-25",
+  "end": "2026-12-26",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "boxing day boxing day sales",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Boxing day sales",
+  "start": "2026-12-26",
+  "end": "2026-12-27",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "bottle drive the 28th",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Bottle drive",
+  "start": "2026-11-28",
+  "end": "2026-11-29",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "the 2nd hydro meter read",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Hydro meter read",
+  "start": "2026-12-02",
+  "end": "2026-12-03",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "holiday concert the 20th",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Holiday concert",
+  "start": "2026-12-20",
+  "end": "2026-12-21",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "end of the month timesheets",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Timesheets",
+  "start": "2026-11-30",
+  "end": "2026-12-01",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "advent calendar first of december",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Advent calendar",
+  "start": "2026-12-01",
+  "end": "2026-12-02",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "feb 14 valentines dinner #Department",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Valentines dinner",
+  "start": "2027-02-14",
+  "end": "2027-02-15",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": "Department"
+ },
+ {
+  "input": "locksmith tomorrow at 9",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Locksmith",
+  "start": "2026-11-24T09:00",
+  "end": "2026-11-24T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "tomorrow 4pm driving lesson",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Driving lesson",
+  "start": "2026-11-24T16:00",
+  "end": "2026-11-24T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "hearing test in 3 days at 2",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Hearing test",
+  "start": "2026-11-26T14:00",
+  "end": "2026-11-26T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "dec 10 at 6pm office potluck",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Office potluck",
+  "start": "2026-12-10T18:00",
+  "end": "2026-12-10T19:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "snow tire install the 1st at 8am",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Snow tire install",
+  "start": "2026-12-01T08:00",
+  "end": "2026-12-01T09:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "jan 15 10:30 tax prep",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Tax prep",
+  "start": "2027-01-15T10:30",
+  "end": "2027-01-15T11:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "wine tasting tomorrow evening",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Wine tasting",
+  "start": "2026-11-24T18:00",
+  "end": "2026-11-24T19:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "day after tomorrow morning blood work",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Blood work",
+  "start": "2026-11-25T09:00",
+  "end": "2026-11-25T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call back the shop in 2 hours #research",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Call back the shop",
+  "start": "2026-11-23T12:00",
+  "end": "2026-11-23T13:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": "Research"
+ },
+ {
+  "input": "in 45 minutes put out the bins",
+  "cat": "relative-date",
+  "kind": "event",
+  "title": "Put out the bins",
+  "start": "2026-11-23T10:45",
+  "end": "2026-11-23T11:45",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "payday drinks fri 5:30",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Payday drinks",
+  "start": "2026-11-27T17:30",
+  "end": "2026-11-27T18:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "farmers market saturday 9am",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Farmers market",
+  "start": "2026-11-28T09:00",
+  "end": "2026-11-28T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "church sun 10am",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Church",
+  "start": "2026-11-29T10:00",
+  "end": "2026-11-29T11:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "garbage day tuesday",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Garbage day",
+  "start": "2026-11-24",
+  "end": "2026-11-25",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "swim lessons wed 4",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Swim lessons",
+  "start": "2026-11-25T16:00",
+  "end": "2026-11-25T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "date night thursday 7",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Date night",
+  "start": "2026-11-26T19:00",
+  "end": "2026-11-26T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "night school monday 6:30",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Night school",
+  "start": "2026-11-30T18:30",
+  "end": "2026-11-30T19:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "hockey tournament sat #Social",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Hockey tournament",
+  "start": "2026-11-28",
+  "end": "2026-11-29",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": "Social"
+ },
+ {
+  "input": "pay the sitter friday",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Pay the sitter",
+  "start": "2026-11-27",
+  "end": "2026-11-28",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "bloodwork tue 8am",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Bloodwork",
+  "start": "2026-11-24T08:00",
+  "end": "2026-11-24T09:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "delivery window wednesday 1",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Delivery window",
+  "start": "2026-11-25T13:00",
+  "end": "2026-11-25T14:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "choir practice thu 7:30",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Choir practice",
+  "start": "2026-11-26T19:30",
+  "end": "2026-11-26T20:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "meal prep sunday 3",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Meal prep",
+  "start": "2026-11-29T15:00",
+  "end": "2026-11-29T16:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "morning huddle mon 9am",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Morning huddle",
+  "start": "2026-11-30T09:00",
+  "end": "2026-11-30T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "field trip friday",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Field trip",
+  "start": "2026-11-27",
+  "end": "2026-11-28",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "cartoons with lily saturday morning",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Cartoons with Lily",
+  "start": "2026-11-28T09:00",
+  "end": "2026-11-28T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "matinee sunday afternoon #personal",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Matinee",
+  "start": "2026-11-29T14:00",
+  "end": "2026-11-29T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": "Personal"
+ },
+ {
+  "input": "laundromat thursday evening",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Laundromat",
+  "start": "2026-11-26T18:00",
+  "end": "2026-11-26T19:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "trivia wed night",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Trivia",
+  "start": "2026-11-25T19:00",
+  "end": "2026-11-25T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "haircut this tuesday 3",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Haircut",
+  "start": "2026-11-24T15:00",
+  "end": "2026-11-24T16:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "report cards this friday",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Report cards",
+  "start": "2026-11-27",
+  "end": "2026-11-28",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "wreath making this sat 1",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Wreath making",
+  "start": "2026-11-28T13:00",
+  "end": "2026-11-28T14:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "lunch shift mon at noon",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Lunch shift",
+  "start": "2026-11-30T12:00",
+  "end": "2026-11-30T13:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "allergist tue 2:15 2:15",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Allergist",
+  "start": "2026-11-24T14:15",
+  "end": "2026-11-24T15:15",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "notary fri 11am 11am",
+  "cat": "weekday",
+  "kind": "event",
+  "title": "Notary",
+  "start": "2026-11-27T11:00",
+  "end": "2026-11-27T12:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "shift 3-11pm tomorrow",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Shift",
+  "start": "2026-11-24T15:00",
+  "end": "2026-11-24T23:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "dentist 2 to 3:30",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Dentist",
+  "start": "2026-11-23T14:00",
+  "end": "2026-11-23T15:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "workshop 9am-4pm sat",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Workshop",
+  "start": "2026-11-28T09:00",
+  "end": "2026-11-28T16:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "meeting with Leah for 30 min at 2",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Meeting with Leah",
+  "start": "2026-11-23T14:00",
+  "end": "2026-11-23T14:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "massage 90 minutes thu 4",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Massage",
+  "start": "2026-11-26T16:00",
+  "end": "2026-11-26T17:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "tutoring 2 hours wed at 5",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Tutoring",
+  "start": "2026-11-25T17:00",
+  "end": "2026-11-25T19:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "open house 1-4 sunday",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Open house",
+  "start": "2026-11-29T13:00",
+  "end": "2026-11-29T16:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "volunteer at food bank 10 to 2 sat",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Volunteer at food bank",
+  "start": "2026-11-28T10:00",
+  "end": "2026-11-28T14:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call with supplier 15 min at 11",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Call with supplier",
+  "start": "2026-11-23T11:00",
+  "end": "2026-11-23T11:15",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "install 8-5 friday",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Install",
+  "start": "2026-11-27T08:00",
+  "end": "2026-11-27T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "daycare tour 45 min tomorrow 10",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Daycare tour",
+  "start": "2026-11-24T10:00",
+  "end": "2026-11-24T10:45",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "nap 20 minutes at 3",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Nap",
+  "start": "2026-11-23T15:00",
+  "end": "2026-11-23T15:20",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "study session 7-10pm",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Study session",
+  "start": "2026-11-23T19:00",
+  "end": "2026-11-23T22:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "lunch 12-1 fri",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Lunch",
+  "start": "2026-11-27T12:00",
+  "end": "2026-11-27T13:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "brunch 11 till 1 sun",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Brunch",
+  "start": "2026-11-29T11:00",
+  "end": "2026-11-29T13:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "photo shoot 2.5 hours sat 1pm",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Photo shoot",
+  "start": "2026-11-28T13:00",
+  "end": "2026-11-28T15:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "exam 9-12 thursday",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Exam",
+  "start": "2026-11-26T09:00",
+  "end": "2026-11-26T12:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "overtime 5 to 9 tonight",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Overtime",
+  "start": "2026-11-23T17:00",
+  "end": "2026-11-23T21:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "kids party 2-4 saturday",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Kids party",
+  "start": "2026-11-28T14:00",
+  "end": "2026-11-28T16:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "webinar 1h tomorrow 1",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Webinar",
+  "start": "2026-11-24T13:00",
+  "end": "2026-11-24T14:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "training 9:30-11:45 tue",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Training",
+  "start": "2026-11-24T09:30",
+  "end": "2026-11-24T11:45",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pottery 6:30 to 8:30 wed",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Pottery",
+  "start": "2026-11-25T18:30",
+  "end": "2026-11-25T20:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "mow lawn for an hour at 4",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Mow lawn",
+  "start": "2026-11-23T16:00",
+  "end": "2026-11-23T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "consult 30m dec 2 at 3",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Consult",
+  "start": "2026-12-02T15:00",
+  "end": "2026-12-02T15:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "drive to Ottawa 5 hours sat 8am",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Drive to Ottawa",
+  "start": "2026-11-28T08:00",
+  "end": "2026-11-28T13:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "clinic shift 7am-7pm sun",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Clinic shift",
+  "start": "2026-11-29T07:00",
+  "end": "2026-11-29T19:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "bar shift 8pm to 2am fri",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Bar shift",
+  "start": "2026-11-27T20:00",
+  "end": "2026-11-28T02:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "night security 11pm-7am tonight",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Night security",
+  "start": "2026-11-23T23:00",
+  "end": "2026-11-24T07:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "ref the game from 6 to 7:30 thu",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Ref the game",
+  "start": "2026-11-26T18:00",
+  "end": "2026-11-26T19:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "half hour standup at 9:30 tomorrow",
+  "cat": "ranges-durations",
+  "kind": "event",
+  "title": "Standup",
+  "start": "2026-11-24T09:30",
+  "end": "2026-11-24T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "cottage weekend fri to sun",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Cottage weekend",
+  "start": "2026-11-27",
+  "end": "2026-11-30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "camping dec 4-6",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Camping",
+  "start": "2026-12-04",
+  "end": "2026-12-07",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "hunting trip mon to thu",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Hunting trip",
+  "start": "2026-11-30",
+  "end": "2026-12-04",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "in-laws visiting dec 20 to 27",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "In-laws visiting",
+  "start": "2026-12-20",
+  "end": "2026-12-28",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "vacation jan 5-16",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Vacation",
+  "start": "2027-01-05",
+  "end": "2027-01-17",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "conference tue through thu",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Conference",
+  "start": "2026-11-24",
+  "end": "2026-11-27",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "kids at their dad's fri-mon",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Kids at their dad's",
+  "start": "2026-11-27",
+  "end": "2026-12-01",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "ski trip feb 13 to 17",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Ski trip",
+  "start": "2027-02-13",
+  "end": "2027-02-18",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "trade show for 3 days starting wed",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Trade show",
+  "start": "2026-11-25",
+  "end": "2026-11-28",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "job site in Barrie all next week",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Job site",
+  "start": "2026-11-30",
+  "end": "2026-12-05",
+  "repeat": null,
+  "zone": null,
+  "loc": "Barrie",
+  "cal": null
+ },
+ {
+  "input": "reading week feb 16-20",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Reading week",
+  "start": "2027-02-16",
+  "end": "2027-02-21",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "cruise mar 1 to mar 8",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Cruise",
+  "start": "2027-03-01",
+  "end": "2027-03-09",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "christmas break dec 24 - jan 2",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Christmas break",
+  "start": "2026-12-24",
+  "end": "2027-01-03",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "exams dec 8 through 18",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Exams",
+  "start": "2026-12-08",
+  "end": "2026-12-19",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "house sitting for Marg 2 weeks from sat",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "House sitting for Marg",
+  "start": "2026-11-28",
+  "end": "2026-12-12",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "tournament weekend dec 12-13",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Tournament weekend",
+  "start": "2026-12-12",
+  "end": "2026-12-14",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "dad in hospital till friday",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Dad in hospital",
+  "start": "2026-11-23",
+  "end": "2026-11-28",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "road trip thursday to sunday",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Road trip",
+  "start": "2026-11-26",
+  "end": "2026-11-30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "festival 3 days from dec 18",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Festival",
+  "start": "2026-12-18",
+  "end": "2026-12-21",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "away tomorrow through sat",
+  "cat": "multi-day",
+  "kind": "event",
+  "title": "Away",
+  "start": "2026-11-24",
+  "end": "2026-11-29",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "gym mon wed fri 6am",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Gym",
+  "start": "2026-11-25T06:00",
+  "end": "2026-11-25T07:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=MO,WE,FR",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "swim lessons every saturday 10",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Swim lessons",
+  "start": "2026-11-28T10:00",
+  "end": "2026-11-28T11:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=SA",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "trash every tuesday",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Trash",
+  "start": "2026-11-24",
+  "end": "2026-11-25",
+  "repeat": "FREQ=WEEKLY;BYDAY=TU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "piano weekly thursday 4:30",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Piano",
+  "start": "2026-11-26T16:30",
+  "end": "2026-11-26T17:30",
+  "repeat": "FREQ=WEEKLY;INTERVAL=30;BYDAY=TH",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "bowling every wed night #Department",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Bowling",
+  "start": "2026-11-25T19:00",
+  "end": "2026-11-25T20:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=WE",
+  "zone": null,
+  "loc": null,
+  "cal": "Department"
+ },
+ {
+  "input": "church sundays at 11",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Church",
+  "start": "2026-11-29T11:00",
+  "end": "2026-11-29T12:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=SU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "karate tue and thu 6pm",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Karate",
+  "start": "2026-11-24T18:00",
+  "end": "2026-11-24T19:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=TU,TH",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "physio every monday 2",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Physio",
+  "start": "2026-11-30T14:00",
+  "end": "2026-11-30T15:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=MO",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "farmers market saturdays 8am",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Farmers market",
+  "start": "2026-11-28T08:00",
+  "end": "2026-11-28T09:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=SA",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "weekly call with mom sunday 7",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Call with mom",
+  "start": "2026-11-29T19:00",
+  "end": "2026-11-29T20:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=SU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "every weekday standup 9",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Standup",
+  "start": "2026-11-24T09:00",
+  "end": "2026-11-24T10:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "shift every sat and sun 7am",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Shift",
+  "start": "2026-11-28T07:00",
+  "end": "2026-11-28T08:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=SA,SU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "recycling every other friday",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Recycling",
+  "start": "2026-11-27",
+  "end": "2026-11-28",
+  "repeat": "FREQ=WEEKLY;INTERVAL=2;BYDAY=FR",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "mow lawn every 2 weeks sat #research",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Mow lawn",
+  "start": "2026-11-28",
+  "end": "2026-11-29",
+  "repeat": "FREQ=WEEKLY;INTERVAL=2;BYDAY=SA",
+  "zone": null,
+  "loc": null,
+  "cal": "Research"
+ },
+ {
+  "input": "poker night fridays 8",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Poker night",
+  "start": "2026-11-27T20:00",
+  "end": "2026-11-27T21:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=FR",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "tutoring every tuesday 3:30 to 5",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Tutoring",
+  "start": "2026-11-24T15:30",
+  "end": "2026-11-24T17:00",
+  "repeat": "FREQ=WEEKLY;INTERVAL=30;BYDAY=TU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "choir weekly wed 7:30pm",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Choir",
+  "start": "2026-11-25T19:30",
+  "end": "2026-11-25T20:30",
+  "repeat": "FREQ=WEEKLY;INTERVAL=30;BYDAY=WE",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "dog walking every morning weekdays",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Dog walking",
+  "start": "2026-11-24T09:00",
+  "end": "2026-11-24T10:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "aqua fit mon/wed 10:30",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Aqua fit",
+  "start": "2026-11-23T10:30",
+  "end": "2026-11-23T11:30",
+  "repeat": "FREQ=WEEKLY;INTERVAL=30;BYDAY=MO,WE",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "cleaner every thursday",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Cleaner",
+  "start": "2026-11-26",
+  "end": "2026-11-27",
+  "repeat": "FREQ=WEEKLY;BYDAY=TH",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "girl guides every monday 6:30",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Girl guides",
+  "start": "2026-11-30T18:30",
+  "end": "2026-11-30T19:30",
+  "repeat": "FREQ=WEEKLY;INTERVAL=30;BYDAY=MO",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "grocery every sunday morning",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Grocery",
+  "start": "2026-11-29T09:00",
+  "end": "2026-11-29T10:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=SU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "supervision every fri 1pm for 30 min #Social",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Supervision",
+  "start": "2026-11-27T13:00",
+  "end": "2026-11-27T13:30",
+  "repeat": "FREQ=WEEKLY;BYDAY=FR",
+  "zone": null,
+  "loc": null,
+  "cal": "Social"
+ },
+ {
+  "input": "drop in hockey tuesdays 10pm",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Drop in hockey",
+  "start": "2026-11-24T22:00",
+  "end": "2026-11-24T23:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=TU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "biweekly payday thursday",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Payday",
+  "start": "2026-11-26",
+  "end": "2026-11-27",
+  "repeat": "FREQ=WEEKLY;INTERVAL=2;BYDAY=TH",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "lessons every tues and fri at 5",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Lessons",
+  "start": "2026-11-24T17:00",
+  "end": "2026-11-24T18:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=TU,FR",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "yoga every weekend 9am",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Yoga",
+  "start": "2026-11-28T09:00",
+  "end": "2026-11-28T10:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=SA,SU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "d&d every other sunday 2pm",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "D&D",
+  "start": "2026-11-29T14:00",
+  "end": "2026-11-29T15:00",
+  "repeat": "FREQ=WEEKLY;INTERVAL=2;BYDAY=SU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "crossing guard every weekday 8am",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Crossing guard",
+  "start": "2026-11-24T08:00",
+  "end": "2026-11-24T09:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "family dinner sundays 6",
+  "cat": "repeat-weekly",
+  "kind": "event",
+  "title": "Family dinner",
+  "start": "2026-11-29T18:00",
+  "end": "2026-11-29T19:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=SU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "rent 1st of every month",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Rent",
+  "start": "2026-12-01",
+  "end": "2026-12-02",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=1",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pay day 1st and 15th",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Pay day",
+  "start": "2026-12-01",
+  "end": "2026-12-02",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=1,15",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "invoice clients last day of each month",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Invoice clients",
+  "start": "2026-11-30",
+  "end": "2026-12-01",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=-1",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "book club 2nd and 4th monday",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Book club",
+  "start": "2026-12-14",
+  "end": "2026-12-15",
+  "repeat": "FREQ=MONTHLY;BYDAY=2MO,4MO",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "legion meeting first tuesday monthly",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Legion meeting",
+  "start": "2026-12-01",
+  "end": "2026-12-02",
+  "repeat": "FREQ=MONTHLY;BYDAY=1TU",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "credit card bill every month on the 20th",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Credit card bill",
+  "start": "2026-12-20",
+  "end": "2026-12-21",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=20",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "haircut monthly",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Haircut",
+  "start": "2026-12-23",
+  "end": "2026-12-24",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=23",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "quilt guild third wednesday of the month",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Quilt guild",
+  "start": "2026-12-16",
+  "end": "2026-12-17",
+  "repeat": "FREQ=MONTHLY;BYDAY=3WE",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "water softener salt every month on the 5th",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Water softener salt",
+  "start": "2026-12-05",
+  "end": "2026-12-06",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=5",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "council meeting last thursday of the month",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Council meeting",
+  "start": "2026-11-26",
+  "end": "2026-11-27",
+  "repeat": "FREQ=MONTHLY;BYDAY=-1TH",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pension deposit 3rd of each month",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Pension deposit",
+  "start": "2026-12-03",
+  "end": "2026-12-04",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=3",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "cleaning day 15th and last day",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Cleaning day",
+  "start": "2026-11-30",
+  "end": "2026-12-01",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=15,-1",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "car payment the 28th monthly",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Car payment",
+  "start": "2026-11-28",
+  "end": "2026-11-29",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=28",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "first friday art walk every month",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Art walk",
+  "start": "2026-12-04",
+  "end": "2026-12-05",
+  "repeat": "FREQ=MONTHLY;BYDAY=1FR",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "support group 2nd and 4th thursday",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Support group",
+  "start": "2026-11-26",
+  "end": "2026-11-27",
+  "repeat": "FREQ=MONTHLY;BYDAY=2TH,4TH",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "budget review end of every month",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Budget review",
+  "start": "2026-11-30",
+  "end": "2026-12-01",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=-1",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "blood pressure check monthly on the 10th",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Blood pressure check",
+  "start": "2026-12-10",
+  "end": "2026-12-11",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=10",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "every other month meter reading the 1st",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Meter reading",
+  "start": "2026-12-01",
+  "end": "2026-12-02",
+  "repeat": "FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=1",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "quarterly tax installment the 15th",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Tax installment",
+  "start": "2026-12-15",
+  "end": "2026-12-16",
+  "repeat": "FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=15",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "market day second saturday each month",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Market day",
+  "start": "2026-12-12",
+  "end": "2026-12-13",
+  "repeat": "FREQ=MONTHLY;BYDAY=2SA",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "foster check in 1st and 3rd monday",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Foster check in",
+  "start": "2026-12-07",
+  "end": "2026-12-08",
+  "repeat": "FREQ=MONTHLY;BYDAY=1MO,3MO",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "newsletter goes out on the 1st and 15th",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Newsletter goes out",
+  "start": "2026-12-01",
+  "end": "2026-12-02",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=1,15",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "phone bill the 25th every month",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Phone bill",
+  "start": "2026-11-25",
+  "end": "2026-11-26",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=25",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "date night last saturday monthly",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Date night",
+  "start": "2026-11-28",
+  "end": "2026-11-29",
+  "repeat": "FREQ=MONTHLY;BYDAY=-1SA",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "mortgage 1st of the month",
+  "cat": "repeat-monthly",
+  "kind": "event",
+  "title": "Mortgage",
+  "start": "2026-12-01",
+  "end": "2026-12-02",
+  "repeat": "FREQ=MONTHLY;BYMONTHDAY=1",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "take pills every day 8am",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Take pills",
+  "start": "2026-11-24T08:00",
+  "end": "2026-11-24T09:00",
+  "repeat": "FREQ=DAILY",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "water plants every 3 days",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Water plants",
+  "start": "2026-11-23",
+  "end": "2026-11-24",
+  "repeat": "FREQ=DAILY;INTERVAL=3",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "walk daily at 7pm",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Walk",
+  "start": "2026-11-23T19:00",
+  "end": "2026-11-23T20:00",
+  "repeat": "FREQ=DAILY",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "mom birthday every year dec 9",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Mom birthday",
+  "start": "2026-12-09",
+  "end": "2026-12-10",
+  "repeat": "FREQ=YEARLY",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "anniversary yearly june 14",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Anniversary",
+  "start": "2027-06-14",
+  "end": "2027-06-15",
+  "repeat": "FREQ=YEARLY",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "insulin every 12 hours from 8am",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Insulin",
+  "start": "2026-11-24T08:00",
+  "end": "2026-11-24T09:00",
+  "repeat": "FREQ=HOURLY;INTERVAL=12",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "stretch every day for 2 weeks at 9",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Stretch",
+  "start": "2026-11-24T09:00",
+  "end": "2026-11-24T10:00",
+  "repeat": "FREQ=DAILY;COUNT=14",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "french class tue thu until dec 17 at 6",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "French class",
+  "start": "2026-11-24T18:00",
+  "end": "2026-11-24T19:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=TU,TH;UNTIL=20261217",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "swim 10 times every mon 5pm",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Swim",
+  "start": "2026-11-23T17:00",
+  "end": "2026-11-23T18:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=MO;COUNT=10",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "daily standup weekdays 9:15 until christmas",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Standup",
+  "start": "2026-11-24T09:15",
+  "end": "2026-11-24T10:15",
+  "repeat": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;UNTIL=20261225",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "car insurance renewal yearly march 1",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Car insurance renewal",
+  "start": "2027-03-01",
+  "end": "2027-03-02",
+  "repeat": "FREQ=YEARLY",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "furnace filter every 3 months",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Furnace filter",
+  "start": "2026-11-23",
+  "end": "2026-11-24",
+  "repeat": "FREQ=MONTHLY;INTERVAL=3",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "feed sourdough starter every day 7am",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Feed sourdough starter",
+  "start": "2026-11-24T07:00",
+  "end": "2026-11-24T08:00",
+  "repeat": "FREQ=DAILY",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "every day at noon lunch walk",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Lunch walk",
+  "start": "2026-11-23T12:00",
+  "end": "2026-11-23T13:00",
+  "repeat": "FREQ=DAILY",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "nightly reading with kids 8pm",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Reading with kids",
+  "start": "2026-11-23T20:00",
+  "end": "2026-11-23T21:00",
+  "repeat": "FREQ=DAILY",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "every other day run 6:30am",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Run",
+  "start": "2026-11-24T06:30",
+  "end": "2026-11-24T07:30",
+  "repeat": "FREQ=DAILY;INTERVAL=2",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "remembrance day every year nov 11",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Remembrance day",
+  "start": "2027-11-11",
+  "end": "2027-11-12",
+  "repeat": "FREQ=YEARLY",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "meds 3x a day 8 2 8",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Meds",
+  "start": "2026-11-23T14:00",
+  "end": "2026-11-23T15:00",
+  "repeat": "FREQ=DAILY;BYHOUR=8,14,20",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "therapy every week for 6 weeks wed 3",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Therapy",
+  "start": "2026-11-25T15:00",
+  "end": "2026-11-25T16:00",
+  "repeat": "FREQ=WEEKLY;BYDAY=WE;COUNT=6",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "check traps every morning",
+  "cat": "repeat-misc",
+  "kind": "event",
+  "title": "Check traps",
+  "start": "2026-11-24T09:00",
+  "end": "2026-11-24T10:00",
+  "repeat": "FREQ=DAILY",
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "permit application due friday",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Permit application",
+  "start": "2026-11-27T17:00",
+  "end": "2026-11-27T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "rent due the 1st",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Rent",
+  "start": "2026-12-01T17:00",
+  "end": "2026-12-01T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "essay due thursday 11:59pm",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Essay",
+  "start": "2026-11-26T23:59",
+  "end": "2026-11-26T23:59",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "deadline for daycare forms wed",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Daycare forms",
+  "start": "2026-11-25T17:00",
+  "end": "2026-11-25T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "submit timesheet by 3 tomorrow",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Submit timesheet",
+  "start": "2026-11-24T15:00",
+  "end": "2026-11-24T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "registration closes dec 5",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Registration",
+  "start": "2026-12-05T17:00",
+  "end": "2026-12-05T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "grant report due dec 15 noon",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Grant report",
+  "start": "2026-12-15T12:00",
+  "end": "2026-12-15T12:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "cutoff for orders sunday",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Orders",
+  "start": "2026-11-29T17:00",
+  "end": "2026-11-29T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "tax filing deadline apr 30",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Tax filing",
+  "start": "2027-04-30T17:00",
+  "end": "2027-04-30T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "portfolio due next friday",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Portfolio",
+  "start": "2026-12-04T17:00",
+  "end": "2026-12-04T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "lab report due tomorrow",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Lab report",
+  "start": "2026-11-24T17:00",
+  "end": "2026-11-24T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "quote due to client by monday 9am",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Quote to client",
+  "start": "2026-11-30T09:00",
+  "end": "2026-11-30T09:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "scholarship app closes jan 31",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Scholarship app",
+  "start": "2027-01-31T17:00",
+  "end": "2027-01-31T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "field trip money due by thu",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Field trip money",
+  "start": "2026-11-26T17:00",
+  "end": "2026-11-26T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "invoice deadline end of month",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Invoice",
+  "start": "2026-11-30T17:00",
+  "end": "2026-11-30T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "return library books by sat",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Return library books",
+  "start": "2026-11-28T17:00",
+  "end": "2026-11-28T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "bid closes dec 2 at 2pm",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Bid",
+  "start": "2026-12-02T14:00",
+  "end": "2026-12-02T14:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "vote by dec 1",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Vote",
+  "start": "2026-12-01T17:00",
+  "end": "2026-12-01T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "cutoff for xmas shipping dec 15",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Xmas shipping",
+  "start": "2026-12-15T17:00",
+  "end": "2026-12-15T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "project due in 2 weeks",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Project",
+  "start": "2026-12-07T17:00",
+  "end": "2026-12-07T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "rebate form due nov 30",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Rebate form",
+  "start": "2026-11-30T17:00",
+  "end": "2026-11-30T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "deadline: insurance claim fri 4pm",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Insurance claim",
+  "start": "2026-11-27T16:00",
+  "end": "2026-11-27T16:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "assignment 3 due wednesday midnight",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Assignment 3",
+  "start": "2026-11-26T00:00",
+  "end": "2026-11-26T00:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pay parking ticket by dec 10",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Pay parking ticket",
+  "start": "2026-12-10T17:00",
+  "end": "2026-12-10T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "final drawings due tue",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Final drawings",
+  "start": "2026-11-24T17:00",
+  "end": "2026-11-24T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "rsvp by friday for the wedding",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "RSVP for the wedding",
+  "start": "2026-11-27T17:00",
+  "end": "2026-11-27T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "applications close tomorrow noon",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Applications",
+  "start": "2026-11-24T12:00",
+  "end": "2026-11-24T12:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "renew licence by jan 8",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Renew licence",
+  "start": "2027-01-08T17:00",
+  "end": "2027-01-08T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "reimbursement cutoff dec 18",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Reimbursement",
+  "start": "2026-12-18T17:00",
+  "end": "2026-12-18T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "thesis chapter due monday",
+  "cat": "deadline",
+  "kind": "deadline",
+  "title": "Thesis chapter",
+  "start": "2026-11-30T17:00",
+  "end": "2026-11-30T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "email Bart",
+  "cat": "task",
+  "kind": "task",
+  "title": "Email Bart",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pay rent friday",
+  "cat": "task",
+  "kind": "task",
+  "title": "Pay rent",
+  "start": "2026-11-27",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "buy milk",
+  "cat": "task",
+  "kind": "task",
+  "title": "Buy milk",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call the school about Ava",
+  "cat": "task",
+  "kind": "task",
+  "title": "Call the school about Ava",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "renew passport",
+  "cat": "task",
+  "kind": "task",
+  "title": "Renew passport",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "order parts for the Ford tomorrow",
+  "cat": "task",
+  "kind": "task",
+  "title": "Order parts for the Ford",
+  "start": "2026-11-24",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "text Jenna back",
+  "cat": "task",
+  "kind": "task",
+  "title": "Text Jenna back",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "book flu shot",
+  "cat": "task",
+  "kind": "task",
+  "title": "Book flu shot",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "return Amazon package by wed",
+  "cat": "task",
+  "kind": "task",
+  "title": "Return Amazon package",
+  "start": "2026-11-25",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "fix the gate saturday",
+  "cat": "task",
+  "kind": "task",
+  "title": "Fix the gate",
+  "start": "2026-11-28",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "send invoice to Kowalski",
+  "cat": "task",
+  "kind": "task",
+  "title": "Send invoice to Kowalski",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pick up dry cleaning thursday",
+  "cat": "task",
+  "kind": "task",
+  "title": "Pick up dry cleaning",
+  "start": "2026-11-26",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "remind Leo about permission slip",
+  "cat": "task",
+  "kind": "task",
+  "title": "Remind Leo about permission slip",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "schedule oil change",
+  "cat": "task",
+  "kind": "task",
+  "title": "Schedule oil change",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pay hydro bill dec 3",
+  "cat": "task",
+  "kind": "task",
+  "title": "Pay hydro bill",
+  "start": "2026-12-03",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "clean gutters sunday",
+  "cat": "task",
+  "kind": "task",
+  "title": "Clean gutters",
+  "start": "2026-11-29",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "todo: sharpen mower blades",
+  "cat": "task",
+  "kind": "task",
+  "title": "Sharpen mower blades",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call plumber about leak tomorrow at 9",
+  "cat": "task",
+  "kind": "task",
+  "title": "Call plumber about leak",
+  "start": "2026-11-24T09:00",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "buy birthday card for Gran",
+  "cat": "task",
+  "kind": "task",
+  "title": "Buy birthday card for Gran",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "upload photos to portfolio",
+  "cat": "task",
+  "kind": "task",
+  "title": "Upload photos to portfolio",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "cancel gym membership",
+  "cat": "task",
+  "kind": "task",
+  "title": "Cancel gym membership",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "ask boss for shift swap monday",
+  "cat": "task",
+  "kind": "task",
+  "title": "Ask boss for shift swap",
+  "start": "2026-11-30",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "get winter tires on",
+  "cat": "task",
+  "kind": "task",
+  "title": "Get winter tires on",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "refill prescription",
+  "cat": "task",
+  "kind": "task",
+  "title": "Refill prescription",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "email landlord about heat",
+  "cat": "task",
+  "kind": "task",
+  "title": "Email landlord about heat",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "make dentist appt for kids",
+  "cat": "task",
+  "kind": "task",
+  "title": "Make dentist appt for kids",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "wrap presents dec 20",
+  "cat": "task",
+  "kind": "task",
+  "title": "Wrap presents",
+  "start": "2026-12-20",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "defrost the freezer weekend",
+  "cat": "task",
+  "kind": "task",
+  "title": "Defrost the freezer",
+  "start": "2026-11-28",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "submit mileage claim",
+  "cat": "task",
+  "kind": "task",
+  "title": "Submit mileage claim",
+  "start": null,
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "follow up with insurance adjuster tue",
+  "cat": "task",
+  "kind": "task",
+  "title": "Follow up with insurance adjuster",
+  "start": "2026-11-24",
+  "end": null,
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call with Mumbai team 9am IST tomorrow",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Call with Mumbai team",
+  "start": "2026-11-24T09:00",
+  "end": "2026-11-24T10:00",
+  "repeat": null,
+  "zone": "Asia/Kolkata",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "zoom with nan 7pm london time sun",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Zoom with nan",
+  "start": "2026-11-29T19:00",
+  "end": "2026-11-29T20:00",
+  "repeat": null,
+  "zone": "Europe/London",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "client call 2pm PST thu",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Client call",
+  "start": "2026-11-26T14:00",
+  "end": "2026-11-26T15:00",
+  "repeat": null,
+  "zone": "America/Los_Angeles",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "flight lands 6:40am in vancouver tomorrow",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Flight lands",
+  "start": "2026-11-24T06:40",
+  "end": "2026-11-24T07:40",
+  "repeat": null,
+  "zone": "America/Vancouver",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "stream at 8pm CET friday",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Stream",
+  "start": "2026-11-27T20:00",
+  "end": "2026-11-27T21:00",
+  "repeat": null,
+  "zone": "Europe/Paris",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "interview 10am Sydney time wed",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Interview",
+  "start": "2026-11-25T10:00",
+  "end": "2026-11-25T11:00",
+  "repeat": null,
+  "zone": "Australia/Sydney",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call dad in Halifax 4pm AST sat",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Call dad in Halifax",
+  "start": "2026-11-28T16:00",
+  "end": "2026-11-28T17:00",
+  "repeat": null,
+  "zone": "America/Halifax",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "webinar 1pm ET tuesday",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Webinar",
+  "start": "2026-11-24T13:00",
+  "end": "2026-11-24T14:00",
+  "repeat": null,
+  "zone": "America/Toronto",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "match kicks off 3pm GMT sat",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Match kicks off",
+  "start": "2026-11-28T15:00",
+  "end": "2026-11-28T16:00",
+  "repeat": null,
+  "zone": "Europe/London",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "standup 9am mountain time mon",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Standup",
+  "start": "2026-11-30T09:00",
+  "end": "2026-11-30T10:00",
+  "repeat": null,
+  "zone": "America/Denver",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call manila supplier 8am PHT thu",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Call Manila supplier",
+  "start": "2026-11-26T08:00",
+  "end": "2026-11-26T09:00",
+  "repeat": null,
+  "zone": "Asia/Manila",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "auction closes 5pm CST dec 1",
+  "cat": "zones",
+  "kind": "deadline",
+  "title": "Auction",
+  "start": "2026-12-01T17:00",
+  "end": "2026-12-01T17:00",
+  "repeat": null,
+  "zone": "America/Chicago",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "video call tokyo 9pm JST tomorrow",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Video call Tokyo",
+  "start": "2026-11-24T21:00",
+  "end": "2026-11-24T22:00",
+  "repeat": null,
+  "zone": "Asia/Tokyo",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pay invoice to Berlin client noon berlin time fri",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Pay invoice to Berlin client",
+  "start": "2026-11-27T12:00",
+  "end": "2026-11-27T13:00",
+  "repeat": null,
+  "zone": "Europe/Berlin",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call aunty in Lagos 6pm WAT sunday",
+  "cat": "zones",
+  "kind": "event",
+  "title": "Call aunty in Lagos",
+  "start": "2026-11-29T18:00",
+  "end": "2026-11-29T19:00",
+  "repeat": null,
+  "zone": "Africa/Lagos",
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "coffee with Tasha at Tim Hortons 3",
+  "cat": "location",
+  "kind": "event",
+  "title": "Coffee with Tasha",
+  "start": "2026-11-23T15:00",
+  "end": "2026-11-23T16:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Tim Hortons",
+  "cal": null
+ },
+ {
+  "input": "soccer at Christie Pits sat 10",
+  "cat": "location",
+  "kind": "event",
+  "title": "Soccer",
+  "start": "2026-11-28T10:00",
+  "end": "2026-11-28T11:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Christie Pits",
+  "cal": null
+ },
+ {
+  "input": "dinner @ Mom's 6pm sunday",
+  "cat": "location",
+  "kind": "event",
+  "title": "Dinner",
+  "start": "2026-11-29T18:00",
+  "end": "2026-11-29T19:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Mom's",
+  "cal": null
+ },
+ {
+  "input": "appointment at 123 King St W tomorrow 2pm",
+  "cat": "location",
+  "kind": "event",
+  "title": "Appointment",
+  "start": "2026-11-24T14:00",
+  "end": "2026-11-24T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "123 King St W",
+  "cal": null
+ },
+ {
+  "input": "job at 45 Elm Ave thursday 8am",
+  "cat": "location",
+  "kind": "event",
+  "title": "Job",
+  "start": "2026-11-26T08:00",
+  "end": "2026-11-26T09:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "45 Elm Ave",
+  "cal": null
+ },
+ {
+  "input": "skating at Nathan Phillips Square fri 7pm",
+  "cat": "location",
+  "kind": "event",
+  "title": "Skating",
+  "start": "2026-11-27T19:00",
+  "end": "2026-11-27T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Nathan Phillips Square",
+  "cal": null
+ },
+ {
+  "input": "meet realtor at the condo wed 11",
+  "cat": "location",
+  "kind": "event",
+  "title": "Meet realtor",
+  "start": "2026-11-25T11:00",
+  "end": "2026-11-25T12:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "the condo",
+  "cal": null
+ },
+ {
+  "input": "blood donation at Canadian Blood Services tue 1pm #social",
+  "cat": "location",
+  "kind": "event",
+  "title": "Blood donation",
+  "start": "2026-11-24T13:00",
+  "end": "2026-11-24T14:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Canadian Blood Services",
+  "cal": "Social"
+ },
+ {
+  "input": "lunch at Pho Hung 12:30 tomorrow",
+  "cat": "location",
+  "kind": "event",
+  "title": "Lunch",
+  "start": "2026-11-24T12:30",
+  "end": "2026-11-24T13:30",
+  "repeat": null,
+  "zone": null,
+  "loc": "Pho Hung",
+  "cal": null
+ },
+ {
+  "input": "parent council in the school library mon 6:30",
+  "cat": "location",
+  "kind": "event",
+  "title": "Parent council",
+  "start": "2026-11-30T18:30",
+  "end": "2026-11-30T19:30",
+  "repeat": null,
+  "zone": null,
+  "loc": "school library",
+  "cal": null
+ },
+ {
+  "input": "gig at the Horseshoe sat 9pm",
+  "cat": "location",
+  "kind": "event",
+  "title": "Gig",
+  "start": "2026-11-28T21:00",
+  "end": "2026-11-28T22:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "the Horseshoe",
+  "cal": null
+ },
+ {
+  "input": "drop off at Value Village 4",
+  "cat": "location",
+  "kind": "event",
+  "title": "Drop off",
+  "start": "2026-11-23T16:00",
+  "end": "2026-11-23T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Value Village",
+  "cal": null
+ },
+ {
+  "input": "vet at Riverdale Animal Hospital fri 9am",
+  "cat": "location",
+  "kind": "event",
+  "title": "Vet",
+  "start": "2026-11-27T09:00",
+  "end": "2026-11-27T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Riverdale Animal Hospital",
+  "cal": null
+ },
+ {
+  "input": "practice at the rink 5:30 thu",
+  "cat": "location",
+  "kind": "event",
+  "title": "Practice",
+  "start": "2026-11-26T17:30",
+  "end": "2026-11-26T18:30",
+  "repeat": null,
+  "zone": null,
+  "loc": "the rink",
+  "cal": null
+ },
+ {
+  "input": "meet buyer in Costco parking lot 2pm sat",
+  "cat": "location",
+  "kind": "event",
+  "title": "Meet buyer",
+  "start": "2026-11-28T14:00",
+  "end": "2026-11-28T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Costco parking lot",
+  "cal": null
+ },
+ {
+  "input": "shift at Sunnybrook 7am tomorrow",
+  "cat": "location",
+  "kind": "event",
+  "title": "Shift",
+  "start": "2026-11-24T07:00",
+  "end": "2026-11-24T08:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Sunnybrook",
+  "cal": null
+ },
+ {
+  "input": "reading at the Danforth library wed 4pm #Personal",
+  "cat": "location",
+  "kind": "event",
+  "title": "Reading",
+  "start": "2026-11-25T16:00",
+  "end": "2026-11-25T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "the Danforth library",
+  "cal": "Personal"
+ },
+ {
+  "input": "estimate at 88 Queen St E monday 10am",
+  "cat": "location",
+  "kind": "event",
+  "title": "Estimate",
+  "start": "2026-11-30T10:00",
+  "end": "2026-11-30T11:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "88 Queen St E",
+  "cal": null
+ },
+ {
+  "input": "brunch at Lady Marmalade sunday 11",
+  "cat": "location",
+  "kind": "event",
+  "title": "Brunch",
+  "start": "2026-11-29T11:00",
+  "end": "2026-11-29T12:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Lady Marmalade",
+  "cal": null
+ },
+ {
+  "input": "swim at Regent Park pool tue 6pm",
+  "cat": "location",
+  "kind": "event",
+  "title": "Swim",
+  "start": "2026-11-24T18:00",
+  "end": "2026-11-24T19:00",
+  "repeat": null,
+  "zone": null,
+  "loc": "Regent Park pool",
+  "cal": null
+ },
+ {
+  "input": "dentist tomorow at 2",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Dentist",
+  "start": "2026-11-24T14:00",
+  "end": "2026-11-24T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "soccer pratice thurday 5",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Soccer practice",
+  "start": "2026-11-26T17:00",
+  "end": "2026-11-26T18:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pick up the kids at three fifteen",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Pick up the kids",
+  "start": "2026-11-23T15:15",
+  "end": "2026-11-23T16:15",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "haircut on wensday at four thirty",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Haircut",
+  "start": "2026-11-25T16:30",
+  "end": "2026-11-25T17:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call grandma at seven p m",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Call grandma",
+  "start": "2026-11-23T19:00",
+  "end": "2026-11-23T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "meeting with the foreman fryday 8 a.m.",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Meeting with the foreman",
+  "start": "2026-11-27T08:00",
+  "end": "2026-11-27T09:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "doctors appointment at quarter past ten tomorrow",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Doctors appointment",
+  "start": "2026-11-24T10:15",
+  "end": "2026-11-24T11:15",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "lunch with dave at half past twelve",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Lunch with dave",
+  "start": "2026-11-23T12:30",
+  "end": "2026-11-23T13:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "gym tommorrow 6am",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Gym",
+  "start": "2026-11-24T06:00",
+  "end": "2026-11-24T07:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "brunch sundy at eleven",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Brunch",
+  "start": "2026-11-29T11:00",
+  "end": "2026-11-29T12:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "band practice tuesday at eight p.m.",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Band practice",
+  "start": "2026-11-24T20:00",
+  "end": "2026-11-24T21:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "vet appointment saterday at nine",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Vet appointment",
+  "start": "2026-11-28T09:00",
+  "end": "2026-11-28T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "parent teacher interviews thrusday at quarter to four",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Parent teacher interviews",
+  "start": "2026-11-26T15:45",
+  "end": "2026-11-26T16:45",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "swimming lesons wednesday 4pm",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Swimming lessons",
+  "start": "2026-11-25T16:00",
+  "end": "2026-11-25T17:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "call the bank at ten forty five",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Call the bank",
+  "start": "2026-11-23T10:45",
+  "end": "2026-11-23T11:45",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "dinner at seven thirty friday",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Dinner",
+  "start": "2026-11-27T19:30",
+  "end": "2026-11-27T20:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "pickup prescriptoin at 3",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Pickup prescription",
+  "start": "2026-11-23T15:00",
+  "end": "2026-11-23T16:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "Um, physio on Monday at two",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Physio",
+  "start": "2026-11-30T14:00",
+  "end": "2026-11-30T15:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "shift at the warehouse tomorow at 6 am",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Shift at the warehouse",
+  "start": "2026-11-24T06:00",
+  "end": "2026-11-24T07:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "meet contracter at the house fri 9",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Meet contractor at the house",
+  "start": "2026-11-27T09:00",
+  "end": "2026-11-27T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "book club next wendsday at seven",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Book club",
+  "start": "2026-12-02T19:00",
+  "end": "2026-12-02T20:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null,
+  "alts": [
+   {
+    "kind": "event",
+    "title": "Book club",
+    "start": "2026-11-25T19:00",
+    "end": "2026-11-25T20:00",
+    "repeat": null,
+    "zone": null,
+    "loc": null,
+    "cal": null
+   }
+  ]
+ },
+ {
+  "input": "Christmas consert dec 17 at 6:30",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Christmas concert",
+  "start": "2026-12-17T18:30",
+  "end": "2026-12-17T19:30",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "take mom to her appointment tuesday at 1 oclock",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Take mom to her appointment",
+  "start": "2026-11-24T13:00",
+  "end": "2026-11-24T14:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "Dentist. Tuesday. 9 AM.",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Dentist",
+  "start": "2026-11-24T09:00",
+  "end": "2026-11-24T10:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ },
+ {
+  "input": "hockey tonite at 9",
+  "cat": "typos-dictation",
+  "kind": "event",
+  "title": "Hockey",
+  "start": "2026-11-23T21:00",
+  "end": "2026-11-23T22:00",
+  "repeat": null,
+  "zone": null,
+  "loc": null,
+  "cal": null
+ }
+]

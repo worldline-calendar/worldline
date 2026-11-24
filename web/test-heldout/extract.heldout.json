@@ -1,0 +1,773 @@
+[
+ {
+  "id": "soccer-winter",
+  "type": "email",
+  "text": "From: Northside Youth Soccer <info@nysl.ca>\nSent: Thu, Nov 19, 2026\nSubject: U10 Winter Indoor Schedule — Team Blue\n\nHi parents,\nWinter indoor season starts Saturday Dec 5 at the Lakeshore Dome (Field 2). Games are every Saturday 9:00–10:00 am through Jan 30, with no games Dec 26 or Jan 2.\nPicture day is Saturday Jan 9 — arrive 8:30.\nPlease pay the $85 uniform fee by Monday Nov 30.\nQuestions? Call Coach Dana at 416-555-0193. Registration #NY-2026-4471.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Team Blue indoor soccer",
+    "start": "2026-12-05 09:00",
+    "end": "2026-12-05 10:00",
+    "loc": "Lakeshore Dome, Field 2",
+    "repeat": "FREQ=WEEKLY;BYDAY=SA;UNTIL=20270130;EXDATE=20261226,20270102"
+   },
+   {
+    "kind": "event",
+    "title": "Soccer picture day",
+    "start": "2027-01-09 08:30",
+    "end": "2027-01-09 09:30",
+    "loc": "Lakeshore Dome"
+   },
+   {
+    "kind": "deadline",
+    "title": "Pay uniform fee ($85)",
+    "start": "2026-11-30 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "vet-confirm",
+  "type": "email",
+  "text": "Paws & Claws Veterinary Clinic\nAppointment Confirmation #A-88213\n\nPatient: Biscuit (canine)\nDate: Wednesday, December 2, 2026\nTime: 3:40 PM (please arrive 10 minutes early)\nService: Annual vaccines + dental check, approx. 30 min\nLocation: 812 Danforth Ave, Toronto\nBiscuit's last visit was June 14, 2026.\nPlease fast Biscuit from midnight the night before.\nTo cancel call 647-555-2210 at least 24 hours ahead.\n© 2026 Paws & Claws",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Biscuit vet appointment",
+    "start": "2026-12-02 15:40",
+    "end": "2026-12-02 16:10",
+    "loc": "812 Danforth Ave, Toronto"
+   },
+   {
+    "kind": "task",
+    "title": "Fast Biscuit from midnight",
+    "start": "2026-12-01",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "landlord-notice",
+  "type": "letter",
+  "text": "NOTICE TO TENANTS — 45 Wellesley St E\nDate: November 16, 2026\n\n1. Annual suite inspection: Management will enter units between 9:00 a.m. and 4:00 p.m. on Tuesday, December 8, 2026. You do not need to be home.\n2. Rent increase: In accordance with the guideline, your monthly rent will increase by 2.1% effective February 1, 2027. (Your last increase took effect February 1, 2026.)\n3. Parking renewals are due by December 15.\nProperty Manager: R. Osei, 416-555-7781",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Suite inspection",
+    "start": "2026-12-08 09:00",
+    "end": "2026-12-08 16:00",
+    "loc": "45 Wellesley St E"
+   },
+   {
+    "kind": "event",
+    "title": "Rent increase takes effect",
+    "start": "2027-02-01",
+    "end": "2027-02-01",
+    "allDay": true
+   },
+   {
+    "kind": "deadline",
+    "title": "Renew parking",
+    "start": "2026-12-15 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "wedding",
+  "type": "invitation",
+  "text": "Together with their families\nPRIYA SHAH & MARCUS LEE\nrequest the pleasure of your company at their wedding\n\nSaturday, the fifteenth of May, two thousand twenty-seven\nCeremony at three o'clock in the afternoon\nSt. Andrew's Church, 73 Simcoe Street, Toronto\n\nReception to follow at six o'clock\nThe Arcadian Court, 401 Bay Street\nDinner, dancing, and celebration until midnight\n\nKindly reply by the first of April",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Priya & Marcus wedding ceremony",
+    "start": "2027-05-15 15:00",
+    "end": "2027-05-15 16:00",
+    "loc": "St. Andrew's Church, 73 Simcoe Street, Toronto"
+   },
+   {
+    "kind": "event",
+    "title": "Priya & Marcus wedding reception",
+    "start": "2027-05-15 18:00",
+    "end": "2027-05-16 00:00",
+    "loc": "The Arcadian Court, 401 Bay Street"
+   },
+   {
+    "kind": "deadline",
+    "title": "RSVP to Priya & Marcus wedding",
+    "start": "2027-04-01 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "interview-zoom",
+  "type": "email",
+  "text": "From: Talent Team, Harbourline Logistics\nSent: Monday, November 23, 2026 9:12 AM\nSubject: Interview — Operations Coordinator\n\nHi Jordan,\nThanks for applying! We'd like to invite you to a 45-minute video interview with Sam and Leila on Thursday, December 3 at 1:30 PM Pacific Time.\nZoom: https://zoom.us/j/84422019937  Passcode: 551203\nPlease confirm by end of day tomorrow.\nJob ID: 2026-OPS-118",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Interview with Harbourline Logistics",
+    "start": "2026-12-03 13:30",
+    "end": "2026-12-03 14:15",
+    "zone": "America/Los_Angeles",
+    "loc": "https://zoom.us/j/84422019937"
+   },
+   {
+    "kind": "deadline",
+    "title": "Confirm Harbourline interview",
+    "start": "2026-11-24 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "court-notice",
+  "type": "letter",
+  "text": "ONTARIO COURT OF JUSTICE\nNOTICE OF HEARING\nCourt File No. 26-T-04417\n\nTAKE NOTICE that the trial of this matter, originally scheduled for October 6, 2026, has been adjourned and will now be heard on Monday, January 18, 2027 at 9:30 a.m. in Courtroom 403, 10 Armoury Street, Toronto.\nAny disclosure requests must be filed no later than December 18, 2026.\nFailure to attend may result in a conviction in your absence.\nDated at Toronto this 12th day of November, 2026.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Court hearing (file 26-T-04417)",
+    "start": "2027-01-18 09:30",
+    "end": "2027-01-18 10:30",
+    "loc": "Courtroom 403, 10 Armoury Street, Toronto"
+   },
+   {
+    "kind": "deadline",
+    "title": "File disclosure requests",
+    "start": "2026-12-18 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "volunteer-shift",
+  "type": "email",
+  "text": "Subject: You're signed up! Daily Bread Food Bank\nThanks for volunteering, Alex. Your shifts:\n• Sat Dec 12, 2026 — Holiday Sort, 8:30 AM – 12:30 PM\n• Sat Dec 19, 2026 — Holiday Sort, 8:30 AM – 12:30 PM\nLocation: 191 New Toronto St, Etobicoke (Door 4)\nPlease complete the online safety orientation before your first shift.\nVolunteer ID 300982 | Charity # 11924 4867 RR0001",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Food bank holiday sort",
+    "start": "2026-12-12 08:30",
+    "end": "2026-12-12 12:30",
+    "loc": "191 New Toronto St, Etobicoke (Door 4)"
+   },
+   {
+    "kind": "event",
+    "title": "Food bank holiday sort",
+    "start": "2026-12-19 08:30",
+    "end": "2026-12-19 12:30",
+    "loc": "191 New Toronto St, Etobicoke (Door 4)"
+   },
+   {
+    "kind": "task",
+    "title": "Complete food bank safety orientation",
+    "start": "2026-12-11",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "power-outage",
+  "type": "notice",
+  "text": "Toronto Hydro — Planned Power Interruption\nTo improve reliability, we will interrupt power to your area on Wednesday, December 9, 2026 from 9:00 a.m. to 3:00 p.m.\nAffected: Dovercourt Rd between Bloor St W and Dupont St.\nIf weather is poor, the work will be moved to Thursday, December 10 at the same times.\nReference 2026-PO-55190. Emergencies: 416-542-8000.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Planned power outage",
+    "start": "2026-12-09 09:00",
+    "end": "2026-12-09 15:00",
+    "loc": "Dovercourt Rd"
+   }
+  ]
+ },
+ {
+  "id": "theatre-tickets",
+  "type": "email",
+  "text": "Mirvish — Order Confirmation\nOrder #MV7719042  Placed Nov 21, 2026\nWICKED\nPrincess of Wales Theatre, 300 King St W\nFriday, January 8, 2027 · 7:30 PM\nOrchestra Row J, Seats 104–105\nRunning time approximately 2 hours 45 minutes including intermission.\nDoors open 45 minutes before showtime.\n© 2027 Mirvish Productions",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Wicked",
+    "start": "2027-01-08 19:30",
+    "end": "2027-01-08 22:15",
+    "loc": "Princess of Wales Theatre, 300 King St W"
+   }
+  ]
+ },
+ {
+  "id": "bookclub-thread",
+  "type": "text thread",
+  "text": "[Sat Nov 21] Maya: Book club Thursday the 26th at 7 at mine? We're doing Tomorrow x3\n[Sat Nov 21] Ben: 👍\n[Sun Nov 22] Rosa: Can't do Thurs, kid's concert. Any chance of Sunday?\n[Sun Nov 22] Maya: Ok new plan: Sunday Nov 29, 4pm, still my place (22 Grace St)\n[Sun Nov 22] Ben: works\n[Mon Nov 23] Rosa: perfect, I'll bring dessert",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Book club",
+    "start": "2026-11-29 16:00",
+    "end": "2026-11-29 17:00",
+    "loc": "22 Grace St"
+   }
+  ]
+ },
+ {
+  "id": "benefits-enrolment",
+  "type": "email",
+  "text": "From: People & Culture\nSent: November 18, 2026\nSubject: 2027 Benefits Open Enrolment is now open\n\nOpen enrolment runs from Monday, November 23 through Friday, December 4, 2026. Make your 2027 elections in Workday by 11:59 PM ET on December 4. If you do nothing, your 2026 coverage rolls over.\nJoin an optional info session: Tuesday, November 24, 12:00–12:45 PM (Teams).\nNew coverage takes effect January 1, 2027.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Benefits open enrolment",
+    "start": "2026-11-23",
+    "end": "2026-12-04",
+    "allDay": true
+   },
+   {
+    "kind": "deadline",
+    "title": "Make 2027 benefits elections",
+    "start": "2026-12-04 23:59",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "Benefits info session",
+    "start": "2026-11-24 12:00",
+    "end": "2026-11-24 12:45",
+    "loc": "Teams"
+   }
+  ]
+ },
+ {
+  "id": "conference-accept",
+  "type": "email",
+  "text": "Subject: CHRA Annual Conference 2027 — Your proposal has been accepted\nDear Ms. Alvarez,\nWe are pleased to accept your talk \"Retention in Small Teams\" for the Canadian HR Association conference, April 21–23, 2027, Vancouver Convention Centre.\nYour session: Thursday, April 22, 10:15–10:45 AM (Room 211). All times Pacific.\nSpeakers must register by February 15, 2027 and upload slides by April 9.\nSubmission ID 1187.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "CHRA conference",
+    "start": "2027-04-21",
+    "end": "2027-04-23",
+    "allDay": true,
+    "loc": "Vancouver Convention Centre"
+   },
+   {
+    "kind": "event",
+    "title": "My CHRA talk: Retention in Small Teams",
+    "start": "2027-04-22 10:15",
+    "end": "2027-04-22 10:45",
+    "zone": "America/Vancouver",
+    "loc": "Vancouver Convention Centre, Room 211"
+   },
+   {
+    "kind": "deadline",
+    "title": "Register for CHRA conference",
+    "start": "2027-02-15 17:00",
+    "end": null
+   },
+   {
+    "kind": "deadline",
+    "title": "Upload CHRA slides",
+    "start": "2027-04-09 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "parent-teacher",
+  "type": "email",
+  "text": "Subject: Interview booking confirmed — Riverdale PS\nYour parent-teacher interview is booked:\nTeacher: Mr. Haddad (Grade 4, Room 12)\nDate: Thursday, December 3, 2026\nTime: 6:20 – 6:30 PM\nReport cards go home Friday, November 27.\nBooking ref PTI-55302",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Parent-teacher interview with Mr. Haddad",
+    "start": "2026-12-03 18:20",
+    "end": "2026-12-03 18:30",
+    "loc": "Riverdale PS, Room 12"
+   }
+  ]
+ },
+ {
+  "id": "car-service",
+  "type": "email",
+  "text": "Hi Nadia, your 2021 Honda Civic is due for service.\nOdometer at last visit (May 30, 2026): 48,210 km.\nWe've reserved Tuesday December 1 at 8:00 AM for an oil change + tire swap (about 90 min). Reply YES to keep it or call 905-555-0148.\nDowntown Honda, 761 Dundas St E",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Civic oil change + tire swap",
+    "start": "2026-12-01 08:00",
+    "end": "2026-12-01 09:30",
+    "loc": "Downtown Honda, 761 Dundas St E"
+   },
+   {
+    "kind": "task",
+    "title": "Reply to confirm car service",
+    "start": "2026-11-30",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "dentist-reschedule",
+  "type": "email",
+  "text": "Sent: Fri Nov 20, 2026\nDue to a scheduling conflict, your hygiene appointment on Monday, November 30 at 2:00 PM has been CANCELLED.\nYour new appointment: Friday, December 11 at 10:30 AM with Dr. Kim (1 hour).\nBloor West Dental, 2300 Bloor St W",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Dentist cleaning",
+    "start": "2026-12-11 10:30",
+    "end": "2026-12-11 11:30",
+    "loc": "Bloor West Dental, 2300 Bloor St W"
+   }
+  ]
+ },
+ {
+  "id": "flight-itinerary",
+  "type": "email",
+  "text": "Air Canada — Booking Confirmation ABX7QP\nToronto (YYZ) → Halifax (YHZ)\nAC 604  Wed 23 Dec 2026  Departs 17:45 (Toronto)  Arrives 21:05 (Halifax)\nHalifax (YHZ) → Toronto (YYZ)\nAC 611  Sat 02 Jan 2027  Departs 13:10 (Halifax)  Arrives 14:40 (Toronto)\nOnline check-in opens 24 hours before departure.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Flight AC 604 YYZ→YHZ",
+    "start": "2026-12-23 17:45",
+    "end": "2026-12-23 20:05",
+    "loc": "Toronto Pearson (YYZ)"
+   },
+   {
+    "kind": "event",
+    "title": "Flight AC 611 YHZ→YYZ",
+    "start": "2027-01-02 13:10",
+    "end": "2027-01-02 13:40",
+    "zone": "America/Halifax",
+    "loc": "Halifax Stanfield (YHZ)"
+   }
+  ]
+ },
+ {
+  "id": "swim-lessons",
+  "type": "email",
+  "text": "City of Toronto Parks & Rec — Registration receipt #PR-0904471\nProgram: Swimmer 3 (ages 6–8)\nLocation: Wallace Emerson Community Centre pool\nTuesdays 5:30–6:00 PM, January 12 – March 16, 2027 (no class March 16 — March Break; final class March 9)\nAmount paid: $96.25",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Swim lessons (Swimmer 3)",
+    "start": "2027-01-12 17:30",
+    "end": "2027-01-12 18:00",
+    "loc": "Wallace Emerson Community Centre pool",
+    "repeat": "FREQ=WEEKLY;BYDAY=TU;UNTIL=20270309"
+   }
+  ]
+ },
+ {
+  "id": "strata-minutes",
+  "type": "minutes",
+  "text": "Minutes — Board of Directors, TSCC 2291\nMeeting held Tuesday, November 17, 2026, 7:00 PM, party room\nPresent: J. Park (chair), L. Brown, T. Nguyen\n1. Minutes of October 20 approved.\n2. Elevator modernization: Elevator B will be out of service Jan 11–22, 2027.\n3. Action: T. Nguyen to obtain three window-cleaning quotes by December 11.\n4. AGM set for Thursday, February 25, 2027 at 7:00 PM in the party room.\nNext board meeting: Tuesday, December 15, 7:00 PM.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Elevator B out of service",
+    "start": "2027-01-11",
+    "end": "2027-01-22",
+    "allDay": true
+   },
+   {
+    "kind": "task",
+    "title": "Get three window-cleaning quotes (T. Nguyen)",
+    "start": "2026-12-11",
+    "end": null
+   },
+   {
+    "kind": "event",
+    "title": "TSCC 2291 AGM",
+    "start": "2027-02-25 19:00",
+    "end": "2027-02-25 20:00",
+    "loc": "Party room"
+   },
+   {
+    "kind": "event",
+    "title": "Condo board meeting",
+    "start": "2026-12-15 19:00",
+    "end": "2026-12-15 20:00",
+    "loc": "Party room"
+   }
+  ]
+ },
+ {
+  "id": "family-chat",
+  "type": "chat",
+  "text": "Mom: Reminder Grandpa's 80th is Sunday Dec 13, lunch at 12:30 at Lai Wah Heen\nMom: Can someone pick up the cake from Dufflet Friday after 4?\nLeo: I'll get the cake\nMom: thanks! also everyone send me $40 for the gift by this Wednesday",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Grandpa's 80th lunch",
+    "start": "2026-12-13 12:30",
+    "end": "2026-12-13 13:30",
+    "loc": "Lai Wah Heen"
+   },
+   {
+    "kind": "task",
+    "title": "Pick up cake from Dufflet",
+    "start": "2026-11-27",
+    "end": null
+   },
+   {
+    "kind": "deadline",
+    "title": "Send Mom $40 for Grandpa's gift",
+    "start": "2026-11-25 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "library-hold",
+  "type": "email",
+  "text": "Toronto Public Library\nYour hold is ready: \"The Wager\" by David Grann\nPick up at: Lillian H. Smith branch by Wed Dec 2, 2026.\nCard ending 4410",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Pick up library hold (The Wager)",
+    "start": "2026-12-02 17:00",
+    "end": null,
+    "loc": "Lillian H. Smith branch"
+   }
+  ]
+ },
+ {
+  "id": "hockey-rink",
+  "type": "email",
+  "text": "Sent: Tuesday, November 10, 2026\nSubject: Rink booking — Ice Dogs beer league\nConfirmed: Fridays 10:15–11:15 PM at Mattamy Athletic Centre, starting Nov 13, 2026 for 12 weeks.\nNote: Friday December 25 and January 1 are cancelled (rink closed).",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Ice Dogs hockey",
+    "start": "2026-11-13 22:15",
+    "end": "2026-11-13 23:15",
+    "loc": "Mattamy Athletic Centre",
+    "repeat": "FREQ=WEEKLY;BYDAY=FR;COUNT=12;EXDATE=20261225,20270101"
+   }
+  ]
+ },
+ {
+  "id": "tax-installment",
+  "type": "letter",
+  "text": "Canada Revenue Agency\nInstalment Reminder\nDate: November 2, 2026\nOur records show you should pay an instalment of $1,250.00 by December 15, 2026.\nPrevious instalment amounts: March 15, June 15, September 15, 2026.\nAccount number ending 7712 RC0001",
+  "items": [
+   {
+    "kind": "deadline",
+    "title": "Pay CRA tax instalment ($1,250)",
+    "start": "2026-12-15 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "photographer",
+  "type": "email",
+  "text": "Hi Tom & Grace! So excited for your engagement shoot.\nLet's meet at Evergreen Brick Works on Sunday the 6th at 2:30 — golden hour is early in December. Plan on about 90 minutes.\nRemaining balance of $350 is due the day of. Please send me your outfit photos by Thursday!\n— Jen",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Engagement photo shoot",
+    "start": "2026-12-06 14:30",
+    "end": "2026-12-06 16:00",
+    "loc": "Evergreen Brick Works"
+   },
+   {
+    "kind": "task",
+    "title": "Send outfit photos to Jen",
+    "start": "2026-11-26",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "pharmacy-flu",
+  "type": "text",
+  "text": "Shoppers Drug Mart: Your flu shot appt is booked for Sat Nov 28 at 11:15am at 360 Bloor St W. Reply C to cancel. Msg&data rates may apply.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Flu shot",
+    "start": "2026-11-28 11:15",
+    "end": "2026-11-28 12:15",
+    "loc": "Shoppers Drug Mart, 360 Bloor St W"
+   }
+  ]
+ },
+ {
+  "id": "recital",
+  "type": "newsletter-with-events",
+  "text": "Maple Leaf Music Studio — December News\nWinter Recital: Saturday, December 19 at 2:00 PM, Church of the Redeemer, 162 Bloor St W. Students arrive by 1:30.\nStudio closed December 21 – January 3 for the holidays. Lessons resume Monday, January 4.\nTuition for January is due January 4.\nThank you for a wonderful 2026!",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Winter recital",
+    "start": "2026-12-19 14:00",
+    "end": "2026-12-19 15:00",
+    "loc": "Church of the Redeemer, 162 Bloor St W"
+   },
+   {
+    "kind": "event",
+    "title": "Music studio closed",
+    "start": "2026-12-21",
+    "end": "2027-01-03",
+    "allDay": true
+   },
+   {
+    "kind": "deadline",
+    "title": "Pay January music tuition",
+    "start": "2027-01-04 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "gym-class",
+  "type": "email",
+  "text": "Your spot is reserved!\nClass: Spin 45 with Coach Rae\nWhen: Wed, Nov 25 · 6:15 PM (45 min)\nWhere: Studio B, Academy of Lions, 64 Ossington Ave\nLate cancellation (<12 h) fee: $15\nBooking ID 99-1182-0",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Spin class",
+    "start": "2026-11-25 18:15",
+    "end": "2026-11-25 19:00",
+    "loc": "Studio B, Academy of Lions, 64 Ossington Ave"
+   }
+  ]
+ },
+ {
+  "id": "contractor-quote",
+  "type": "email",
+  "text": "Sent: Mon Nov 23, 2026\nHi, thanks for having me out last Thursday. Quote #Q-3318 attached for the bathroom reno ($14,200). The quote is valid for 30 days. If you want to go ahead, we can start demolition Monday January 11 and should wrap by Friday January 29. A 25% deposit is required to book the dates.\n— Marco, MR Renovations, 289-555-0101",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Bathroom reno (MR Renovations)",
+    "start": "2027-01-11",
+    "end": "2027-01-29",
+    "allDay": true
+   },
+   {
+    "kind": "deadline",
+    "title": "Contractor quote expires",
+    "start": "2026-12-23 17:00",
+    "end": null
+   },
+   {
+    "kind": "task",
+    "title": "Pay 25% reno deposit to book dates",
+    "start": null,
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "passport-appt",
+  "type": "email",
+  "text": "Service Canada — Appointment\nYour appointment to submit a passport application is scheduled for:\nMonday, December 14, 2026 at 11:00 AM (Eastern)\nService Canada Centre, 25 St Clair Ave E\nBring: completed form PPTC 153, two photos, proof of citizenship, current passport (expires March 3, 2027).\nConfirmation code 4F7-K22",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Passport appointment",
+    "start": "2026-12-14 11:00",
+    "end": "2026-12-14 12:00",
+    "loc": "Service Canada Centre, 25 St Clair Ave E"
+   },
+   {
+    "kind": "task",
+    "title": "Get passport photos",
+    "start": "2026-12-14",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "daycare-closure",
+  "type": "notice",
+  "text": "Little Sprouts Daycare — Parent Notice\nThe centre will be closed for a staff PD day on Friday, December 4.\nHoliday closure: December 24, 2026 through January 1, 2027 inclusive.\nThe holiday party for families is Thursday, December 17 from 4:00 to 5:30 PM. Please sign up to bring a dish on the sheet by the door by December 10.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Daycare closed (PD day)",
+    "start": "2026-12-04",
+    "end": "2026-12-04",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Daycare holiday closure",
+    "start": "2026-12-24",
+    "end": "2027-01-01",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Daycare holiday party",
+    "start": "2026-12-17 16:00",
+    "end": "2026-12-17 17:30",
+    "loc": "Little Sprouts Daycare"
+   },
+   {
+    "kind": "task",
+    "title": "Sign up to bring a dish to daycare party",
+    "start": "2026-12-10",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "webinar-london",
+  "type": "email",
+  "text": "Subject: You're registered — Small Business Export Basics\nTuesday 8 December 2026, 15:00–16:00 GMT\nJoin link: https://events.example.co.uk/w/88213\nA recording will be available for 14 days after the event.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Small Business Export Basics webinar",
+    "start": "2026-12-08 15:00",
+    "end": "2026-12-08 16:00",
+    "zone": "Europe/London",
+    "loc": "https://events.example.co.uk/w/88213"
+   }
+  ]
+ },
+ {
+  "id": "garbage-schedule",
+  "type": "notice",
+  "text": "Holiday collection changes — Ward 9\nCollection normally on Friday, December 25 will happen Saturday, December 26.\nCollection normally on Friday, January 1 will happen Saturday, January 2.\nChristmas tree pickup: put trees out on your regular collection day the weeks of January 4 and January 11.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Garbage collection (moved from Fri)",
+    "start": "2026-12-26",
+    "end": "2026-12-26",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Garbage collection (moved from Fri)",
+    "start": "2027-01-02",
+    "end": "2027-01-02",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Christmas tree pickup",
+    "start": "2027-01-08",
+    "end": "2027-01-08",
+    "allDay": true
+   },
+   {
+    "kind": "event",
+    "title": "Christmas tree pickup",
+    "start": "2027-01-15",
+    "end": "2027-01-15",
+    "allDay": true
+   }
+  ]
+ },
+ {
+  "id": "potluck-slack",
+  "type": "chat",
+  "text": "#office-social\nPriyanka: Holiday potluck is Friday Dec 18, noon–2 in the 5th floor kitchen 🎄\nPriyanka: sign-up sheet closes next Wednesday\nDev: Was it not the 11th?\nPriyanka: it was, we moved it because of the audit",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Office holiday potluck",
+    "start": "2026-12-18 12:00",
+    "end": "2026-12-18 14:00",
+    "loc": "5th floor kitchen"
+   },
+   {
+    "kind": "deadline",
+    "title": "Sign up for holiday potluck",
+    "start": "2026-12-02 17:00",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "moving-quote",
+  "type": "email",
+  "text": "Booking confirmed — Two Small Men with Big Hearts\nMove date: Saturday, January 30, 2027. Crew arrival window 8:00–10:00 AM.\nFrom: 45 Wellesley St E #1204 → To: 18 Ravina Cres\nPlease reserve the service elevator with your building for that morning.\nEstimate: 5 hrs @ $159/hr. Job #T2M-61190",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Movers arrive",
+    "start": "2027-01-30 08:00",
+    "end": "2027-01-30 10:00",
+    "loc": "45 Wellesley St E #1204"
+   },
+   {
+    "kind": "task",
+    "title": "Reserve service elevator for move",
+    "start": "2027-01-30",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "blood-donation",
+  "type": "text",
+  "text": "Canadian Blood Services: Thanks Sam! You're booked to donate Mon Dec 21 at 4:40 PM, 67 College St. You're eligible again 56 days after your donation. Reply STOP to opt out.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Blood donation",
+    "start": "2026-12-21 16:40",
+    "end": "2026-12-21 17:40",
+    "loc": "67 College St"
+   }
+  ]
+ },
+ {
+  "id": "knitting-class",
+  "type": "email",
+  "text": "Thanks for signing up for Beginner Knitting at Romni Wools!\n4 sessions: Sundays, January 10, 17, 24 and 31, 2027, 1:00–3:00 PM.\nPlease buy one skein of worsted yarn and 5 mm needles before the first class.",
+  "items": [
+   {
+    "kind": "event",
+    "title": "Beginner knitting class",
+    "start": "2027-01-10 13:00",
+    "end": "2027-01-10 15:00",
+    "loc": "Romni Wools",
+    "repeat": "FREQ=WEEKLY;BYDAY=SU;COUNT=4"
+   },
+   {
+    "kind": "task",
+    "title": "Buy worsted yarn and 5 mm needles",
+    "start": "2027-01-10",
+    "end": null
+   }
+  ]
+ },
+ {
+  "id": "receipt-grocery",
+  "type": "receipt",
+  "text": "LOBLAWS #1012  60 Carlton St\n11/22/2026 18:42  Cashier 07\nBANANAS 1.45  MILK 2L 5.29  BREAD 3.99\nSUBTOTAL 10.73  HST 0.52  TOTAL 11.25\nVISA ****3381 AUTH 044291\nReturns accepted within 30 days with receipt.\nThank you! Tel 416-555-0122",
+  "items": []
+ },
+ {
+  "id": "newsletter-history",
+  "type": "newsletter",
+  "text": "The Annex Residents' Association — Autumn Newsletter 2026\nLooking back: our 1976 founding meeting drew 40 neighbours, and on June 3, 2023 we planted 120 trees along Brunswick Ave.\nThis fall's survey had 312 responses — thank you! Full results are on our website.\n© 2026 ARA. Unsubscribe anytime.",
+  "items": []
+ },
+ {
+  "id": "order-shipped",
+  "type": "email",
+  "text": "Your order #112-4478213-5520101 has shipped!\nOrdered: Nov 20, 2026. Delivered: Nov 22, 2026 — left at front door.\nItem: USB-C cable (2-pack). Return window closed? No action needed.",
+  "items": []
+ },
+ {
+  "id": "warranty-card",
+  "type": "letter",
+  "text": "Thank you for purchasing the Breville Barista Express.\nModel BES870 · Serial 2611A0457 · Manufactured 09/2026\nYour product is covered by a 2-year limited warranty from the date of purchase.\nKeep your receipt as proof of purchase. Customer care: 1-866-555-0177 (Mon–Fri).",
+  "items": []
+ },
+ {
+  "id": "cancelled-party",
+  "type": "text thread",
+  "text": "[Fri Nov 20] Chloe: Party at mine Sat Dec 5, 8pm!\n[Sun Nov 22] Chloe: ugh sorry everyone, landlord said no — party's cancelled. Next year!\n[Sun Nov 22] Ari: no worries",
+  "items": []
+ }
+]
