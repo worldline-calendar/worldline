@@ -18,7 +18,7 @@ import { fixDateTypos, typoDistance } from './fuzzy';
 import { prefs } from './prefs';
 import { ZONE_ABBR, ZONE_WORDS, zoneByName } from './zoneNames';
 import { AIRPORTS } from './airports';
-import { instantOf } from './zone';
+import { instantOf, wallClock } from './zone';
 
 export interface Parsed {
   title: string;
@@ -100,7 +100,7 @@ function takeRepeat(input: string): RepeatInfo {
   const ORD = '(first|1st|second|2nd|third|3rd|fourth|4th|last)';
   const ordN = (w: string) => (/last/i.test(w) ? -1 : /^(first|1)/i.test(w) ? 1 : /^(second|2)/i.test(w) ? 2 : /^(third|3)/i.test(w) ? 3 : 4);
   const DAYNUM = '(?:the\\s+)?(\\d{1,2})(?:st|nd|rd|th)?';
-  const EACH_MONTH = '(?:of\\s+)?(?:each|every|the|a)\\s+month|monthly|a\\s+month';
+  const EACH_MONTH = '(?:of\\s+)?(?:each|every|the|a)\\s+month|of\\s+month|monthly|a\\s+month';
   // "2nd and 4th monday(s)", "1st & 3rd thursdays of the month": several weeks of the month
   t = t.replace(new RegExp(`\\b(?:every\\s+|on\\s+)?(?:the\\s+)?${ORD}\\s*(?:,|and|&)\\s*(?:the\\s+)?${ORD}\\s+(${WD})s?(?:\\s+(?:${EACH_MONTH}))?\\b`, 'i'), (_, a: string, b: string, wd: string) => {
     rule = { freq: 'monthly', interval: 1, byDay: [wdOf(wd)!], nths: [...new Set([ordN(a), ordN(b)])].sort((x, y) => (x < 0 ? 9 : x) - (y < 0 ? 9 : y)) };
@@ -111,6 +111,12 @@ function takeRepeat(input: string): RepeatInfo {
   // "on the 20th monthly", "monthly on the 20th"
   if (!rule)
     t = t.replace(new RegExp(`\\b(?:on\\s+)?${DAYNUM}\\s*(?:,|and|&)\\s*(?:the\\s+)?(?:(\\d{1,2})(?:st|nd|rd|th)?|(last)(?:\\s+day)?)\\s+(?:${EACH_MONTH})\\b`, 'i'), (_, a: string, b?: string, last?: string) => {
+      rule = { freq: 'monthly', interval: 1, byMonthDay: [+a, last ? -1 : +b!] };
+      return ' ';
+    });
+  // "on the 1st and 15th", "the 15th and last day" with no "of each month": two days of the month can only repeat
+  if (!rule)
+    t = t.replace(/\b(?:on\s+)?(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)\s*(?:,|and|&)\s*(?:the\s+)?(?:(\d{1,2})(?:st|nd|rd|th)|(last)(?:\s+day)?)\b/i, (_, a: string, b?: string, last?: string) => {
       rule = { freq: 'monthly', interval: 1, byMonthDay: [+a, last ? -1 : +b!] };
       return ' ';
     });
@@ -188,6 +194,11 @@ function takeRepeat(input: string): RepeatInfo {
     take(new RegExp(`\\b(?:on\\s+)?(${WD}s?(?:\\s*(?:,|/|&|\\+|and|\\s)\\s*${WD}s?)+)\\b`, 'i'), (_, list) =>
       set('weekly', 1, [...new Set(list.split(/\s*(?:,|\/|&|\+|\band\b|\s)\s*/).map((w: string) => wdOf(w.trim())).filter((d: number | undefined): d is number => d !== undefined))].sort()),
     );
+  if (rule && (rule as Recurrence).freq === 'monthly' && /\bevery\s+other\s+month\b|\bbi-?monthly\b/i.test(input)) {
+    (rule as Recurrence).interval = 2;
+    t = t.replace(/\bevery\s+other\s+month\b|\bbi-?monthly\b/i, ' ');
+  }
+  if (!rule) take(/\b(?:every|each)\s+(?:yr|year)\b|\bannually\b|\byearly\b/i, () => set('yearly'));
   if (!rule && wantsRepeat) set('weekly');
   // "swim lessons sat 9am until feb 27": a weekday with an end date repeats on it
   if (!rule && new RegExp(`\\b${WD}\\b[^]*\\b(?:until|till|thru|through)\\s+(?:${MONTH_RE}|\\d)`, 'i').test(t)) {
@@ -247,7 +258,7 @@ const MEALS: [RegExp, number][] = [
 const LONE_MONTH =
   /(?<!\d\s*)\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)\b(?!\.?\s*\d{1,2}(?:st|nd|rd|th)?\b(?!\/\d))/gi;
 // Room numbers etc. ("Room 1318") must not be read as years; "at 1530" (24-hour time) and 20xx years are kept.
-const LONG_NUMBER = /(?<![:/\d]|\bat\s)\b(?!20\d\d\b)\d{3,}\b(?![:/])/g;
+const LONG_NUMBER = /(?<![:/\d-]|\bat\s|^\s*)\b(?!20\d\d\b)(?!(?:[01]\d|2[0-3])[0-5]\d\s*-\s*(?:[01]\d|2[0-3])[0-5]\d\b)\d{3,}\b(?![:/])/g;
 // "Cottage weekend" is a name; only "this/next/the weekend" (or "on/over the weekend") is a date.
 const LONE_WEEKEND = /(?<!\b(?:this|next|the|coming|every|each|on)\s+)\bweekend\b/gi;
 // Addresses and site numbers are places, not times: "22 Birch Rd", "123 PINE ST", "at 12 Oak", "Lot 14", "Unit 5"
@@ -299,13 +310,14 @@ function normalize(input: string, now: Date) {
   t = t.replace(/\bnext week\s+((?:mon|tue|wed|thu|fri|sat|sun)[a-z]*)\b/gi, '$1 next week');
   t = t.replace(/\bmid-?afternoon\b/gi, '3pm').replace(/\bmid-?morning\b/gi, '10am').replace(/\blate afternoon\b/gi, '4pm').replace(/\bearly evening\b/gi, '6pm');
   t = t.replace(/\b([01]\d|2[0-3])([0-5]\d)\s*-\s*([01]\d|2[0-3])([0-5]\d)\b/g, '$1:$2-$3:$4'); // "1300-1500"
+  t = t.replace(/^(\s*)([01]\d|2[0-3])([0-5]\d)\b(?=\s+[a-z])/i, '$1at $2:$3'); // "1500 bed meeting"
   // "from 6 to 7am", "between 7 and 9am", "1-3am": the start is in the morning too
   t = t.replace(/\b(\d{1,2}(?::\d\d)?)\s*(-|to|and|until|till)\s*(\d{1,2}(?::\d\d)?)\s*am\b/gi, '$1am $2 $3am');
   t = t.replace(/@\s*(?=\d|quarter\b|half\b|noon\b|midnight\b)/gi, 'at ');
   // holidays as dates — unless the sentence gives its own date ("Christmas party dec 18" is on the 18th)
-  if (!/\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d|\b\d{1,2}\/\d{1,2}\b/i.test(t)) t = t.replace(/\bchristmas eve\b/gi, 'dec 24').replace(/\b(?:christmas|xmas)(?:\s+day)?\b/gi, 'dec 25').replace(/\bboxing day\b/gi, 'dec 26')
+  if (!/\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d|\b\d{1,2}\/\d{1,2}\b/i.test(t)) t = t.replace(/\bchristmas eve\b/gi, 'dec 24').replace(/\b(?:christmas|xmas)(?:\s+day)?\b/gi, 'dec 25').replace(/\bboxing day\b/gi, 'dec 26 Zhol1')
     .replace(/\bnew year'?s eve\b/gi, 'dec 31').replace(/\bnew year'?s(?:\s+day)?\b(?!\s+(?:brunch|party|dinner|resolution))/gi, 'jan 1')
-    .replace(/\bhalloween\b/gi, 'oct 31').replace(/\bvalentine'?s(?:\s+day)?\b/gi, 'feb 14').replace(/\bcanada day\b/gi, 'jul 1');
+    .replace(/\bremembrance day\b/gi, 'nov 11 Zhol0').replace(/\bhalloween\b/gi, 'oct 31').replace(/\bvalentine'?s(?:\s+day)?\b/gi, 'feb 14').replace(/\bcanada day\b/gi, 'jul 1 Zhol2');
   // "mortgage 15th every month": a bare ordinal is a day of the month ("the 15th") — not after a month name
   t = t.replace(/(^|\s)(\d{1,2})(st|nd|rd|th)(?=\s)/gi, (m, sp, d, suf, off: number) =>
     /\b(?:the|of|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s*$/i.test(t.slice(0, off + sp.length)) ? m : `${sp}the ${d}${suf}`);
@@ -442,7 +454,9 @@ function cleanTitle(title: string, input: string) {
   t = t.replace(/[,;]?\s*\b(?:checklist|todo|to-do|steps)\s*:.*$/i, ' ');
   t = t.replace(/\s(?:a\.?m\.?|p\.?m\.?)(?=\s)/gi, ' ');
   t = t.replace(/\b(?:this|next|that)\s+(?:week|weekend)\b|\b(?:after|before)\s+(?:school|work|class|lunch|dinner)\b|\bfirst thing\b/gi, ' ');
-  t = t.replace(/\b(?:evenings|mornings|afternoons|nights)\b/gi, ' ');
+  t = t.replace(/\b(?:evenings|mornings|afternoons)\b/gi, ' ');
+  t = t.replace(/\b(?:after|before)\s+(?:mass|church|service|work|school|class|practice|lunch|dinner)\b/gi, ' ');
+  t = t.replace(/\b(?:please|thanks|thank you|thx|pls)\s*$/i, ' ').replace(/\s+comma\s+/gi, ', ');
   t = t.replace(/\bin the (?:morning|afternoon|evening)\b/gi, ' ').replace(/\s(?:is|are|will be|must be|should be)\s*$/i, ' ').replace(/\bmust be\s+(?=\w+ed\b)/i, ' ');
   // a day that names the thing ("Sunday service", "Saturday school"): kept even though it also says when
   const named = /^\s*(sunday|saturday)\s+(service|school)\b/i.exec(input);
@@ -454,7 +468,7 @@ function cleanTitle(title: string, input: string) {
   t = t.replace(/[A-Za-z]{4,}/g, (w) => fixWord(w));
   return t.replace(/\s+/g, ' ').trim();
 }
-const VOCAB = ['meeting', 'call', 'appointment', 'dentist', 'doctor', 'dinner', 'lunch', 'breakfast', 'rehearsal', 'interview', 'conference', 'seminar', 'lecture', 'presentation', 'review', 'session', 'inspection', 'showing', 'birthday', 'party', 'practice', 'workout', 'training', 'deadline', 'proposal', 'report', 'submission', 'tutorial', 'office', 'hours', 'consultation', 'therapy', 'haircut', 'flight', 'hotel', 'wedding', 'reception', 'ceremony', 'concert', 'webinar', 'workshop', 'standup', 'retreat', 'committee', 'colloquium', 'meetup', 'coffee', 'drinks', 'client', 'contractor', 'designer', 'teacher', 'student', 'project', 'invoice', 'payment'];
+const VOCAB = ['meeting', 'call', 'appointment', 'dentist', 'doctor', 'dinner', 'lunch', 'breakfast', 'rehearsal', 'interview', 'conference', 'seminar', 'lecture', 'presentation', 'review', 'session', 'inspection', 'showing', 'birthday', 'party', 'practice', 'workout', 'training', 'deadline', 'proposal', 'report', 'submission', 'tutorial', 'office', 'hours', 'consultation', 'therapy', 'haircut', 'flight', 'hotel', 'wedding', 'reception', 'ceremony', 'concert', 'webinar', 'workshop', 'standup', 'retreat', 'committee', 'colloquium', 'meetup', 'coffee', 'drinks', 'client', 'contractor', 'designer', 'teacher', 'student', 'project', 'invoice', 'payment', 'department', 'appointment', 'rehearsal'];
 /** A common calendar word typed with a slip ("meetign", "calll", "apointment") — names and other words are left alone. */
 function fixWord(w: string) {
   const lw = w.toLowerCase();
@@ -501,7 +515,7 @@ const WD_INDEX: Record<string, number> = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 
 const wdNum = (w: string) => WD_INDEX[w.slice(0, 3).toLowerCase()];
 const dateWords = (d: Date) => ` ${MONTHS3[d.getMonth()]} ${d.getDate()} ${d.getFullYear()} `;
 const spanWords = (a: Date, b: Date) => ` ${MONTHS3[a.getMonth()]} ${a.getDate()} ${a.getFullYear()} - ${MONTHS3[b.getMonth()]} ${b.getDate()} ${b.getFullYear()} `;
-const N_WORD: Record<string, number> = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, couple: 2, 'a couple of': 2 };
+const N_WORD: Record<string, number> = { eleven: 11, twelve: 12, a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, couple: 2, 'a couple of': 2 };
 const nOf = (w: string) => N_WORD[w.toLowerCase()] ?? +w;
 /** The next `wd` after today (today itself doesn't count), as a date. */
 function coming(now: Date, wd: number, includeToday = false) {
@@ -540,6 +554,15 @@ function resolveChains(t: string, now: Date) {
     return spanWords(s0, e0);
   });
   t = t.replace(/\b((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\s+(\d{1,2})\s+(?:and|&)\s+(\d{1,2})\b(?!\s*(?:am|pm|:))/gi, '$1 $2 - $1 $3'); // "feb 4 and 5"
+  t = t.replace(/\b((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\s+(\d{1,2})\s*(?:through|thru|to|till|-)\s*(\d{1,2})\b(?!\s*(?::|am|pm|[ap]\b))/gi, '$1 $2 - $1 $3'); // "jan 10 through 17"
+  t = t.replace(/\b((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\s+(\d{1,2})((?:\s*,\s*\d{1,2})+)(?:\s*,?\s*(?:and|&)\s*(\d{1,2}))?\b(?!\s*(?::|am|pm))/gi, (_, mo: string, a: string, more: string, last?: string) => {
+    const ds = [a, ...more.split(',').map((x) => x.trim()).filter(Boolean), ...(last ? [last] : [])].map(Number);
+    return `${mo} ${a} - ${mo} ${ds[ds.length - 1]}`; // "dec 18, 19, 20"
+  });
+  t = t.replace(/\b(?:the\s+)?(first|1st|(\d{1,2})(?:st|nd|rd|th))\s+of\s+next\s+month\b/gi, (_, _f: string, d?: string) => {
+    const n = new Date(now.getFullYear(), now.getMonth() + 1, d ? +d : 1);
+    return dateWords(n);
+  });
   t = t.replace(/\b(?:the\s+)?rest\s+of\s+(?:the|this)\s+week\b/gi, () => spanWords(today, addDays(coming(now, 5, true), 0)));
   t = t.replace(/\btoday\s+and\s+tomorrow\b/gi, () => spanWords(today, addDays(today, 1)));
   t = t.replace(/\b(?:the\s+|whole\s+)?week\s+of\s+((?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\s+(\d{1,2})\b/gi, (_, mo: string, d: string) => {
@@ -549,9 +572,18 @@ function resolveChains(t: string, now: Date) {
     const mon = addDays(a, -((a.getDay() + 6) % 7));
     return spanWords(mon, addDays(mon, 4));
   });
-  t = t.replace(new RegExp(`\\b${NUM}\\s+days?\\s+(?:starting|from|beginning)\\s+(?:on\\s+)?(today|tomorrow|${WDX})\\b`, 'gi'), (_, n: string, base: string) => {
-    const b = /today/i.test(base) ? today : /tomorrow/i.test(base) ? addDays(today, 1) : coming(now, wdNum(base), true);
-    return spanWords(b, addDays(b, nOf(n) - 1));
+  // "3 days starting wednesday", "3 day workshop starting wed", "2 weeks starting monday", "4 weeks from jan 4"
+  t = t.replace(new RegExp(`\\b${NUM}[-\\s]+(day|week)s?\\s+((?:[a-z][\\w'-]*\\s+){0,3}?)(?:starting|from|beginning)\\s+(?:on\\s+)?(today|tomorrow|${WDX}|(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\\s+\\d{1,2})\\b`, 'gi'), (_m, n: string, unit: string, middle: string, base: string) => {
+    let b: Date;
+    if (/today/i.test(base)) b = today;
+    else if (/tomorrow/i.test(base)) b = addDays(today, 1);
+    else if (/\d/.test(base)) {
+      const [mo, d] = base.split(/\s+/);
+      b = new Date(now.getFullYear(), MONTHS3.indexOf(mo.slice(0, 3).toLowerCase()), +d);
+      if (b < today) b = new Date(now.getFullYear() + 1, b.getMonth(), b.getDate());
+    } else b = coming(now, wdNum(base), true);
+    const days = nOf(n) * (unit.toLowerCase() === 'week' ? 7 : 1);
+    return ` ${middle}${spanWords(b, addDays(b, days - 1))}`;
   });
   return t;
 }
@@ -569,7 +601,15 @@ function takeZone(t: string): [string, string | undefined] {
     if (zone) return [t.slice(0, a.index) + (a[1] ?? a[3]) + ' ' + t.slice(a.index + a[0].length), zone];
   }
   const m = /\b(?:in\s+)?((?:[A-Za-z][\w.'-]*\s+){0,2}[A-Za-z][\w.'-]*)\s+time\b/i.exec(t);
-  if (!m) return [t, undefined];
+  if (!m) {
+    // a known city right after a time: "3pm Reykjavik", "8pm Manila" (capitalised: it's a place, not a word)
+    const c = /(\d(?:[:.]\d\d)?\s*(?:[ap]\.?m\.?)?)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/.exec(t);
+    if (c) for (const name of [c[2], c[2].split(' ')[0]]) {
+      const zone = zoneByName(name);
+      if (zone) return [t.slice(0, c.index) + c[1] + ' ' + t.slice(c.index + c[1].length).replace(name, ' '), zone];
+    }
+    return [t, undefined];
+  }
   const words = m[1].split(/\s+/);
   for (let k = Math.min(3, words.length); k >= 1; k--) {
     const name = words.slice(-k).join(' ');
@@ -601,12 +641,15 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
   // nouns that end in "night" aren't the night ("pizza night") — but "thursday night" is
   input = input.replace(/\b(?!(?:to|tomorrow|tonight|last|this|next|every|each|on|at|mon|tue|tues|wed|weds|thu|thur|thurs|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday|late|the)\b)([a-z]+)\s+night\b/gi, '$1 Nyght');
   input = input.replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|twenty-one|twenty-two|twenty-three|1[0-9]|2[0-3])\s+hundred(?:\s+hours)?\b/gi, (_, w: string) => `${NUMBER_WORDS[w.toLowerCase()] ?? HUNDREDS[w.toLowerCase()] ?? w}:00`);
+  input = input.replace(/\b(wiht|whit)\b/gi, 'with').replace(/\bdinr\b/gi, 'dinner').replace(/\blnch\b/gi, 'lunch').replace(/\btday\b/gi, 'today').replace(/\b2nite\b|\btonite\b/gi, 'tonight')
+    .replace(/(\d)\s*([ap])m{2,}\b/gi, '$1$2m').replace(/\btil\b/gi, 'till');
   input = input.replace(/\bb4\b/gi, 'before').replace(/\b2\s*mor+ow\b|\b2moro+w?\b/gi, 'tomorrow').replace(/\bweeknights?\b/gi, 'weekdays').replace(/\b(\w+)-long\b/gi, (m, u: string) => (/^(hour|day|week)$/i.test(u) ? `for 1 ${u}` : m));
   const [shielded, unshield] = shieldNames(fixDateTypos(input));
   const repeat = takeRepeat(shielded);
   if (repeat.rule) repeat.text = repeat.text.replace(/^(\s*)(1[0-2]|[1-9])(?=\s+[a-z])(?!\s+(?:am|pm|hours?|hrs?|mins?|minutes?|days?|weeks?|months?|times?)\b)/i, '$1at $2');
   const [afterLeadRaw, lead] = takeLead(repeat.text);
   const [afterLead, zone] = takeZone(afterLeadRaw);
+
   let isDeadline = lead !== undefined || /\b(due|deadline)\b/i.test(afterLead) ||
     /\b(?:closes?|cut-?off|expires|ends)\b(?=\s+(?:on\s+|in\s+)?(?:today|tomorrow|tonight|mon|tue|wed|thu|fri|sat|sun|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|\d))/i.test(afterLead) ||
     /^\s*(?:the\s+)?(?:cut-?off|deadline)\s+(?:for|to)\b/i.test(afterLead);
@@ -615,7 +658,9 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
   // ---- 2. calendar, duration, all-day -------------------------------------------------
   let calendarId: string | undefined;
   text = text.replace(/\s#(\w+)/g, (m, tag: string) => {
-    const cal = calendars.find((c) => c.name.toLowerCase().startsWith(tag.toLowerCase()));
+    // (a prefix, or an abbreviation: "#dept" → Department, "#res" → Research)
+    const abbr = (name: string, tg: string) => { let i = 0; for (const ch of name.toLowerCase()) if (ch === tg[i]) i++; return i === tg.length && name[0].toLowerCase() === tg[0]; };
+    const cal = calendars.find((c) => c.name.toLowerCase().startsWith(tag.toLowerCase())) ?? calendars.find((c) => abbr(c.name, tag.toLowerCase()));
     if (!cal) return m;
     calendarId ??= cal.id; // (the first tag picks; any others are only tags)
     return ' ';
@@ -679,7 +724,12 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
     const e = timeRes.end;
     if (e?.isCertain('hour')) {
       hasEnd = true;
-      end = at(start, e.get('hour')! * 60 + (e.get('minute') ?? 0));
+      // "friday 5pm to sunday 2pm": the end has its own day
+      // (only when the end's own words name a day: "… to sunday 2pm", "… through mon 8am")
+      const endWords = timeRes.text.split(/\s+(?:-|–|to|through|thru|till|until)\s+|\s*-\s*/i).slice(1).join(' ');
+      const ownDay = /\b(?:mon|tue|wed|thu|fri|sat|sun|tomorrow|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i.test(endWords);
+      const endDay = ownDay ? e.date() : start;
+      end = at(endDay, e.get('hour')! * 60 + (e.get('minute') ?? 0));
       if (e.isCertain('meridiem')) { if (end <= start) end = addDays(end, 1); }
       else while (end <= start) end = new Date(end.getTime() + 12 * 60 * MIN); // "11-1" → 11 AM–1 PM
     }
@@ -883,7 +933,7 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
     }
   }
 
-  const DANGLING = /^(?:on|at|from|for|by|in|this|next|the|and|to|of|before|after|starting|until|,)\s+|\s+(?:on|at|from|for|by|in|this|next|the|and|to|of|before|after|starting|until|,)$/i;
+  const DANGLING = /^(?:on(?!\s+call\b)|at|from|for|by|in|this|next|the|and|to|of|before|after|starting|until|,)\s+|\s+(?:on|at|from|for|by|in|this|next|the|and|to|of|before|after|starting|until|,)$/i;
   if (isDeadline) {
     // "Deadline for X" → "X"; "X due" / "X deadline" → "X" unless only one word would be left ("Tax deadline")
     text = text.replace(/^\s*(?:the\s+)?(?:deadline|due)(?:\s+(?:for|of|on|date))?\s*:?\s+/i, ' ');
@@ -895,7 +945,23 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
     else text = text.replace(/\b(?:is\s+)?due(?!\s+to\b)(?:\s+(?:on|by|at|date))?\b|:/gi, ' ');
   }
   let title = unshield(text).replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
+  title = title.replace(/\bZhol(\d)\b/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!location) {
+    // "lab meeting room 410", "open house 55 Elm St", "staff meeting conference rm B": the room or address is the place
+    const room = new RegExp(`${ADDRESS.source}|\\b(?:conference|meeting|board)\\s+(?:rm|room)\\s+[A-Z0-9]+\\b|\\b[A-Z]{2,5}\\s+\\d(?:st|nd|rd|th)\\s+floor\\b`, 'i').exec(title);
+    if (room && title.replace(room[0], '').trim()) {
+      location = room[0].trim();
+      title = title.replace(room[0], ' ').replace(/[,\s]+$/, '').replace(/\s+/g, ' ').trim();
+    }
+  }
+
+  if (!title) { const hol = /\b(remembrance day|boxing day|canada day|christmas eve|christmas|new year'?s eve|new year'?s day|halloween|valentine'?s day)\b/i.exec(input); if (hol) title = hol[1].replace(/\b\w/g, (c) => c.toUpperCase()); }
   title = cleanTitle(title.replace(/Nyght/g, 'night'), input);
+  // "Weekly council briefing", "Grand rounds monthly": how often goes with the repeat, not the name
+  if (repeat.rule) {
+    const bare = title.replace(/^\s*(?:daily|weekly|monthly|bi-?weekly)\s+|\s+(?:daily|weekly|monthly)\s*$/i, '').trim();
+    if (bare && bare.includes(' ')) title = bare[0].toUpperCase() + bare.slice(1);
+  }
   if (repeat.rule && title && !/\s/.test(title)) {
     const adj = new RegExp(`\\b(quarterly|annual|yearly)\\s+${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').exec(input); // (the title escaped: it's the user's text)
     if (adj) title = `${adj[1]} ${title}`;
@@ -909,7 +975,13 @@ export function parseQuick(input: string, calendars: CalendarSource[], now = new
   // "9am Tokyo time": the clock time is Tokyo's — the same wall time there, as an instant here
   let timeZone: string | undefined;
   if (zone && !allDay && (timeRes || timeFromWords)) {
-    const shifted = instantOf(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours() * 60 + start.getMinutes(), zone);
+    let shifted = instantOf(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours() * 60 + start.getMinutes(), zone);
+    if (!dateRes && !repeat.rule) {
+      // a time with no day ("standup 9am PT"): the next time it's 9 there — today there if that's still ahead
+      const w = wallClock(now.getTime(), zone);
+      shifted = instantOf(w.y, w.m, w.d, start.getHours() * 60 + start.getMinutes(), zone);
+      if (shifted <= now.getTime()) shifted = instantOf(w.y, w.m, w.d + 1, start.getHours() * 60 + start.getMinutes(), zone);
+    }
     const delta = shifted - start.getTime();
     start = new Date(shifted);
     end = new Date(end.getTime() + delta);

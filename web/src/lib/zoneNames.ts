@@ -16,7 +16,7 @@ const EXTRA: Record<string, string> = {
   japan: 'Asia/Tokyo', korea: 'Asia/Seoul', 'south korea': 'Asia/Seoul', china: 'Asia/Shanghai', beijing: 'Asia/Shanghai',
   taiwan: 'Asia/Taipei', 'hong kong': 'Asia/Hong_Kong', singapore: 'Asia/Singapore', india: 'Asia/Kolkata', mumbai: 'Asia/Kolkata',
   delhi: 'Asia/Kolkata', bangalore: 'Asia/Kolkata', 'new zealand': 'Pacific/Auckland', chile: 'America/Santiago',
-  argentina: 'America/Argentina/Buenos_Aires', 'south africa': 'Africa/Johannesburg', utc: 'UTC', gmt: 'UTC',
+  argentina: 'America/Argentina/Buenos_Aires', bali: 'Asia/Makassar', nz: 'Pacific/Auckland', iceland: 'Atlantic/Reykjavik', hk: 'Asia/Hong_Kong', 'south africa': 'Africa/Johannesburg', utc: 'UTC', gmt: 'UTC',
 };
 
 let names: Map<string, string> | null = null;

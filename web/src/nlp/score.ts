@@ -78,7 +78,7 @@ export function interpret(input: string, now: Date, max = 4): Answer[] {
 }
 
 const norm = (f: (typeof FIELDS)[number], v: unknown) =>
-  v === undefined || v === null || v === '' ? null : f === 'title' || f === 'loc' || f === 'cal' ? String(v).trim().replace(/[.!?,;:]+$/, '').toLowerCase().replace(/\s+/g, ' ') : String(v);
+  v === undefined || v === null || v === '' ? null : f === 'title' || f === 'loc' || f === 'cal' ? String(v).trim().replace(f === 'loc' ? /^the\s+/i : /^$/, '').replace(/[.!?,;:]+$/, '').toLowerCase().replace(/\s+/g, ' ') : String(v);
 
 // (the order weekdays are listed in doesn't matter: SA,SU = SU,SA)
 const byDaySorted = (r: string | null | undefined) =>

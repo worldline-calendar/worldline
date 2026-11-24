@@ -133,8 +133,9 @@ export function readings(text: string, calendars: CalendarSource[], now = new Da
     add('local', `${fmtTime(p.start)} ${zoneCity(localZone())} time`, { ...p, title: base.title });
   }
 
-  // an event that reads like a to-do ("clean the garage saturday", "pay nanny every 2 weeks"): or a to-do for that day
-  if ((base.allDay || base.recurrence) && (ACTION.test(text.trim()) || /^(?:photocopy|copy|transfer|invoice|backup|back up|change|replace|refill|pay|check|update)\b/i.test(text.trim())))
+  // an event that reads like a to-do ("clean the garage saturday", "pay nanny every 2 weeks", "charge batteries tonight"):
+  // or a to-do for that day
+  if ((base.allDay || base.recurrence || (base.timeFromWords && !base.hasTime)) && (ACTION.test(text.trim()) || /^(?:photocopy|copy|transfer|invoice|backup|back up|change|replace|refill|pay|check|update)\b/i.test(text.trim())))
     add('as-task', `A to-do · due ${day(base.start)}`, { ...base, recurrence: undefined }, 'task');
 
   titleVariants(text, base, kind, add);
@@ -160,6 +161,12 @@ function titleVariants(text: string, base: Parsed, kind: Kind, add: (id: string,
     return orig ? (w[0] === w[0].toUpperCase() ? orig[0].toUpperCase() + orig.slice(1) : orig) : w;
   });
   if (asTyped !== base.title) add('title-typed', titled(asTyped), { ...base, title: asTyped }, kind);
+  // an emoji that was typed ("🎻 quartet 8pm", "call grandma 📞"): kept in the name
+  const emo = /\p{Extended_Pictographic}/u.exec(text);
+  if (emo) {
+    const t = text.trim().startsWith(emo[0]) ? `${emo[0]} ${base.title}` : `${base.title} ${emo[0]}`;
+    add('title-emoji', titled(t), { ...base, title: t }, kind);
+  }
   // leftovers of how it was said ("Or sun brunch w ali", "7 book club", "Lab meeting, no"): a tidied title
   const tidy = base.title
     .replace(/\b(?:or|no|just|wait|maybe|like|ish|and|then|also|um|uh)\b|\?|\b\d{1,2}\b(?!:)|\b(?:mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun)(?:day)?s?\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/gi, ' ')
