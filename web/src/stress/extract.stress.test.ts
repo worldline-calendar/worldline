@@ -144,8 +144,10 @@ Shanghai PVG Vancouver YVR
 AC 26 • Operated by Air Canada
 Taxes CAD 34.42 CA4 (CA4)`, new Date(2026, 10, 20));
     expect(r.map((p) => p.parsed.title)).toEqual(['AC 101 to Vancouver', 'AC 25 to Shanghai', 'AC 26 to Vancouver']);
-    expect(at(r[1])).toEqual(['2026-12-05T20:25', '2026-12-06T08:00']);
-    expect(at(r[2])).toEqual(['2026-12-17T09:35', '2026-12-17T20:55']);
+    // (on each airport's own clock: whether BC keeps daylight time in winter depends on this machine's zone data)
+    const clock = (t: number, z: string) => new Date(t).toLocaleString('en-CA', { timeZone: z, month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
+    expect([clock(r[1].parsed.start, 'America/Vancouver'), clock(r[1].parsed.end, 'Asia/Shanghai')]).toEqual(['12-05, 12:25', '12-06, 16:00']);
+    expect([clock(r[2].parsed.start, 'Asia/Shanghai'), clock(r[2].parsed.end, 'America/Vancouver')]).toEqual(['12-17, 17:35', '12-17, 12:55']);
   });
   it('a ticket table: cities, the number, then the times (Aeroméxico)', () => {
     const r = ticked(`Itinerary Details
