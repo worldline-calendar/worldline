@@ -19,7 +19,25 @@ export async function readDocument(file: File): Promise<{ text: string; kind: 'p
   return { text: raw, kind: 'text' };
 }
 
+// pdf.js reads a page's text with `for await (… of stream)`; the Mac app's WebKit can't loop over a stream that way yet
+// ("undefined is not a function"), so it's taught to here
+function streamsIterable() {
+  const RS = globalThis.ReadableStream?.prototype as (ReadableStream & { [Symbol.asyncIterator]?: unknown }) | undefined;
+  if (!RS || RS[Symbol.asyncIterator]) return;
+  Object.defineProperty(RS, Symbol.asyncIterator, {
+    configurable: true,
+    writable: true,
+    value: async function* (this: ReadableStream) {
+      const reader = this.getReader();
+      try {
+        for (;;) { const { done, value } = await reader.read(); if (done) return; yield value; }
+      } finally { reader.releaseLock(); }
+    },
+  });
+}
+
 async function pdfText(file: File) {
+  streamsIterable();
   const pdfjs = await import('pdfjs-dist');
   const data = new Uint8Array(await file.arrayBuffer());
   let task;

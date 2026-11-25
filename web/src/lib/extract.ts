@@ -12,7 +12,7 @@ import type { CalendarSource } from '../data/types';
 import { parseQuick, type Parsed } from './quickparse';
 import { guessKind } from './tasks';
 import { parseIcs } from './ics';
-import { parseItinerary } from './flights';
+import { parseItinerary, type FlightInfo } from './flights';
 import { decodeEvent } from './recurrence';
 
 export type ExtractKind = 'event' | 'deadline' | 'task';
@@ -26,6 +26,7 @@ export interface Proposal {
   confidence: number;
   why?: string;
   /** The meeting link (Zoom, Teams, Meet…) or the page it points to, and the details that go with it. */
+  flight?: FlightInfo; // a flight from a booking: shown on its airports' clocks, with its countdown and reminders
   url?: string;
   notes?: string;
 }
@@ -288,8 +289,8 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
   // 4. each unit with a date or time
   let proposals: Proposal[] = flights.map((f) => ({
     kind: 'event' as const,
-    parsed: { title: f.title, start: f.start, end: f.end, allDay: false, hasDate: true, hasDay: true, hasTime: true, timeFromWords: false, hasEnd: f.hasArrival, timeZone: undefined },
-    from: 0, to: 0, confidence: 1, why: 'flight booking',
+    parsed: { title: f.title, start: f.start, end: f.end, allDay: false, hasDate: true, hasDay: true, hasTime: true, timeFromWords: false, hasEnd: f.hasArrival, timeZone: f.flight.fromZone },
+    from: 0, to: 0, confidence: 1, why: 'flight booking', flight: f.flight,
   }));
   const cancelledDays = new Set<number>();
   let lastEvent: Proposal | null = null;
@@ -406,6 +407,12 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
     else if ((p.parsed.location && !dup.parsed.location) || p.confidence > dup.confidence) Object.assign(dup, p);
   }
   attachLinks(kept, text);
+  // a booking: its flights are what it's for. Anything else dated in it (a fee, a fare rule, "Departure • Tue 01 Dec")
+  // is offered unticked, and what falls on a flight's own day is the flight said again
+  if (flights.length) {
+    const days = new Set(flights.map((f) => startOfDay(f.start).getTime()));
+    return { proposals: kept.filter((p) => p.why === 'flight booking' || !days.has(startOfDay(p.parsed.start).getTime())).map((p) => (p.why === 'flight booking' ? p : { ...p, confidence: Math.min(p.confidence, 0.5) })).sort((a, b) => a.parsed.start - b.parsed.start), skipped };
+  }
   return { proposals: kept.sort((a, b) => a.parsed.start - b.parsed.start), skipped };
 }
 

@@ -96,3 +96,33 @@ describe('drop: meeting links', () => {
     expect(ps.find((p) => p.kind === 'deadline')?.url).toBe('https://forms.example.org/reg');
   });
 });
+
+describe('a booking with the flight number after its times (Air Canada)', () => {
+  const doc = `From: Airline notification@example.com
+Subject: Airline - 01 Dec 2026: Toronto - San Francisco (Booking reference: ABC123)
+Date: November 18, 2026 at 23:04
+Booking Confirmation
+ABC123 Issued 19 Nov, 2026
+Flights
+Departure • Tue 01 Dec, 2026
+Economy Standard
+Toronto YYZ San Francisco SFO
+12:50 15:40
+Toronto-Pearson International Airport Terminal 1 San Francisco International Airport Terminal 2
+AC 743 • Operated by Air Canada
+Aircraft type: Airbus A321-200 Wi-Fi
+Return • Fri 04 Dec, 2026
+San Francisco SFO Toronto YYZ
+12:00 19:55
+AC 740 • Operated by Air Canada
+Tickets are valid until 19 Nov, 2027. Changes allowed.`;
+  it('reads both flights, each on its own airport clock, and ticks nothing else', () => {
+    const r = extract(doc, [], new Date(2026, 10, 25, 12));
+    const on = r.proposals.filter((p) => p.confidence >= 0.6);
+    expect(on.map((p) => p.parsed.title)).toEqual(['AC 743 to San Francisco', 'AC 740 to Toronto']);
+    expect(new Date(on[0].parsed.start).toISOString()).toBe('2026-12-01T17:50:00.000Z');
+    expect(new Date(on[0].parsed.end).toISOString()).toBe('2026-12-01T23:40:00.000Z');
+    expect(new Date(on[1].parsed.start).toISOString()).toBe('2026-12-04T20:00:00.000Z');
+    expect(new Date(on[1].parsed.end).toISOString()).toBe('2026-12-05T00:55:00.000Z');
+  });
+});

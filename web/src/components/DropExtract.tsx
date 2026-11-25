@@ -145,7 +145,7 @@ export function DropExtract() {
       for (const r of chosen) {
         const p = r.parsed;
         if (r.kind === 'task') st.addTask({ title: p.title, ...(p.hasDay ? { due: startOfDay(p.start).getTime() } : {}) });
-        else if (r.kind === 'deadline') st.createEvent({ calendarId: '', title: p.title, start: p.start, end: p.start, allDay: false, kind: 'deadline', leadDays: defaultLeadDays(), ...(p.location ? { location: p.location } : {}), ...(r.url ? { url: r.url } : {}), ...(r.notes ? { notes: r.notes } : {}) });
+        else if (r.kind === 'deadline') st.createEvent({ calendarId: '', title: p.title, start: p.start, end: p.start, allDay: false, kind: 'deadline', leadDays: defaultLeadDays(), ...(p.location ? { location: p.location } : {}), ...(r.flight ? { flight: r.flight } : {}), ...(r.url ? { url: r.url } : {}), ...(r.notes ? { notes: r.notes } : {}) });
         else st.createEvent({ calendarId: calId, title: p.title, start: p.start, end: p.end, allDay: p.allDay, ...(p.location ? { location: p.location } : {}), ...(p.recurrence ? { recurrence: p.recurrence } : {}), ...(p.timeZone ? { timeZone: p.timeZone } : {}), ...(r.url ? { url: r.url } : {}), ...(r.notes ? { notes: r.notes } : {}) });
       }
     });

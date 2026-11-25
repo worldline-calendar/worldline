@@ -192,22 +192,28 @@ function dateIn(s: string, now: Date): [number, number, number] | null {
   return [thisYear.getTime() < now.getTime() - 30 * DAY ? now.getFullYear() + 1 : now.getFullYear(), mo, d];
 }
 
-/** Every flight in a pasted itinerary or confirmation email: each segment starts at a flight number ("AC 856", "LH471"),
- *  and holds two airport codes (often in brackets: "Toronto (YYZ)"), a date and the departure and arrival times. */
+/** Every flight in a pasted itinerary or confirmation email. Two layouts: the flight number first, then its airports,
+ *  date and times ("AC 856 · Toronto (YYZ) → London (LHR) · Sat 12 Dec · 6:40 PM 6:55 AM"); or the date, airports and
+ *  times first and the flight number after them (Air Canada: "Departure • Tue 01 Dec, 2026 / Toronto YYZ San Francisco
+ *  SFO / 12:50 15:40 / AC 743 • Operated by …"). The second is used when the text before the first flight number
+ *  already holds a whole flight. */
 export function parseItinerary(text: string, now = new Date()): FlightPlan[] {
   const flat = text.replace(/\s+/g, ' ');
-  // (not "PM 11" in "3:55 PM 11:50 AM", nor a time: a flight number isn't followed by ":")
-  const nos = [...flat.matchAll(/\b([A-Z]{2}|[A-Z]\d|\d[A-Z])\s?(\d{1,4})\b(?![:.]\d)/g)].filter((m) => !/^(?:AM|PM)$/.test(m[1]) && !airport(m[0].slice(0, 3)));
+  // (not "PM 11" in "3:55 PM 11:50 AM", nor a time: a flight number isn't followed by ":"; nor an aircraft, "A321-200")
+  const nos = [...flat.matchAll(/\b([A-Z]{2}|[A-Z]\d|\d[A-Z])\s?(\d{1,4})\b(?![:.]\d|-\d)/g)].filter((m) => !/^(?:AM|PM)$/.test(m[1]) && !airport(m[0].slice(0, 3)) && !/(?:airbus|boeing|aircraft|type:?)\s*$/i.test(flat.slice(Math.max(0, m.index! - 12), m.index!)));
+  const after = (i: number) => flat.slice(nos[i].index!, nos[i + 1]?.index ?? flat.length);
+  const before = (i: number) => flat.slice(i ? nos[i - 1].index! + nos[i - 1][0].length : 0, nos[i].index!);
+  const numberLast = nos.length > 0 && !!segment(before(0), now, true);
   const out: FlightPlan[] = [];
   const seen = new Set<string>();
   let lastDate = null as [number, number, number] | null;
   for (let i = 0; i < nos.length; i++) {
-    const seg = flat.slice(nos[i].index!, nos[i + 1]?.index ?? flat.length);
-    const codes = [...seg.matchAll(/\(([A-Z]{3})\)|\b([A-Z]{3})\b/g)].map((m) => m[1] ?? m[2]).filter((c) => airport(c));
-    const from = airport(codes[0]), to = airport(codes.find((c) => c !== codes[0]));
-    const times = [...seg.matchAll(TIME)].map((m) => m[0]);
-    const date = dateIn(seg, now) ?? lastDate;
-    if (!from || !to || !times.length || !date) continue;
+    // (a route line just before the number — "Toronto (YYZ) → Halifax (YHZ) / AC 604 Wed 23 Dec 17:45 21:05" — is
+    // that flight's, not the next one's)
+    const pre = before(i).split(TIME).pop() ?? '';
+    const seg = numberLast ? segment(before(i), now, true) : segment(after(i), now, false, lastDate, pre);
+    if (!seg) continue;
+    const { from, to, times, date } = seg;
     lastDate = date;
     const no = `${nos[i][1]} ${nos[i][2]}`;
     const [y, m, d] = date;
@@ -221,4 +227,24 @@ export function parseItinerary(text: string, now = new Date()): FlightPlan[] {
     out.push({ title: flightTitle(flight), start, end, flight, from, to, hasArrival: !!times[1] });
   }
   return out;
+}
+
+/** One flight's airports, times and date in a piece of an itinerary. Number-last: the piece's last date, and the
+ *  airports and times after it (what comes earlier — a sent date, an issue date — is another thing's). */
+function segment(seg: string, now: Date, numberLast: boolean, lastDate: [number, number, number] | null = null, route = '') {
+  let date: [number, number, number] | null;
+  if (numberLast) {
+    let at = -1;
+    for (const [re] of DATE_RES) for (const m of seg.matchAll(new RegExp(re.source, 'gi'))) at = Math.max(at, m.index!);
+    if (at < 0) return null;
+    seg = seg.slice(at);
+    date = dateIn(seg, now);
+  } else date = dateIn(seg, now) ?? lastDate;
+  const codesIn = (x: string) => [...x.matchAll(/\(([A-Z]{3})\)|\b([A-Z]{3})\b/g)].map((m) => m[1] ?? m[2]).filter((c) => airport(c));
+  const routed = codesIn(route);
+  const codes = new Set(routed).size >= 2 ? routed : codesIn(seg);
+  const from = airport(codes[0]), to = airport(codes.find((c) => c !== codes[0]));
+  const times = [...seg.matchAll(TIME)].map((m) => m[0]);
+  if (!from || !to || !times.length || !date) return null;
+  return { from, to, times, date };
 }
