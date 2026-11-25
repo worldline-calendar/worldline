@@ -4,7 +4,8 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { format, startOfDay } from 'date-fns';
 import { useStore, newEventCalendarId, readOnly } from '../data/store';
-import { extract, type ExtractKind, type Proposal } from '../lib/extract';
+import { extract, type Extraction, type ExtractKind, type Proposal } from '../lib/extract';
+import { combine, type ModelItem } from '../lib/modelRead';
 import { readDocument } from '../lib/readDocument';
 import { readings } from '../lib/readings';
 import { fmtTime } from '../lib/format';
@@ -67,9 +68,27 @@ export function DropExtract() {
     return () => { window.removeEventListener('dragenter', enter); window.removeEventListener('dragleave', leave); window.removeEventListener('dragover', overW); window.removeEventListener('drop', dropW); };
   }, []);
 
+  const reading = useRef(0);
+  const [thinking, setThinking] = useState(false);
   const read = (t: string) => {
     const now = new Date();
-    const r = extract(t, calendars, now);
+    show(t, extract(t, calendars, now), now);
+    // then the Mac's own language model (macOS 26, Apple Intelligence on): better titles, a few more finds; if it
+    // can't run, what the rules read stays
+    const id = ++reading.current;
+    if (!('__TAURI_INTERNALS__' in window) || !t.trim() || /BEGIN:VEVENT/i.test(t)) { setThinking(false); return; }
+    setThinking(true);
+    void import('@tauri-apps/api/core').then(({ invoke }) => invoke<string>('model_read', { text: t, today: format(now, 'EEEE, MMMM d, yyyy') }))
+      .then((out) => {
+        const r = JSON.parse(out) as { available?: boolean; items?: ModelItem[] };
+        if (id !== reading.current || !r.available || !Array.isArray(r.items)) return;
+        const items = r.items.filter((x) => x && typeof x.title === 'string').map((x) => ({ kind: String(x.kind ?? ''), title: x.title, when: String(x.when ?? ''), location: String(x.location ?? ''), repeats: String(x.repeats ?? '') }));
+        show(t, combine(items, t, calendars, now), now);
+      })
+      .catch(() => {})
+      .finally(() => { if (id === reading.current) setThinking(false); });
+  };
+  const show = (t: string, r: Extraction, now: Date) => {
     setRows(r.proposals.map((p, i) => {
       const sentence = t.slice(p.from, p.to);
       const alts = sentence && sentence.length < 300 ? readings(sentence, calendars, now, 6, p.kind).filter((a) => !a.id.startsWith('title-')).slice(0, 2).map((a) => ({ label: a.label, p: { ...a.parsed, title: p.parsed.title, location: p.parsed.location ?? a.parsed.location }, kind: a.kind })) : [];
@@ -101,7 +120,7 @@ export function DropExtract() {
   };
   useEffect(() => {
     if (drop.open && (drop.text !== undefined || drop.file)) void load(drop);
-    if (!drop.open) { setText(''); setRows([]); setSkipped([]); setFileName(null); setError(null); }
+    if (!drop.open) { reading.current++; setText(''); setRows([]); setSkipped([]); setFileName(null); setError(null); }
   }, [drop]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // the source with what each row came from marked
@@ -136,7 +155,7 @@ export function DropExtract() {
       st.showToast(`Added ${chosen.length}: ${chosen.map((r) => r.parsed.title).join(', ').slice(0, 120)}`);
     }
   };
-  const patch = (i: number, p: Partial<Row>) => setRows((rs) => rs.map((r, k) => (k === i ? { ...r, ...p } : r)));
+  const patch = (i: number, p: Partial<Row>) => { reading.current++; setThinking(false); return setRows((rs) => rs.map((r, k) => (k === i ? { ...r, ...p } : r))); };
 
   if (!drop.open) return cover ? <Portal><div className="dx-cover">Drop to find what’s in it</div></Portal> : null;
   const on = rows.filter((r) => r.on).length;
@@ -173,7 +192,7 @@ export function DropExtract() {
                 )}
               </div>
               <div className="dx-hint">
-                {busy ? 'Reading…' : error ? <span className="bad">{error}</span> : text ? <button className="chip" onClick={() => { setText(''); setRows([]); setSkipped([]); setFileName(null); }}>Clear</button> : 'Read on this device — nothing is uploaded.'}
+                {busy ? 'Reading…' : thinking ? 'Reading on this Mac…' : error ? <span className="bad">{error}</span> : text ? <button className="chip" onClick={() => { reading.current++; setThinking(false); setText(''); setRows([]); setSkipped([]); setFileName(null); }}>Clear</button> : 'Read on this device — nothing is uploaded.'}
                 <label className="chip">Choose file…<input type="file" accept=".pdf,.eml,.ics,.txt,text/*,application/pdf" hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void load({ file: f }); }} /></label>
               </div>
             </div>

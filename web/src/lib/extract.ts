@@ -271,8 +271,10 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
   const flights = parseItinerary(text, now);
   let docNow = documentDate(text, now);
   // a shift schedule: three or more lines that are just a day and hours ("Wed 3p-11p", "12/6 D 07:00-19:30")
-  const ROTA_LINE = /^\s*(?:(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*\.?|\d{1,2}\/\d{1,2})\s+(?:[DNE]\s+|day\s+|night\s+|eve\s+)?(?:\d{1,2}(?::?\d\d)?\s*[ap]?m?\s*[-–]\s*\d{1,2}(?::?\d\d)?\s*[ap]?m?|off|rest|—)\s*$/gim;
-  const rota = (text.match(ROTA_LINE)?.length ?? 0) >= 3;
+  const ROTA_LINE = /^[ \t]*(?:(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*\.?|\d{1,2}\/\d{1,2})[ \t]+(?:(?:[DNE]|day|night|eve)[ \t]+)?(?:\d{1,2}(?::?\d\d)?[ \t]*(?:[ap]m?[ \t]*)?[-–][ \t]*\d{1,2}(?::?\d\d)?(?:[ \t]*[ap]m?)?|off|rest|—)[ \t]*$/i;
+  // (short lines only: a schedule row is short, and a long line can't make the pattern slow)
+  const isRota = (l: string) => l.length < 80 && ROTA_LINE.test(l);
+  const rota = text.split('\n').filter(isRota).length >= 3;
   if (rota) {
     // "Rota wk of Nov 30": its weekdays are that week's
     const wk = /\b(?:wk|week)\s+(?:of|starting|beginning|commencing)\s+([^\n—,(]+)/i.exec(text);
@@ -335,7 +337,7 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
     if (PAST_REF.test(s)) { skipped.push({ text: s, why: 'already happened' }); continue; }
     // a sentence with two things ("dentist tue 9am and haircut thu 4"): each on its own
     if (rota && /\b(?:wk|week)\s+(?:of|starting|beginning|commencing)\b/i.test(s) && s.length < 60) continue; // (the schedule's own title)
-    const parts = rota && new RegExp(ROTA_LINE.source, 'i').test(s) ? [s.replace(/^(\s*\S+\s+)(?:[DNE]|day|night|eve)\s+/i, '$1')] : splitTwo(s, docNow);
+    const parts = rota && isRota(s) ? [s.replace(/^(\s*\S+\s+)(?:[DNE]|day|night|eve)\s+/i, '$1')] : splitTwo(s, docNow);
     for (const part of parts) {
       const p = parseQuick(part.slice(0, 300), calendars, docNow);
       if (!p.hasDate) continue;
@@ -368,7 +370,7 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
         p.start = p.end = d.getTime(); p.allDay = false;
       }
       let title = tidyTitle(p.title, u, subject, !!appt);
-      if (rota && new RegExp(ROTA_LINE.source, 'i').test(u.s)) {
+      if (rota && isRota(u.s)) {
         const code = /^\s*\S+\s+([DNE]|day|night|eve)\b/i.exec(u.s)?.[1].toLowerCase()[0];
         title = code === 'n' ? 'Night shift' : code === 'd' ? 'Day shift' : code === 'e' ? 'Evening shift' : 'Shift';
       }

@@ -92,3 +92,7 @@ jobs:
           cp "$dmg" "$RUNNER_TEMP/Worldline.dmg"
           gh release upload "$TAG" "$RUNNER_TEMP/Worldline.dmg" --clobber
           gh release delete-asset "$TAG" "$(basename "$dmg")" -y
+
+      # the on-device reader (src-tauri/reader) needs the macOS 26 SDK; without it the app reads with its rules alone
+      - name: On-device reader built?
+        run: xcrun --show-sdk-version; test -s src-tauri/reader/bin/worldline-reader || echo "::warning::the on-device reader wasn't built (needs the macOS 26 SDK)"

@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Worldline",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "identifier": "io.github.bradenseefeldt.worldline",
   "build": {
     "frontendDist": "../dist",
@@ -39,7 +39,7 @@
       "dmg"
     ],
     "category": "Productivity",
-    "shortDescription": "Your calendar, habits and research projects \u2014 on your Mac, offline",
+    "shortDescription": "Your calendar, habits and research projects — on your Mac, offline",
     "copyright": "Free to use",
     "icon": [
       "icons/32x32.png",
@@ -51,6 +51,9 @@
     "macOS": {
       "minimumSystemVersion": "11.0",
       "signingIdentity": "-"
+    },
+    "resources": {
+      "reader/bin/worldline-reader": "worldline-reader"
     }
   },
   "plugins": {

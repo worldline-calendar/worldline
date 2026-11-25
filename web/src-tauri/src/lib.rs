@@ -194,6 +194,42 @@ impl tauri_plugin_http::reqwest::dns::Resolve for PublicOnly {
   }
 }
 
+/// Read dropped text with the language model built into macOS 26 (the worldline-reader helper, in the bundle's
+/// resources; see reader/main.swift): on this Mac, no network. The page sends {text, today} (text at most 60,000
+/// characters); the answer is the helper's JSON, or an error when it can't run (an older Mac, Apple Intelligence off,
+/// an Intel Mac, the helper missing) — then the page keeps what its own rules read. 60 s at most, 1 MB of answer.
+#[tauri::command]
+async fn model_read(app: tauri::AppHandle, text: String, today: String) -> Result<String, String> {
+  use std::io::{Read, Write};
+  use std::process::{Command, Stdio};
+  let exe = app.path().resource_dir().map_err(|e| e.to_string())?.join("worldline-reader");
+  if std::fs::metadata(&exe).map(|m| m.len() == 0).unwrap_or(true) {
+    return Err("no on-device reader in this build".into());
+  }
+  let text: String = text.chars().take(60_000).collect();
+  let today: String = today.chars().take(80).collect();
+  let input = serde_json::json!({ "text": text, "today": today }).to_string();
+  tauri::async_runtime::spawn_blocking(move || {
+    let mut child = Command::new(&exe).stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::null()).spawn().map_err(|e| e.to_string())?;
+    let mut stdin = child.stdin.take().ok_or("no stdin")?;
+    std::thread::spawn(move || { let _ = stdin.write_all(input.as_bytes()); });
+    let mut stdout = child.stdout.take().ok_or("no stdout")?;
+    let reader = std::thread::spawn(move || { let mut buf = Vec::new(); let _ = (&mut stdout).take(1_000_000).read_to_end(&mut buf); let _ = std::io::copy(&mut stdout, &mut std::io::sink()); buf });
+    let start = std::time::Instant::now();
+    loop {
+      match child.try_wait().map_err(|e| e.to_string())? {
+        Some(_) => break,
+        None if start.elapsed() > Duration::from_secs(60) => { let _ = child.kill(); let _ = child.wait(); return Err("the on-device reader took too long".into()); }
+        None => std::thread::sleep(Duration::from_millis(50)),
+      }
+    }
+    let out = reader.join().map_err(|_| "reader thread")?;
+    String::from_utf8(out).map_err(|e| e.to_string())
+  })
+  .await
+  .map_err(|e| e.to_string())?
+}
+
 /// Read a calendar link (.ics) for a subscription. Only public web addresses — never this Mac or the local network
 /// (the page can't use this to reach a router, a printer or a dev server), at most 20 MB, 30 s.
 #[tauri::command]
@@ -474,7 +510,7 @@ pub fn run() {
     .plugin(tauri_plugin_notification::init())
     .manage(AlertState::default())
     .invoke_handler(tauri::generate_handler![
-      save_file, quit_now, confirm_uninstall, uninstall, set_alerts, test_alert, fetch_feed, show_in_finder,
+      save_file, quit_now, confirm_uninstall, uninstall, set_alerts, test_alert, fetch_feed, show_in_finder, model_read,
       db_get, db_set, db_del, db_keys, db_snapshots, db_snapshot,
       #[cfg(target_os = "macos")] ek_status,
       #[cfg(target_os = "macos")] ek_request,
