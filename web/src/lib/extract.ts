@@ -12,7 +12,7 @@ import type { CalendarSource } from '../data/types';
 import { parseQuick, type Parsed } from './quickparse';
 import { guessKind } from './tasks';
 import { parseIcs } from './ics';
-import { parseItinerary, type FlightInfo } from './flights';
+import { parseItinerary, parseRides, type FlightInfo } from './flights';
 import { decodeEvent } from './recurrence';
 
 export type ExtractKind = 'event' | 'deadline' | 'task';
@@ -270,6 +270,7 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
   if (/\b(?:automatic reply|auto-?reply|out of (?:the )?office)\b/i.test(text.slice(0, 600)) || /\bterms (?:of service|and conditions)\b/i.test(text.slice(0, 800)))
     return { proposals: [], skipped: [{ text: text.slice(0, 80), why: 'an automatic reply or terms — nothing to add' }] };
   const flights = parseItinerary(text, now);
+  const rides = flights.length ? [] : parseRides(text, now);
   let docNow = documentDate(text, now);
   // a shift schedule: three or more lines that are just a day and hours ("Wed 3p-11p", "12/6 D 07:00-19:30")
   const ROTA_LINE = /^[ \t]*(?:(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*\.?|\d{1,2}\/\d{1,2})[ \t]+(?:(?:[DNE]|day|night|eve)[ \t]+)?(?:\d{1,2}(?::?\d\d)?[ \t]*(?:[ap]m?[ \t]*)?[-–][ \t]*\d{1,2}(?::?\d\d)?(?:[ \t]*[ap]m?)?|off|rest|—)[ \t]*$/i;
@@ -292,6 +293,8 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
     parsed: { title: f.title, start: f.start, end: f.end, allDay: false, hasDate: true, hasDay: true, hasTime: true, timeFromWords: false, hasEnd: f.hasArrival, timeZone: f.flight.fromZone },
     from: 0, to: 0, confidence: 1, why: 'flight booking', flight: f.flight,
   }));
+  for (const r of rides)
+    proposals.push({ kind: 'event', parsed: { title: r.title, start: r.start, end: r.end, allDay: false, hasDate: true, hasDay: true, hasTime: true, timeFromWords: false, hasEnd: true, timeZone: r.zone, location: r.from }, from: 0, to: 0, confidence: 1, why: 'train or bus ticket' });
   const cancelledDays = new Set<number>();
   let lastEvent: Proposal | null = null;
   for (const u of units(text)) {
@@ -399,7 +402,7 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
   }
 
   // 5. cancelled days out; the same thing twice kept once (the one with more said about it)
-  proposals = proposals.filter((p) => !cancelledDays.has(startOfDay(p.parsed.start).getTime()) || p.why === 'flight booking');
+  proposals = proposals.filter((p) => !cancelledDays.has(startOfDay(p.parsed.start).getTime()) || (p.why === 'flight booking' || p.why === 'train or bus ticket'));
   const kept: Proposal[] = [];
   for (const p of proposals) {
     const dup = kept.find((k) => k.kind === p.kind && Math.abs(k.parsed.start - p.parsed.start) < 60_000 && (k.parsed.title === p.parsed.title || k.kind === 'event'));
@@ -409,9 +412,10 @@ export function extract(input: string, calendars: CalendarSource[], now = new Da
   attachLinks(kept, text);
   // a booking: its flights are what it's for. Anything else dated in it (a fee, a fare rule, "Departure • Tue 01 Dec")
   // is offered unticked, and what falls on a flight's own day is the flight said again
-  if (flights.length) {
-    const days = new Set(flights.map((f) => startOfDay(f.start).getTime()));
-    return { proposals: kept.filter((p) => p.why === 'flight booking' || !days.has(startOfDay(p.parsed.start).getTime())).map((p) => (p.why === 'flight booking' ? p : { ...p, confidence: Math.min(p.confidence, 0.5) })).sort((a, b) => a.parsed.start - b.parsed.start), skipped };
+  if (flights.length || rides.length) {
+    const trip = (p: Proposal) => p.why === 'flight booking' || p.why === 'train or bus ticket';
+    const days = new Set([...flights, ...rides].map((f) => startOfDay(f.start).getTime()));
+    return { proposals: kept.filter((p) => trip(p) || !days.has(startOfDay(p.parsed.start).getTime())).map((p) => (trip(p) ? p : { ...p, confidence: Math.min(p.confidence, 0.5) })).sort((a, b) => a.parsed.start - b.parsed.start), skipped };
   }
   return { proposals: kept.sort((a, b) => a.parsed.start - b.parsed.start), skipped };
 }

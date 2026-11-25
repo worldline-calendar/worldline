@@ -3,12 +3,21 @@
 const MAX_BYTES = 25 * 1024 * 1024; // (a bigger file isn't an invitation)
 const MAX_PAGES = 30;
 
-export async function readDocument(file: File): Promise<{ text: string; kind: 'pdf' | 'email' | 'ics' | 'text' }> {
+export async function readDocument(file: File): Promise<{ text: string; kind: 'pdf' | 'email' | 'ics' | 'text' | 'image' }> {
   if (file.size > MAX_BYTES) throw new Error('That file is too large to read (over 25 MB).');
   const name = file.name.toLowerCase();
   if (name.endsWith('.pdf') || file.type === 'application/pdf') return { text: await pdfText(file), kind: 'pdf' };
+  // an image (a screenshot of a booking): its words, read by the Mac's own text recognition — in the Mac app only
+  if ((/^image\//.test(file.type) || /\.(?:png|jpe?g|gif|heic|webp|tiff?|bmp)$/.test(name)) && '__TAURI_INTERNALS__' in globalThis) {
+    const { invoke } = await import('@tauri-apps/api/core');
+    let r: { available?: boolean; text?: string };
+    try { r = JSON.parse(await invoke<string>('ocr_image', new Uint8Array(await file.arrayBuffer()))); } catch { r = {}; }
+    if (!r.available) throw new Error('This Mac can’t read the words in images (it needs macOS 26) — paste the text instead.');
+    if (!r.text?.trim()) throw new Error('No words found in that image.');
+    return { text: r.text, kind: 'image' };
+  }
   if (/^(?:image|video|audio)\//.test(file.type) || /\.(?:png|jpe?g|gif|heic|webp|tiff?|bmp|mp[34]|mov|zip|gz|dmg|exe|docx?|xlsx?|pptx?|pages|key|numbers)$/.test(name))
-    throw new Error('That kind of file can’t be read here — paste its text, or drop a PDF, email, .ics or text file.');
+    throw new Error('That kind of file can’t be read here — paste its text, or drop a PDF, email, .ics, text file or (in the Mac app) a screenshot.');
   const raw = await file.text();
   // (bytes that aren't text: many replacement characters or control codes in the first few KB)
   const head = raw.slice(0, 4000);
@@ -56,17 +65,13 @@ async function pdfText(file: File) {
   for (let i = 1; i <= Math.min(doc.numPages, MAX_PAGES); i++) {
     const page = await doc.getPage(i);
     const content = await page.getTextContent();
-    // lines from the text's positions: a new line wherever the baseline moves
-    let line = '', lastY: number | null = null;
-    const lines: string[] = [];
-    for (const it of content.items as { str: string; transform: number[]; hasEOL?: boolean }[]) {
-      const y = Math.round(it.transform[5]);
-      if (lastY !== null && Math.abs(y - lastY) > 2 && line) { lines.push(line); line = ''; }
-      line += (line && !line.endsWith(' ') && it.str && !it.str.startsWith(' ') ? ' ' : '') + it.str;
-      if (it.hasEOL && line) { lines.push(line); line = ''; }
-      lastY = y;
-    }
-    if (line) lines.push(line);
+    // lines in reading order, from where each piece sits on the page: top to bottom, then left to right. (A PDF
+    // stores its text in whatever order it was drawn — a ticket's table can come out with all its times first.)
+    const items = (content.items as { str: string; transform: number[] }[]).filter((it) => it.str?.trim()).map((it) => ({ s: it.str, x: it.transform[4], y: it.transform[5] }));
+    items.sort((a, b) => b.y - a.y || a.x - b.x);
+    const rows: { y: number; parts: typeof items }[] = [];
+    for (const it of items) { const r = rows.at(-1); if (r && Math.abs(r.y - it.y) <= 2) r.parts.push(it); else rows.push({ y: it.y, parts: [it] }); }
+    const lines = rows.map((r) => r.parts.sort((a, b) => a.x - b.x).map((p) => p.s).join(' '));
     pages.push(lines.map((l) => l.replace(/\s+/g, ' ').trim()).join('\n'));
   }
   await task.destroy();

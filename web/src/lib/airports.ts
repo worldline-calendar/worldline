@@ -165,3 +165,18 @@ export const AIRPORTS: ReadonlyMap<string, Airport> = new Map(
 );
 
 export const airport = (code: string | undefined): Airport | undefined => (code ? AIRPORTS.get(code.toUpperCase()) : undefined);
+
+// ---- by city name ("Toronto, Canada", "Ciudad de Mexico"), for itineraries that print no codes: the city's first
+// (main) airport. Matched without accents or case.
+const fold = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const ALIASES: Record<string, string> = { 'ciudad de mexico': 'MEX', 'mexico df': 'MEX', 'new york city': 'JFK', 'sao paulo': 'GRU', 'praha': 'PRG', 'wien': 'VIE', 'munchen': 'MUC', 'roma': 'FCO', 'firenze': 'FLR', 'venezia': 'VCE', 'lisboa': 'LIS', 'bruxelles': 'BRU', 'kobenhavn': 'CPH', 'beijing capital': 'PEK' };
+const BY_CITY = new Map<string, Airport>();
+for (const [k, code] of Object.entries(ALIASES)) { const a = AIRPORTS.get(code); if (a) BY_CITY.set(k, a); }
+for (const a of AIRPORTS.values()) { const c = fold(a.city.replace(/\s*\(.*\)$/, '')); if (!BY_CITY.has(c)) BY_CITY.set(c, a); }
+const CITY_RE = new RegExp(`(?<![\\p{L}])(?:${[...BY_CITY.keys()].sort((a, b) => b.length - a.length).map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})(?![\\p{L}])`, 'giu');
+/** Every city with an airport named in `s`, where it is.  */
+export function citiesIn(s: string): { at: number; end: number; airport: Airport }[] {
+  // (folded a character at a time, so every position in it is the same as in `s`)
+  const f = s.replace(/[^]/g, (ch) => (fold(ch) + ' ').slice(0, ch.length));
+  return [...f.matchAll(CITY_RE)].map((m) => ({ at: m.index!, end: m.index! + m[0].length, airport: BY_CITY.get(m[0])! }));
+}

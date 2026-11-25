@@ -14,10 +14,11 @@
 //         {"available": false, "reason": "..."}            (Apple Intelligence off, unsupported Mac, …)
 import Foundation
 import FoundationModels
+import Vision
 
 struct Input: Decodable { let text: String; let today: String; var candidates: [String]? = nil }
 struct OutItem: Encodable { let kind, title, when, location, repeats: String }
-struct Output: Encodable { let available: Bool; var reason: String? = nil; var items: [OutItem] = []; var keep: [Bool]? = nil }
+struct Output: Encodable { let available: Bool; var reason: String? = nil; var items: [OutItem] = []; var keep: [Bool]? = nil; var text: String? = nil }
 
 func emit(_ o: Output) {
   let data = try! JSONEncoder().encode(o)
@@ -80,6 +81,31 @@ func parseLine(_ line: String) -> OutItem? {
 }
 
 let raw = FileHandle.standardInput.readDataToEndOfFile()
+
+// `worldline-reader ocr`: stdin is an image (a screenshot of a booking, a photo of a poster); stdout {"available":
+// true, "text": "..."}, its words line by line, top to bottom, read by the Mac's own text recognition (Vision).
+if CommandLine.arguments.dropFirst().first == "ocr" {
+  let request = VNRecognizeTextRequest()
+  request.recognitionLevel = .accurate
+  request.usesLanguageCorrection = true
+  do {
+    try VNImageRequestHandler(data: raw, options: [:]).perform([request])
+    // pieces into lines: ones whose middles are level with each other are one line, left to right
+    let pieces = (request.results ?? []).compactMap { o -> (String, CGRect)? in
+      guard let t = o.topCandidates(1).first?.string else { return nil }
+      return (t, o.boundingBox)
+    }.sorted { $0.1.midY > $1.1.midY }
+    var lines: [[(String, CGRect)]] = []
+    for p in pieces {
+      if let last = lines.last?.first, abs(last.1.midY - p.1.midY) < min(last.1.height, p.1.height) / 2 { lines[lines.count - 1].append(p) } else { lines.append([p]) }
+    }
+    let text = lines.map { $0.sorted { $0.1.minX < $1.1.minX }.map { $0.0 }.joined(separator: " ") }.joined(separator: "\n")
+    emit(Output(available: true, text: text))
+  } catch {
+    emit(Output(available: false, reason: "\(error)"))
+  }
+  exit(0)
+}
 guard let input = try? JSONDecoder().decode(Input.self, from: raw) else {
   emit(Output(available: false, reason: "bad input")); exit(2)
 }

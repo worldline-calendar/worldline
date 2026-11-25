@@ -185,7 +185,7 @@ export function DropExtract() {
                 ) : (
                   <textarea
                     autoFocus
-                    placeholder="Paste an email, a text thread, an invitation letter… or drop a PDF, .eml or .ics file here"
+                    placeholder={`Paste an email, a text thread, an invitation letter… or drop a PDF, .eml or .ics file${'__TAURI_INTERNALS__' in window ? ', or a screenshot,' : ''} here`}
                     onPaste={(e) => { const t = e.clipboardData.getData('text'); if (t) { e.preventDefault(); void load({ text: t }); } }}
                     onChange={(e) => e.target.value.trim().length > 20 && void load({ text: e.target.value })}
                   />
@@ -193,7 +193,7 @@ export function DropExtract() {
               </div>
               <div className="dx-hint">
                 {busy ? 'Reading…' : thinking ? 'Reading on this Mac…' : error ? <span className="bad">{error}</span> : text ? <button className="chip" onClick={() => { reading.current++; setThinking(false); setText(''); setRows([]); setSkipped([]); setFileName(null); }}>Clear</button> : 'Read on this device — nothing is uploaded.'}
-                <label className="chip">Choose file…<input type="file" accept=".pdf,.eml,.ics,.txt,text/*,application/pdf" hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void load({ file: f }); }} /></label>
+                <label className="chip">Choose file…<input type="file" accept={`.pdf,.eml,.ics,.txt,text/*,application/pdf${'__TAURI_INTERNALS__' in window ? ',image/*' : ''}`} hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void load({ file: f }); }} /></label>
               </div>
             </div>
             <div className="dx-right">

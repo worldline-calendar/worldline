@@ -59,7 +59,7 @@ export function reviewed(rules: Extraction, keep: boolean[] | undefined): Extrac
 export function combine(items: ModelItem[], text: string, calendars: CalendarSource[], now = new Date(), keep?: boolean[]): Extraction {
   const rules = reviewed(extract(text, calendars, now), keep);
   // a calendar file or a booking: the rules read those exactly
-  if (/BEGIN:VEVENT/i.test(text) || rules.proposals.some((p) => p.why === 'flight booking' || p.why === 'calendar file (.ics)')) return rules;
+  if (/BEGIN:VEVENT/i.test(text) || rules.proposals.some((p) => p.why === 'flight booking' || p.why === 'train or bus ticket' || p.why === 'calendar file (.ics)')) return rules;
   const docNow = documentDate(text, now);
   const fromModel: Proposal[] = [];
   for (const it of items) {

@@ -126,3 +126,67 @@ Tickets are valid until 19 Nov, 2027. Changes allowed.`;
     expect(new Date(on[1].parsed.end).toISOString()).toBe('2026-12-05T00:55:00.000Z');
   });
 });
+
+describe('travel documents, as their PDFs read', () => {
+  const at = (p: { parsed: { start: number; end: number } }) => [new Date(p.parsed.start).toISOString().slice(0, 16), new Date(p.parsed.end).toISOString().slice(0, 16)];
+  const ticked = (doc: string, now: Date) => extract(doc, [], now).proposals.filter((p) => p.confidence >= 0.6);
+  it('several legs under one date (Air Canada)', () => {
+    const r = ticked(`FLIGHT 1 • Sat 05 Dec, 2026
+Toronto YYZ Vancouver YVR
+06:15 09:51
+AC 101 • Operated by Air Canada
+Vancouver YVR Shanghai PVG
+12:25 16:00
+AC 25 • Operated by Air Canada
+FLIGHT 2 • Thu 17 Dec, 2026
+Shanghai PVG Vancouver YVR
+17:35 12:55
+AC 26 • Operated by Air Canada
+Taxes CAD 34.42 CA4 (CA4)`, new Date(2026, 10, 20));
+    expect(r.map((p) => p.parsed.title)).toEqual(['AC 101 to Vancouver', 'AC 25 to Shanghai', 'AC 26 to Vancouver']);
+    expect(at(r[1])).toEqual(['2026-12-05T20:25', '2026-12-06T08:00']);
+    expect(at(r[2])).toEqual(['2026-12-17T09:35', '2026-12-17T20:55']);
+  });
+  it('a ticket table: cities, the number, then the times (Aeroméxico)', () => {
+    const r = ticked(`Itinerary Details
+26 Jul 26 AEROMEXICO Toronto, Canada Ciudad de Mexico Cabin ECONOMY / H
+AEROVIAS DE M Seat Number 14F
+AM 693 Baggage Allowance 0 PIECES
+Time Time
+11:01am 2:00pm
+26 Jul 26 AEROMEXICO Ciudad de Mexico Tijuana Cabin ECONOMY / H
+AM 182 Baggage Allowance 0 PIECES
+Time Time
+3:50pm 6:28pm`, new Date(2026, 5, 17));
+    expect(r.map((p) => p.parsed.title)).toEqual(['AM 693 to Mexico City', 'AM 182 to Tijuana']);
+    expect(at(r[0])).toEqual(['2026-07-26T15:01', '2026-07-26T20:00']);
+  });
+  it('every word printed four times, dates as 30.05.2026 (Finnair)', () => {
+    const r = ticked(`Date: Date: Tuesday, April 14, 2026 at 00:17:30
+Departure 30.05.2026
+12:05 12:05 12:05 12:05
+BUD BUD BUD BUD
+15:25 15:25 15:25 15:25
+HEL HEL HEL HEL
+AY1252
+Transfer time 1 h 25 min
+16:50 16:50 16:50 16:50
+HEL HEL HEL HEL
+18:35 18:35 18:35 18:35
+YYZ YYZ YYZ YYZ
+AY031`, new Date(2026, 3, 15));
+    expect(r.map((p) => p.parsed.title)).toEqual(['AY 1252 to Helsinki', 'AY 31 to Toronto']);
+    expect(at(r[1])).toEqual(['2026-05-30T13:50', '2026-05-30T22:35']);
+  });
+  it('a train ticket, on the stations’ clock', () => {
+    const r = ticked(`Your booking number is: XXXXXX
+Outbound
+Sun, May 17, 2026
+11:58 AM Prague hlavní nádraží
+3h 04 České dráhy | R 869
+03:02 PM Brno hlavní nádraží
+Ticket CA$27.38`, new Date(2026, 4, 16));
+    expect(r.map((p) => p.parsed.title)).toEqual(['Train to Brno']);
+    expect(at(r[0])).toEqual(['2026-05-17T09:58', '2026-05-17T13:02']);
+  });
+});

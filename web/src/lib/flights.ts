@@ -4,7 +4,7 @@
 // Before it: a countdown in the deadline band (FLIGHT_LEAD days) and three reminders (FLIGHT_ALERTS).
 // After it: the days until the next flight out of that city are a trip ("In London"), shown across the all-day row.
 import type { CalEvent, CalendarSource } from '../data/types';
-import { airport, type Airport } from './airports';
+import { airport, citiesIn, type Airport } from './airports';
 import { instantOf, wallClock, zoneAbbr } from './zone';
 import { parseQuick } from './quickparse';
 import { prefs } from './prefs';
@@ -25,7 +25,7 @@ const MAX_TRIP_DAYS = 120; // a stay longer than this isn't a trip (you moved)
 const DAY = 86_400_000;
 
 // ---------------------------------------------------------------- reading what's typed
-const TIME = /\b(\d{1,2})(?::(\d{2}))?\s*(am|pm|a|p)\b|\b([01]?\d|2[0-3]):([0-5]\d)\b/gi;
+const TIME = /\b(\d{1,2})(?::(\d{2}))?\s*(am|pm|a\.m\.|p\.m\.|a|p)(?![a-z])|\b([01]?\d|2[0-3]):([0-5]\d)\b/gi;
 const SEP = /^\s*(?:→|->|–|—|-|>|to|›|»)\s*$/i;
 const FLIGHT_NO = /\b([A-Z]{2}|[A-Z]\d|\d[A-Z])\s?(\d{1,4})\b/i;
 
@@ -171,6 +171,7 @@ const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', '
 const MON = '(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\\.?';
 const DATE_RES: [RegExp, (m: RegExpExecArray) => [number | undefined, number, number]][] = [
   [/\b(\d{4})-(\d{2})-(\d{2})\b/, (m) => [+m[1], +m[2] - 1, +m[3]]],
+  [/\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b/, (m) => [+m[3], +m[2] - 1, +m[1]]], // (30.05.2026: day first)
   [new RegExp(`\\b(\\d{1,2})\\s*${MON}\\s*,?\\s*(\\d{4})?\\b`, 'i'), (m) => [m[3] ? +m[3] : undefined, MONTHS.indexOf(m[2].toLowerCase()), +m[1]]],
   [new RegExp(`\\b${MON}\\s+(\\d{1,2})(?:st|nd|rd|th)?\\s*,?\\s*(\\d{4})?\\b`, 'i'), (m) => [m[3] ? +m[3] : undefined, MONTHS.indexOf(m[1].toLowerCase()), +m[2]]],
 ];
@@ -192,59 +193,144 @@ function dateIn(s: string, now: Date): [number, number, number] | null {
   return [thisYear.getTime() < now.getTime() - 30 * DAY ? now.getFullYear() + 1 : now.getFullYear(), mo, d];
 }
 
-/** Every flight in a pasted itinerary or confirmation email. Two layouts: the flight number first, then its airports,
- *  date and times ("AC 856 · Toronto (YYZ) → London (LHR) · Sat 12 Dec · 6:40 PM 6:55 AM"); or the date, airports and
- *  times first and the flight number after them (Air Canada: "Departure • Tue 01 Dec, 2026 / Toronto YYZ San Francisco
- *  SFO / 12:50 15:40 / AC 743 • Operated by …"). The second is used when the text before the first flight number
- *  already holds a whole flight. */
+/** Every flight in a pasted itinerary, confirmation email or e-ticket. Airlines lay these out every way: the flight
+ *  number first, then airports, date and times ("AC 856 · Toronto (YYZ) → London (LHR) · Sat 12 Dec · 6:40 PM 6:55
+ *  AM"); or the date, airports and times first and the number after them (Air Canada); or a table, the airports before
+ *  the number and the times after it (Aeroméxico). So: each flight number is an anchor, and for each kind of detail —
+ *  the date, the two airports, the times — the document is asked once whether it sits before its number or after it
+ *  (whichever finds it for more flights, nearer); each flight then takes the nearest ones on that side, up to the
+ *  neighbouring flight's number. A leg with no date of its own ("AC 25", the second leg of "FLIGHT 1 • Sat 05 Dec")
+ *  flies on the date before it. Airports are codes ("YYZ", "(YYZ)") or, where a ticket prints none, city names. */
 export function parseItinerary(text: string, now = new Date()): FlightPlan[] {
   const flat = text.replace(/\s+/g, ' ');
   // (not "PM 11" in "3:55 PM 11:50 AM", nor a time: a flight number isn't followed by ":"; nor an aircraft, "A321-200")
-  const nos = [...flat.matchAll(/\b([A-Z]{2}|[A-Z]\d|\d[A-Z])\s?(\d{1,4})\b(?![:.]\d|-\d)/g)].filter((m) => !/^(?:AM|PM)$/.test(m[1]) && !airport(m[0].slice(0, 3)) && !/(?:airbus|boeing|aircraft|type:?)\s*$/i.test(flat.slice(Math.max(0, m.index! - 12), m.index!)));
-  const after = (i: number) => flat.slice(nos[i].index!, nos[i + 1]?.index ?? flat.length);
-  const before = (i: number) => flat.slice(i ? nos[i - 1].index! + nos[i - 1][0].length : 0, nos[i].index!);
-  const numberLast = nos.length > 0 && !!segment(before(0), now, true);
+  // (two to four digits: "CA4" is a tax code; "AM 693" is Aeroméxico, but the "AM" after a time isn't)
+  const anchors = [...flat.matchAll(/\b([A-Z]{2}|[A-Z]\d|\d[A-Z])\s?(\d{2,4})\b(?![:.]\d|-\d)/g)]
+    .filter((m) => !(/^(?:AM|PM)$/.test(m[1]) && /\d\s*$/.test(flat.slice(0, m.index!))) && !airport(m[0].slice(0, 3)) && !/(?:airbus|boeing|aircraft|type:?|seats?:?|row)\s*$/i.test(flat.slice(Math.max(0, m.index! - 12), m.index!)))
+    .map((m) => ({ at: m.index!, end: m.index! + m[0].length, no: `${m[1]} ${m[2].replace(/^0+(?=\d)/, '')}` as string | undefined }));
+  // a heading where no number follows ("RETURN FLIGHT", a regional partner's leg; a screenshot too small to read it) is
+  // that flight's anchor
+  for (const m of flat.matchAll(/\b(?:departing|departure|outbound|return(?:ing)?|inbound)\s+flight\b|\bflight\s+\d\b/gi))
+    if (!anchors.some((a) => a.at > m.index! - 40 && a.at < m.index! + m[0].length + 250)) anchors.push({ at: m.index!, end: m.index! + m[0].length, no: undefined });
+  anchors.sort((a, b) => a.at - b.at);
+  if (!anchors.length) return [];
+
+  // the details, in order; one said several times in a row ("12:05 12:05 12:05", a PDF's bold) is one
+  interface Tk { at: number; end: number; text: string }
+  const dedup = (xs: Tk[]) => xs.filter((x, i) => !(i && xs[i - 1].text === x.text && x.at - xs[i - 1].end < 4));
+  const times = dedup([...flat.matchAll(TIME)].map((m) => ({ at: m.index!, end: m.index! + m[0].length, text: m[0] })));
+  const dates: (Tk & { ymd: [number, number, number] })[] = [];
+  for (const [re] of DATE_RES)
+    for (const m of flat.matchAll(new RegExp(re.source, 'gi'))) {
+      const ymd = dateIn(m[0], now);
+      if (ymd && !dates.some((d) => d.at < m.index! + m[0].length && m.index! < d.end)) dates.push({ at: m.index!, end: m.index! + m[0].length, text: m[0], ymd });
+    }
+  dates.sort((a, b) => a.at - b.at);
+  const codes = dedup([...flat.matchAll(/\(([A-Z]{3})\)|\b([A-Z]{3})\b/g)].filter((m) => airport(m[1] ?? m[2])).map((m) => ({ at: m.index!, end: m.index! + m[0].length, text: (m[1] ?? m[2]) })));
+  const cities = dedup(citiesIn(flat).map((c) => ({ at: c.at, end: c.end, text: c.airport.code })));
+
+  // each flight's room: from the number before it to the number after it
+  const room = anchors.map((a, i) => ({ before: [i ? anchors[i - 1].end : 0, a.at] as const, after: [a.end, anchors[i + 1]?.at ?? flat.length] as const }));
+  type Side = 'before' | 'after';
+  const near = (xs: Tk[], i: number, side: Side, n: number) => {
+    const [lo, hi] = room[i][side];
+    const inside = xs.filter((x) => x.at >= lo && x.end <= hi);
+    const picked = side === 'before' ? inside.slice(-n) : inside.slice(0, n);
+    const dist = picked.length ? (side === 'before' ? anchors[i].at - picked[0].at : picked.at(-1)!.end - anchors[i].end) : Infinity;
+    return { picked, dist };
+  };
+  // airports: two different ones nearest the number (codes where the room has any, else city names)
+  const pairNear = (i: number, side: Side) => {
+    for (const xs of [codes, cities]) {
+      const [lo, hi] = room[i][side];
+      const inside = xs.filter((x) => x.at >= lo && x.end <= hi);
+      const ordered = side === 'before' ? [...inside].reverse() : inside;
+      const first = ordered[0], second = ordered.find((x) => x.text !== first?.text);
+      if (first && second) {
+        const pair = side === 'before' ? [second, first] : [first, second];
+        return { picked: pair, dist: side === 'before' ? anchors[i].at - pair[0].at : pair[1].end - anchors[i].end };
+      }
+    }
+    return { picked: [] as Tk[], dist: Infinity };
+  };
+  // which side, for the whole document: the one that finds the detail for more flights, then the nearer
+  const choose = (find: (i: number, side: Side) => { picked: Tk[]; dist: number }, need: number): Side => {
+    const score = (side: Side) => {
+      let found = 0, dist = 0;
+      anchors.forEach((_, i) => { const r = find(i, side); if (r.picked.length >= need) { found++; dist += r.dist; } });
+      return { found, dist };
+    };
+    const b = score('before'), a = score('after');
+    return b.found > a.found || (b.found === a.found && b.dist < a.dist) ? 'before' : 'after';
+  };
+  const timeSide = choose((i, s) => near(times, i, s, 2), 1);
+  // (a flight's date sits with its times — reading it on its own side would take the next flight's date as often as
+  // its own — unless that side has no dates at all)
+  const dateSide: Side = anchors.some((_, i) => near(dates, i, timeSide, 1).picked.length) ? timeSide : timeSide === 'before' ? 'after' : 'before';
+  const portSide = choose(pairNear, 2);
+
   const out: FlightPlan[] = [];
   const seen = new Set<string>();
-  let lastDate = null as [number, number, number] | null;
-  for (let i = 0; i < nos.length; i++) {
-    // (a route line just before the number — "Toronto (YYZ) → Halifax (YHZ) / AC 604 Wed 23 Dec 17:45 21:05" — is
-    // that flight's, not the next one's)
-    const pre = before(i).split(TIME).pop() ?? '';
-    const seg = numberLast ? segment(before(i), now, true) : segment(after(i), now, false, lastDate, pre);
-    if (!seg) continue;
-    const { from, to, times, date } = seg;
+  let lastDate: [number, number, number] | null = null;
+  anchors.forEach((a, i) => {
+    const d = near(dates, i, dateSide, 1).picked[0] as (typeof dates)[number] | undefined;
+    const date = d?.ymd ?? lastDate;
+    const ports = pairNear(i, portSide).picked;
+    const ts = near(times, i, timeSide, 2).picked.map((t) => t.text);
+    if (!date || ports.length < 2 || !ts.length) return;
     lastDate = date;
-    const no = `${nos[i][1]} ${nos[i][2]}`;
-    const [y, m, d] = date;
-    const start = instantOf(y, m, d, minutesOf(times[0]), from.zone);
-    let end = times[1] ? instantOf(y, m, d, minutesOf(times[1]), to.zone) : start + 2 * 3_600_000;
-    for (let k = 1; end <= start && k <= 3; k++) end = instantOf(y, m, d + k, minutesOf(times[1]), to.zone);
-    const key = `${no}|${y}-${m}-${d}`;
-    if (end <= start || seen.has(key)) continue; // (emails often repeat a segment: the summary, then the details)
+    const from = airport(ports[0].text)!, to = airport(ports[1].text)!;
+    const [y, m, dd] = date;
+    const start = instantOf(y, m, dd, minutesOf(ts[0]), from.zone);
+    let end = ts[1] ? instantOf(y, m, dd, minutesOf(ts[1]), to.zone) : start + 2 * 3_600_000;
+    for (let k = 1; end <= start && k <= 3; k++) end = instantOf(y, m, dd + k, minutesOf(ts[1]), to.zone);
+    const key = `${a.no ?? from.code + to.code}|${y}-${m}-${dd}`;
+    if (end <= start || seen.has(key)) return; // (emails often repeat a segment: the summary, then the details)
     seen.add(key);
-    const flight: FlightInfo = { no, from: from.code, to: to.code, fromZone: from.zone, toZone: to.zone };
-    out.push({ title: flightTitle(flight), start, end, flight, from, to, hasArrival: !!times[1] });
-  }
+    const flight: FlightInfo = { ...(a.no ? { no: a.no } : {}), from: from.code, to: to.code, fromZone: from.zone, toZone: to.zone };
+    out.push({ title: flightTitle(flight), start, end, flight, from, to, hasArrival: !!ts[1] });
+  });
   return out;
 }
 
-/** One flight's airports, times and date in a piece of an itinerary. Number-last: the piece's last date, and the
- *  airports and times after it (what comes earlier — a sent date, an issue date — is another thing's). */
-function segment(seg: string, now: Date, numberLast: boolean, lastDate: [number, number, number] | null = null, route = '') {
-  let date: [number, number, number] | null;
-  if (numberLast) {
-    let at = -1;
-    for (const [re] of DATE_RES) for (const m of seg.matchAll(new RegExp(re.source, 'gi'))) at = Math.max(at, m.index!);
-    if (at < 0) return null;
-    seg = seg.slice(at);
-    date = dateIn(seg, now);
-  } else date = dateIn(seg, now) ?? lastDate;
-  const codesIn = (x: string) => [...x.matchAll(/\(([A-Z]{3})\)|\b([A-Z]{3})\b/g)].map((m) => m[1] ?? m[2]).filter((c) => airport(c));
-  const routed = codesIn(route);
-  const codes = new Set(routed).size >= 2 ? routed : codesIn(seg);
-  const from = airport(codes[0]), to = airport(codes.find((c) => c !== codes[0]));
-  const times = [...seg.matchAll(TIME)].map((m) => m[0]);
-  if (!from || !to || !times.length || !date) return null;
-  return { from, to, times, date };
+// ---------------------------------------------------------------- a train or bus ticket
+export interface RidePlan { title: string; start: number; end: number; zone?: string; from: string; to: string }
+const RIDE_WORDS = /(?<![\p{L}])(?:train|rail|railway|bahn|sncf|trenitalia|renfe|amtrak|via rail|eurostar|české dráhy|ceske drahy|öbb|obb|sbb|ns international|omio|trainline|flixbus|bus|coach|megabus|greyhound|platform|carriage|coach \d)(?![\p{L}])/iu;
+/** Each ride in a train or bus ticket: a departure time and station on one line ("11:58 AM Prague hlavní nádraží"),
+ *  the arrival time and station a few lines on ("03:02 PM Brno hlavní nádraží"), on the date written before them. Both
+ *  times are on the stations' own clock: the zone of the departure city (when it has an airport this app knows),
+ *  else the viewer's. */
+export function parseRides(text: string, now = new Date()): RidePlan[] {
+  if (!RIDE_WORDS.test(text)) return [];
+  const lines = text.split('\n').map((l) => l.trim());
+  const STOP = new RegExp(`^(${TIME.source})\\s+([\\p{Lu}][^\\d|•]{2,60})$`, 'iu');
+  const out: RidePlan[] = [];
+  const seen = new Set<string>();
+  let date: [number, number, number] | null = null;
+  for (let i = 0; i < lines.length; i++) {
+    if (!STOP.test(lines[i])) {
+      const d = lines[i].length < 60 ? dateIn(lines[i], now) : null;
+      if (d) date = d;
+      continue;
+    }
+    const j = lines.slice(i + 1, i + 4).findIndex((l) => STOP.test(l));
+    if (j < 0 || !date) continue;
+    const a = STOP.exec(lines[i])!, b = STOP.exec(lines[i + 1 + j])!;
+    const station = (m: RegExpExecArray) => m[m.length - 1].replace(/\s+/g, ' ').trim();
+    const [from, to] = [station(a), station(b)];
+    const place = (s: string) => s.split(/\s+(?:hlavn|hbf|centraal|centrale|central|station|gare|bahnhof|main|union|\(|–|-)/i)[0].trim();
+    const zone = citiesIn(from)[0]?.airport.zone ?? citiesIn(to)[0]?.airport.zone;
+    const [y, m, d] = date;
+    const at = (t: string, k = 0) => (zone ? instantOf(y, m, d + k, minutesOf(t), zone) : new Date(y, m, d + k, 0, minutesOf(t)).getTime());
+    const start = at(a[1]);
+    let end = at(b[1]);
+    for (let k = 1; end <= start && k <= 2; k++) end = at(b[1], k);
+    const kind = /\b(?:flixbus|bus|coach|megabus|greyhound)\b/i.test(text) && !/\b(?:train|rail)\b/i.test(text) ? 'Bus' : 'Train';
+    const key = `${start}|${from}`;
+    if (end <= start || seen.has(key)) continue;
+    seen.add(key);
+    out.push({ title: `${kind} to ${place(to)}`, start, end, zone, from: place(from), to: place(to) });
+    i += 1 + j;
+  }
+  return out;
 }

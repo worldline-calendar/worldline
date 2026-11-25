@@ -194,25 +194,21 @@ impl tauri_plugin_http::reqwest::dns::Resolve for PublicOnly {
   }
 }
 
-/// Read dropped text with the language model built into macOS 26 (the worldline-reader helper, in the bundle's
-/// resources; see reader/main.swift): on this Mac, no network. The page sends {text, today} (text at most 60,000
-/// characters); the answer is the helper's JSON, or an error when it can't run (an older Mac, Apple Intelligence off,
-/// an Intel Mac, the helper missing) — then the page keeps what its own rules read. 60 s at most, 1 MB of answer.
-#[tauri::command]
-async fn model_read(app: tauri::AppHandle, text: String, today: String) -> Result<String, String> {
+/// The worldline-reader helper (reader/main.swift, in the bundle's resources): fed `input` on stdin, its stdout back.
+/// An error when it can't run (an older Mac, an Intel Mac, the helper missing from this build). 60 s at most, 1 MB of
+/// answer.
+async fn run_reader(app: &tauri::AppHandle, args: &[&str], input: Vec<u8>) -> Result<String, String> {
   use std::io::{Read, Write};
   use std::process::{Command, Stdio};
   let exe = app.path().resource_dir().map_err(|e| e.to_string())?.join("worldline-reader");
   if std::fs::metadata(&exe).map(|m| m.len() == 0).unwrap_or(true) {
     return Err("no on-device reader in this build".into());
   }
-  let text: String = text.chars().take(60_000).collect();
-  let today: String = today.chars().take(80).collect();
-  let input = serde_json::json!({ "text": text, "today": today }).to_string();
+  let args: Vec<String> = args.iter().map(|a| a.to_string()).collect();
   tauri::async_runtime::spawn_blocking(move || {
-    let mut child = Command::new(&exe).stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::null()).spawn().map_err(|e| e.to_string())?;
+    let mut child = Command::new(&exe).args(&args).stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::null()).spawn().map_err(|e| e.to_string())?;
     let mut stdin = child.stdin.take().ok_or("no stdin")?;
-    std::thread::spawn(move || { let _ = stdin.write_all(input.as_bytes()); });
+    std::thread::spawn(move || { let _ = stdin.write_all(&input); });
     let mut stdout = child.stdout.take().ok_or("no stdout")?;
     let reader = std::thread::spawn(move || { let mut buf = Vec::new(); let _ = (&mut stdout).take(1_000_000).read_to_end(&mut buf); let _ = std::io::copy(&mut stdout, &mut std::io::sink()); buf });
     let start = std::time::Instant::now();
@@ -228,6 +224,25 @@ async fn model_read(app: tauri::AppHandle, text: String, today: String) -> Resul
   })
   .await
   .map_err(|e| e.to_string())?
+}
+
+/// Read dropped text with the language model built into macOS 26 (Apple Intelligence; on this Mac, no network). The
+/// page sends {text, today} (text at most 60,000 characters); the answer is the helper's JSON. When it can't run, the
+/// page keeps what its own rules read.
+#[tauri::command]
+async fn model_read(app: tauri::AppHandle, text: String, today: String) -> Result<String, String> {
+  let text: String = text.chars().take(60_000).collect();
+  let today: String = today.chars().take(80).collect();
+  run_reader(&app, &[], serde_json::json!({ "text": text, "today": today }).to_string().into_bytes()).await
+}
+
+/// The words in a dropped image (a screenshot of a booking, a photo of a poster), read by the Mac's own text
+/// recognition (Vision; on this Mac). The page sends the image's bytes as they are (at most 25 MB).
+#[tauri::command]
+async fn ocr_image(app: tauri::AppHandle, request: tauri::ipc::Request<'_>) -> Result<String, String> {
+  let tauri::ipc::InvokeBody::Raw(bytes) = request.body() else { return Err("send the image's bytes".into()) };
+  if bytes.len() > 25 * 1024 * 1024 { return Err("that image is too large to read (over 25 MB)".into()); }
+  run_reader(&app, &["ocr"], bytes.clone()).await
 }
 
 /// Read a calendar link (.ics) for a subscription. Only public web addresses — never this Mac or the local network
@@ -510,7 +525,7 @@ pub fn run() {
     .plugin(tauri_plugin_notification::init())
     .manage(AlertState::default())
     .invoke_handler(tauri::generate_handler![
-      save_file, quit_now, confirm_uninstall, uninstall, set_alerts, test_alert, fetch_feed, show_in_finder, model_read,
+      save_file, quit_now, confirm_uninstall, uninstall, set_alerts, test_alert, fetch_feed, show_in_finder, model_read, ocr_image,
       db_get, db_set, db_del, db_keys, db_snapshots, db_snapshot,
       #[cfg(target_os = "macos")] ek_status,
       #[cfg(target_os = "macos")] ek_request,
